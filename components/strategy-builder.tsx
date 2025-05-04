@@ -49,8 +49,10 @@ export type StrategyConfig = {
   isPublic?: boolean
 }
 
+const generateId = (prefix: string) => `${prefix}-${new Date().toISOString()}`
+
 const defaultCondition: IndicatorCondition = {
-  id: "condition-" + Date.now(),
+  id: generateId("condition"),
   indicator: "rsi",
   parameter: "value",
   logic: "less_than",
@@ -65,14 +67,14 @@ const defaultCondition: IndicatorCondition = {
 }
 
 const defaultConditionGroup: ConditionGroup = {
-  id: "group-" + Date.now(),
-  conditions: [{ ...defaultCondition, id: "condition-" + Date.now() }],
+  id: generateId("group"),
+  conditions: [{ ...defaultCondition, id: generateId("condition") }],
   operator: "and",
 }
 
 const defaultPositionRule: PositionRule = {
-  id: "rule-" + Date.now(),
-  conditionGroups: [{ ...defaultConditionGroup, id: "group-" + Date.now() }],
+  id: generateId("rule"),
+  conditionGroups: [{ ...defaultConditionGroup, id: generateId("group") }],
 }
 
 const defaultRiskManagement: RiskManagementConfig = {
@@ -116,10 +118,10 @@ const defaultRiskManagement: RiskManagementConfig = {
 const defaultStrategy: StrategyConfig = {
   name: "My Trading Strategy",
   description: "A simple trading strategy based on technical indicators",
-  entryLong: { ...defaultPositionRule, id: "entry-long-" + Date.now() },
-  entryShort: { ...defaultPositionRule, id: "entry-short-" + Date.now() },
-  exitLong: { ...defaultPositionRule, id: "exit-long-" + Date.now() },
-  exitShort: { ...defaultPositionRule, id: "exit-short-" + Date.now() },
+  entryLong: { ...defaultPositionRule, id: generateId("entry-long") },
+  entryShort: { ...defaultPositionRule, id: generateId("entry-short") },
+  exitLong: { ...defaultPositionRule, id: generateId("exit-long") },
+  exitShort: { ...defaultPositionRule, id: generateId("exit-short") },
   riskManagement: defaultRiskManagement,
   isPublic: false,
 }
@@ -201,7 +203,7 @@ export default function StrategyBuilder() {
 
       // Store strategy data in context
       setStrategyName(strategy.name)
-      setStrategyId(strategy.id || `strategy-${Date.now()}`)
+      setStrategyId(strategy.id || generateId("strategy"))
       setIsPublic(strategy.isPublic || false)
 
       // Collect all indicators used in the strategy

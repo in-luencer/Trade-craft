@@ -198,127 +198,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section - Enhanced */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold sm:text-4xl">Real Results from Our Users</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Join thousands of traders who have improved their trading with in_luencer
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="mb-4 flex items-center">
-                  <div className="mr-4 h-12 w-12 rounded-full bg-primary/20"></div>
-                  <div>
-                    <h4 className="font-bold">Michael T.</h4>
-                    <p className="text-sm text-muted-foreground">Day Trader</p>
-                  </div>
-                </div>
-                <div className="mb-2 flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="h-5 w-5 fill-primary" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-muted-foreground">
-                  "in_luencer has completely transformed my trading. I've gone from inconsistent results to a structured
-                  approach with measurable performance. My win rate increased by 32% in just 3 months!"
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="mb-4 flex items-center">
-                  <div className="mr-4 h-12 w-12 rounded-full bg-primary/20"></div>
-                  <div>
-                    <h4 className="font-bold">Sarah K.</h4>
-                    <p className="text-sm text-muted-foreground">Swing Trader</p>
-                  </div>
-                </div>
-                <div className="mb-2 flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="h-5 w-5 fill-primary" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-muted-foreground">
-                  "As someone with no coding experience, I never thought I could create automated strategies. in_luencer
-                  made it possible and my results speak for themselves. I'm up 28% YTD using their templates!"
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="mb-4 flex items-center">
-                  <div className="mr-4 h-12 w-12 rounded-full bg-primary/20"></div>
-                  <div>
-                    <h4 className="font-bold">David R.</h4>
-                    <p className="text-sm text-muted-foreground">Crypto Trader</p>
-                  </div>
-                </div>
-                <div className="mb-2 flex">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="h-5 w-5 fill-primary" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-muted-foreground">
-                  "The backtesting capabilities are incredible. I've optimized my strategies to perform in different
-                  market conditions with confidence. My drawdowns are now 65% smaller than before!"
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Badges Section */}
-      <section className="bg-background py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-            <div className="flex flex-col items-center">
-              <div className="mb-2 rounded-full bg-primary/10 p-3">
-                <Shield className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">Bank-Level Security</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="mb-2 rounded-full bg-primary/10 p-3">
-                <Lock className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">Data Protection</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="mb-2 rounded-full bg-primary/10 p-3">
-                <CheckCircle className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">Verified Results</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="mb-2 rounded-full bg-primary/10 p-3">
-                <Users className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">10,000+ Users</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="mb-2 rounded-full bg-primary/10 p-3">
-                <Clock className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">24/7 Support</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Founder Story Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
@@ -334,16 +213,18 @@ export default function Home() {
             <div className="flex flex-col justify-center">
               <h2 className="mb-4 text-3xl font-bold">Our Founder's Story</h2>
               <p className="mb-6 text-muted-foreground">
-                After losing over $50,000 in the markets due to emotional trading and lack of a systematic approach, our
-                founder set out to create a platform that would help traders of all levels build, test, and deploy
-                professional trading strategies without needing to code.
+              I was you—a beginner trader losing money with every random YouTube strategy I tried. I’d stare at charts for hours, hoping for a breakthrough... but all I got was emotional burnout and a blown-up account.
+              I knew there had to be a better way.
               </p>
               <p className="mb-6 text-muted-foreground">
-                "I created in_luencer to solve the problems I faced as a trader. I wanted to make algorithmic trading
-                accessible to everyone, not just programmers and quants. Today, thousands of traders use our platform to
-                trade with confidence and consistency."
+              So I locked in. I studied the markets, mastered Pine Script, and built my own custom strategies. No noise. No hype. Just data-backed logic. The results? I finally started winning consistently—and with control.
+              Now, I’ve turned that same system into a tool.</p>
+              <p className="mb-6 text-muted-foreground">
+               A SaaS platform built for traders like you—so you never have to trade blindly again.
+              No more guesswork. Just your strategy. Your rules. Your edge.
+              Let’s flip the script—together.
               </p>
-              <p className="font-medium">- Alex Chen, Founder & CEO</p>
+              <p className="font-medium">- Anandhu, Founder & CEO</p>
             </div>
           </div>
         </div>

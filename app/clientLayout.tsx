@@ -9,8 +9,31 @@ import { usePathname } from "next/navigation"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { MobileNav } from "@/components/ui/mobile-nav"
+import { MessageSquare } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import emailjs from "emailjs-com"
 
 const inter = Inter({ subsets: ["latin"] })
+
+// Updated error handling to log the full error object
+const sendFeedback = (feedback) => {
+  const templateParams = {
+    feedback: feedback, // Pass the feedback text
+  };
+
+  emailjs
+      .send('service_yv3z6qi', 'template_rdtzbw4', templateParams, '1IAdEEyqKlumQiOFc')
+    .then(
+      (response) => {
+        console.log('SUCCESS!', response.status, response.text);
+      },
+      (err) => {
+        console.log('FAILED...', err);
+      },
+    );
+};
+
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -94,6 +117,38 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         )}
 
         {children}
+
+        {/* Feedback Form */}
+        <div className="mt-8 rounded-lg border p-6 max-w-lg mx-auto">
+          <div className="flex items-center space-x-3">
+            <MessageSquare className="h-6 w-6 text-primary" />
+            <h3 className="text-lg font-semibold">We Value Your Feedback</h3>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Have suggestions to improve our onboarding process? Let us know!
+          </p>
+          <Textarea
+            id="feedback-textarea"
+            className="mt-3 w-full resize-none"
+            placeholder="Your feedback helps us improve..."
+            rows={4}
+          />
+          <Button
+            variant="outline"
+            size="md"
+            className="mt-3 w-full"
+            onClick={() => {
+              const feedback = document.getElementById("feedback-textarea").value
+              if (feedback.trim()) {
+                sendFeedback(feedback)
+              } else {
+                alert("Please enter your feedback before submitting.")
+              }
+            }}
+          >
+            Submit Feedback
+          </Button>
+        </div>
       </div>
     </ThemeProvider>
   )

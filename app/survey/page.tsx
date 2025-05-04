@@ -12,13 +12,21 @@ import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 
+// Replace dynamic progress bar calculation with a pre-rendered value
+const calculateProgress = (currentStep, totalSteps) => {
+  return Math.round((currentStep / totalSteps) * 100);
+};
+
+// Replace dynamic slider value with a default value during SSR
+const defaultMaxDrawdown = [15]; // Default value for server-side rendering
+
 export default function SurveyPage() {
-  const router = useRouter()
-  const [currentStep, setCurrentStep] = useState(1)
-  const totalSteps = 3
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 3;
   const [surveyData, setSurveyData] = useState({
     riskTolerance: "moderate",
-    maxDrawdown: [15],
+    maxDrawdown: defaultMaxDrawdown,
     features: {
       backtesting: true,
       automation: true,
@@ -30,7 +38,9 @@ export default function SurveyPage() {
     featureRequest: "",
     existingStrategy: "no",
     strategyDescription: "",
-  })
+  });
+
+  const progressPercentage = calculateProgress(currentStep, totalSteps);
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -91,7 +101,7 @@ export default function SurveyPage() {
             Step {currentStep} of {totalSteps}
           </span>
           <span className="text-sm text-muted-foreground">
-            {Math.round((currentStep / totalSteps) * 100)}% Complete
+            {progressPercentage}% Complete
           </span>
         </div>
       </div>
@@ -351,20 +361,6 @@ export default function SurveyPage() {
         </Card>
       )}
 
-      {/* Feedback Form */}
-      <div className="mt-8 rounded-lg border p-4">
-        <div className="flex items-center space-x-2">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          <h3 className="font-medium">We Value Your Feedback</h3>
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Have suggestions to improve our onboarding process? Let us know!
-        </p>
-        <Textarea className="mt-2" placeholder="Your feedback helps us improve..." rows={2} />
-        <Button variant="outline" size="sm" className="mt-2">
-          Submit Feedback
-        </Button>
-      </div>
     </div>
   )
 }

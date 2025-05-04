@@ -644,19 +644,24 @@ const SidebarMenuBadge = React.forwardRef<
 ))
 SidebarMenuBadge.displayName = "SidebarMenuBadge"
 
+const generateRandomPercentage = () => {
+  const [width, setWidth] = React.useState("50%") // Default value for server-side rendering
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setWidth(`${Math.floor(Math.random() * 40) + 50}%`)
+    }
+  }, [])
+
+  return width
+}
+
 const SidebarMenuSkeleton = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
     showIcon?: boolean
   }
 >(({ className, showIcon = false, ...props }, ref) => {
-  const generateRandomPercentage = () => {
-    if (typeof window !== "undefined") {
-      return `${Math.floor(Math.random() * 40) + 50}%`
-    }
-    return "50%" // Default value for server-side rendering
-  }
-
   const width = React.useMemo(() => {
     return generateRandomPercentage()
   }, [])

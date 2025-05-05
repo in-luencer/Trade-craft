@@ -6,34 +6,81 @@ import "@/app/globals.css"
 import { Inter } from "next/font/google"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import emailjs from "@emailjs/browser"
+import { emailjsConfig } from "./config/emailjs"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { MobileNav } from "@/components/ui/mobile-nav"
 import { MessageSquare } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import emailjs from "emailjs-com"
 
 const inter = Inter({ subsets: ["latin"] })
 
-// Updated error handling to log the full error object
-const sendFeedback = (feedback) => {
-  const templateParams = {
-    feedback: feedback, // Pass the feedback text
-  };
+interface EmailJSResponse {
+  status: number;
+  text: string;
+}
 
-  emailjs
-      .send('service_yv3z6qi', 'template_rdtzbw4', templateParams, '1IAdEEyqKlumQiOFc')
-    .then(
-      (response) => {
-        console.log('SUCCESS!', response.status, response.text);
-      },
-      (err) => {
-        console.log('FAILED...', err);
-      },
-    );
+// Updated to send feedback using EmailJS directly
+const sendFeedback = async (feedback: string) => {
+  try {
+    const { serviceId, templateId, publicKey, templateParams } = emailjsConfig;
+
+    // Validate configuration
+    if (!serviceId || !templateId || !publicKey) {
+      throw new Error('EmailJS configuration is incomplete');
+    }
+
+    // Initialize EmailJS with error handling
+    try {
+      await emailjs.init(publicKey);
+    } catch (initError) {
+      console.error('Failed to initialize EmailJS:', initError);
+      throw new Error('Failed to initialize email service');
+    }
+
+    const params = {
+      ...templateParams,
+      message: feedback,
+      feedback: feedback,
+      email: templateParams.email,
+      reply_to: templateParams.reply_to
+    };
+
+    console.log('Attempting to send email with params:', params);
+
+    // Send email with timeout
+    const response = await Promise.race([
+      emailjs.send(serviceId, templateId, params),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Email send timeout')), 10000)
+      )
+    ]) as EmailJSResponse;
+
+    console.log('EmailJS response:', response);
+
+    if (response && response.status === 200) {
+      console.log("Feedback sent successfully!", response);
+      alert("Thank you for your feedback!");
+    } else {
+      throw new Error(`EmailJS returned unexpected response: ${JSON.stringify(response)}`);
+    }
+  } catch (error: unknown) {
+    console.error("Failed to send feedback:", error);
+    let errorMessage = "An unexpected error occurred. Please try again later.";
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error && typeof error === 'object') {
+      errorMessage = JSON.stringify(error);
+    }
+    
+    alert(`Failed to send feedback: ${errorMessage}`);
+  }
 };
-
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -135,10 +182,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           />
           <Button
             variant="outline"
-            size="md"
+            size="default"
             className="mt-3 w-full"
             onClick={() => {
-              const feedback = document.getElementById("feedback-textarea").value
+              const feedbackElement = document.getElementById("feedback-textarea") as HTMLTextAreaElement
+              const feedback = feedbackElement?.value || ""
               if (feedback.trim()) {
                 sendFeedback(feedback)
               } else {

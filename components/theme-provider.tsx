@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-
-import { createContext, useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes"
 
 type Theme = "dark" | "light" | "system"
 
@@ -14,56 +14,31 @@ type ThemeProviderProps = {
   enableSystem?: boolean
 }
 
-type ThemeProviderState = {
-  theme: Theme
-  setTheme: (theme: Theme) => void
-}
-
-const initialState: ThemeProviderState = {
-  theme: "system",
-  setTheme: () => null,
-}
-
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
-
-export function ThemeProvider({
-  children,
-  defaultTheme = "system",
-  storageKey = "ui-theme",
-  attribute = "data-theme",
-  enableSystem = true,
-  ...props
-}: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme)
+// Ensure the dark theme is applied immediately to avoid the light theme flash
+export function ThemeProvider({ children, attribute, defaultTheme, enableSystem }: ThemeProviderProps) {
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   useEffect(() => {
-    const root = window.document.documentElement
-    root.classList.remove("light", "dark")
+    // Apply the dark theme immediately on the client
+    document.documentElement.classList.add("dark");
+    document.documentElement.style.colorScheme = "dark";
+    setIsDarkTheme(true);
+  }, []);
 
-    if (theme === "system" && enableSystem) {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-      root.classList.add(systemTheme)
-      root.setAttribute(attribute, systemTheme)
-      return
-    }
-
-    root.classList.add(theme)
-    root.setAttribute(attribute, theme)
-  }, [theme, attribute, enableSystem])
-
-  const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
-    },
+  if (!isDarkTheme) {
+    // Prevent rendering until the theme is applied
+    return null;
   }
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <NextThemesProvider
+      attribute={attribute}
+      defaultTheme={defaultTheme}
+      enableSystem={enableSystem}
+    >
       {children}
-    </ThemeProviderContext.Provider>
-  )
+    </NextThemesProvider>
+  );
 }
 
 export const useTheme = () => {

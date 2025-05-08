@@ -62,14 +62,15 @@ const strategyPreviews = {
     bestFor: "Markets with strong trends and momentum",
     image: "/placeholder.svg?height=200&width=400",
   },
-  "support-resistance": {
-    title: "Support & Resistance",
-    description: "A price action strategy that trades bounces and breakouts from key support and resistance levels.",
+  "volume-spike": {
+    title: "Volume Spike",
+    description:
+      "A volume-based strategy that identifies potential reversals or continuations based on significant spikes in trading volume.",
     logic:
-      "Buy when: Price bounces off support level with confirmation\nSell when: Price bounces off resistance level with confirmation",
-    indicators: ["Support/Resistance levels", "Confirmation indicators (e.g., RSI, Volume)"],
-    difficulty: "Advanced",
-    bestFor: "All market types, especially those with clear S/R levels",
+      "Buy when: Volume exceeds the average volume by a certain threshold\nSell when: Volume drops below the average volume",
+    indicators: ["Volume"],
+    difficulty: "Intermediate",
+    bestFor: "Markets with sudden changes in interest or activity",
     image: "/placeholder.svg?height=200&width=400",
   },
   ichimoku: {

@@ -1,15 +1,20 @@
 "use client"
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
-import { ArrowDown, ArrowUp } from 'lucide-react'
+import { ArrowDown, ArrowUp, Save } from 'lucide-react'
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer } from "@/components/ui/chart"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/use-toast"
 
 import type { StrategyConfig } from "../strategy-builder"
+
+import tradingviewChart from "../tradingview-chart"
 
 // Define interfaces for the strategy configuration
 interface Condition {
@@ -31,6 +36,7 @@ interface PositionRule {
 }
 
 interface RiskRule {
+  id: string
   enabled: boolean
   type: string
   value: number | string
@@ -105,6 +111,18 @@ const sampleData = [
   { date: "2023-01-28", price: 113, sma20: 104, rsi: 76 },
   { date: "2023-01-29", price: 115, sma20: 105, rsi: 80, signal: "sell" },
   { date: "2023-01-30", price: 112, sma20: 106, rsi: 70 },
+  { date: "2023-01-31", price: 110, sma20: 107, rsi: 65 },
+  { date: "2023-02-01", price: 108, sma20: 108, rsi: 60 },
+  { date: "2023-02-02", price: 106, sma20: 109, rsi: 55 },
+  { date: "2023-02-03", price: 104, sma20: 110, rsi: 50 },
+  { date: "2023-02-04", price: 102, sma20: 111, rsi: 45 },
+  { date: "2023-02-05", price: 100, sma20: 112, rsi: 40 },
+  { date: "2023-02-06", price: 98, sma20: 113, rsi: 35 },
+  { date: "2023-02-07", price: 96, sma20: 114, rsi: 30 },
+  { date: "2023-02-08", price: 94, sma20: 115, rsi: 25 },
+  { date: "2023-02-09", price: 92, sma20: 116, rsi: 20 },
+  { date: "2023-02-10", price: 90, sma20: 117, rsi: 15 },
+  { date: "2023-02-11", price: 88, sma20: 118, rsi: 10, signal: "buy" },
 ]
 
 interface StrategyPreviewProps {
@@ -114,6 +132,204 @@ interface StrategyPreviewProps {
 export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
   const [symbol, setSymbol] = useState("BTCUSD")
   const [timeframe, setTimeframe] = useState("1d")
+  const [isSaving, setIsSaving] = useState(false)
+  const router = useRouter()
+  const { toast } = useToast()
+
+  const saveStrategy = async () => {
+    try {
+      setIsSaving(true)
+      
+      // Ensure we have all required data
+      if (!strategy.name || !strategy.description) {
+        toast({
+          title: "Error",
+          description: "Strategy name and description are required",
+          variant: "destructive",
+        })
+        return
+      }
+
+      // Prepare the complete strategy data with all logic and parameters
+      const strategyData = {
+        name: strategy.name,
+        description: strategy.description,
+        symbol,
+        timeframe,
+        entryLong: {
+          conditionGroups: strategy.entryLong.conditionGroups.map(group => ({
+            operator: group.operator,
+            conditions: group.conditions.map(condition => ({
+              indicator: condition.indicator,
+              parameter: condition.parameter,
+              logic: condition.logic,
+              value: condition.value,
+              timeframe: condition.timeframe,
+              params: condition.params || getIndicatorParams(condition, condition.indicator)
+            }))
+          }))
+        },
+        entryShort: {
+          conditionGroups: strategy.entryShort.conditionGroups.map(group => ({
+            operator: group.operator,
+            conditions: group.conditions.map(condition => ({
+              indicator: condition.indicator,
+              parameter: condition.parameter,
+              logic: condition.logic,
+              value: condition.value,
+              timeframe: condition.timeframe,
+              params: condition.params || getIndicatorParams(condition, condition.indicator)
+            }))
+          }))
+        },
+        exitLong: {
+          conditionGroups: strategy.exitLong.conditionGroups.map(group => ({
+            operator: group.operator,
+            conditions: group.conditions.map(condition => ({
+              indicator: condition.indicator,
+              parameter: condition.parameter,
+              logic: condition.logic,
+              value: condition.value,
+              timeframe: condition.timeframe,
+              params: condition.params || getIndicatorParams(condition, condition.indicator)
+            }))
+          }))
+        },
+        exitShort: {
+          conditionGroups: strategy.exitShort.conditionGroups.map(group => ({
+            operator: group.operator,
+            conditions: group.conditions.map(condition => ({
+              indicator: condition.indicator,
+              parameter: condition.parameter,
+              logic: condition.logic,
+              value: condition.value,
+              timeframe: condition.timeframe,
+              params: condition.params || getIndicatorParams(condition, condition.indicator)
+            }))
+          }))
+        },
+        riskManagement: {
+          stopLoss: strategy.riskManagement.stopLoss.map(rule => ({
+            id: rule.id || `sl-${Date.now()}`,
+            type: rule.type,
+            value: rule.value,
+            enabled: rule.enabled,
+            atrPeriod: rule.atrPeriod,
+            atrMultiplier: rule.atrMultiplier,
+            lookbackPeriod: rule.lookbackPeriod,
+            activationThreshold: rule.activationThreshold,
+            equityPercentage: rule.equityPercentage,
+            riskPerTrade: rule.riskPerTrade,
+            maxRisk: rule.maxRisk,
+            winRate: rule.winRate,
+            payoffRatio: rule.payoffRatio,
+            volatilityPeriod: rule.volatilityPeriod,
+            volatilityMultiplier: rule.volatilityMultiplier,
+            riskRewardRatio: rule.riskRewardRatio
+          })),
+          takeProfit: strategy.riskManagement.takeProfit.map(rule => ({
+            id: rule.id || `tp-${Date.now()}`,
+            type: rule.type,
+            value: rule.value,
+            enabled: rule.enabled,
+            atrPeriod: rule.atrPeriod,
+            atrMultiplier: rule.atrMultiplier,
+            lookbackPeriod: rule.lookbackPeriod,
+            activationThreshold: rule.activationThreshold,
+            equityPercentage: rule.equityPercentage,
+            riskPerTrade: rule.riskPerTrade,
+            maxRisk: rule.maxRisk,
+            winRate: rule.winRate,
+            payoffRatio: rule.payoffRatio,
+            volatilityPeriod: rule.volatilityPeriod,
+            volatilityMultiplier: rule.volatilityMultiplier,
+            riskRewardRatio: rule.riskRewardRatio
+          })),
+          trailingStop: strategy.riskManagement.trailingStop.map(rule => ({
+            id: rule.id || `ts-${Date.now()}`,
+            type: rule.type,
+            value: rule.value,
+            enabled: rule.enabled,
+            atrPeriod: rule.atrPeriod,
+            atrMultiplier: rule.atrMultiplier,
+            lookbackPeriod: rule.lookbackPeriod,
+            activationThreshold: rule.activationThreshold,
+            equityPercentage: rule.equityPercentage,
+            riskPerTrade: rule.riskPerTrade,
+            maxRisk: rule.maxRisk,
+            winRate: rule.winRate,
+            payoffRatio: rule.payoffRatio,
+            volatilityPeriod: rule.volatilityPeriod,
+            volatilityMultiplier: rule.volatilityMultiplier,
+            riskRewardRatio: rule.riskRewardRatio
+          })),
+          positionSizing: strategy.riskManagement.positionSizing.map(rule => ({
+            id: rule.id || `ps-${Date.now()}`,
+            type: rule.type,
+            value: rule.value,
+            enabled: rule.enabled,
+            atrPeriod: rule.atrPeriod,
+            atrMultiplier: rule.atrMultiplier,
+            lookbackPeriod: rule.lookbackPeriod,
+            activationThreshold: rule.activationThreshold,
+            equityPercentage: rule.equityPercentage,
+            riskPerTrade: rule.riskPerTrade,
+            maxRisk: rule.maxRisk,
+            winRate: rule.winRate,
+            payoffRatio: rule.payoffRatio,
+            volatilityPeriod: rule.volatilityPeriod,
+            volatilityMultiplier: rule.volatilityMultiplier,
+            riskRewardRatio: rule.riskRewardRatio
+          })),
+          timeExit: strategy.riskManagement.timeExit.map(rule => ({
+            id: rule.id || `te-${Date.now()}`,
+            type: rule.type,
+            value: rule.value,
+            enabled: rule.enabled
+          })),
+          maxOpenPositions: strategy.riskManagement.maxOpenPositions,
+          maxDrawdown: strategy.riskManagement.maxDrawdown,
+          maxDailyLoss: strategy.riskManagement.maxDailyLoss,
+          maxConsecutiveLosses: strategy.riskManagement.maxConsecutiveLosses,
+          profitTarget: strategy.riskManagement.profitTarget,
+          riskRewardMinimum: strategy.riskManagement.riskRewardMinimum,
+          pyramiding: strategy.riskManagement.pyramiding
+        }
+      }
+      
+      const response = await fetch("/api/strategies", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(strategyData),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || "Failed to save strategy")
+      }
+
+      const data = await response.json()
+      
+      toast({
+        title: "Success",
+        description: "Strategy saved successfully",
+      })
+
+      // Optionally redirect to backtest page
+      router.push(`/backtest?strategy=${data.id}`)
+    } catch (error) {
+      console.error("Error saving strategy:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save strategy. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   // Generate pseudocode representation of the strategy
   const generatePseudocode = () => {
@@ -136,7 +352,7 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
     collectIndicators(strategy.entryShort)
     collectIndicators(strategy.exitLong)
     collectIndicators(strategy.exitShort)
-
+    
     // Generate indicator definitions
     indicators.forEach((indicator) => {
       switch (indicator) {
@@ -271,8 +487,22 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
 
         // Get indicator parameter for display
         const indicatorDisplay = getIndicatorDisplayName(condition)
+        const indicatorVariable = getIndicatorVariable(condition)
 
-        code += `  ${indicatorDisplay} ${logicMap[condition.logic] || condition.logic} ${condition.value} [${condition.timeframe}]`
+        // Handle crossover/crossunder between indicators
+        if (condition.logic === "crosses_above" || condition.logic === "crosses_below") {
+          if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+            // Extract the target indicator from the value
+            const targetIndicator = condition.value.split(":")[1]
+            const targetIndicatorDisplay = getIndicatorDisplayName({ indicator: targetIndicator })
+            code += `  ${indicatorDisplay} ${logicMap[condition.logic]} ${targetIndicatorDisplay} [${condition.timeframe}]`
+          } else {
+            code += `  ${indicatorDisplay} ${logicMap[condition.logic]} ${condition.value} [${condition.timeframe}]`
+          }
+        } else {
+          code += `  ${indicatorDisplay} ${logicMap[condition.logic] || condition.logic} ${condition.value} [${condition.timeframe}]`
+        }
+
         if (conditionIndex < group.conditions.length - 1) {
           code += ` ${group.operator.toUpperCase()}\n`
         } else {
@@ -339,8 +569,22 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
 
         // Get indicator parameter for display
         const indicatorDisplay = getIndicatorDisplayName(condition)
+        const indicatorVariable = getIndicatorVariable(condition)
 
-        code += `  ${indicatorDisplay} ${logicMap[condition.logic] || condition.logic} ${condition.value} [${condition.timeframe}]`
+        // Handle crossover/crossunder between indicators
+        if (condition.logic === "crosses_above" || condition.logic === "crosses_below") {
+          if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+            // Extract the target indicator from the value
+            const targetIndicator = condition.value.split(":")[1]
+            const targetIndicatorDisplay = getIndicatorDisplayName({ indicator: targetIndicator })
+            code += `  ${indicatorDisplay} ${logicMap[condition.logic]} ${targetIndicatorDisplay} [${condition.timeframe}]`
+          } else {
+            code += `  ${indicatorDisplay} ${logicMap[condition.logic]} ${condition.value} [${condition.timeframe}]`
+          }
+        } else {
+          code += `  ${indicatorDisplay} ${logicMap[condition.logic] || condition.logic} ${condition.value} [${condition.timeframe}]`
+        }
+
         if (conditionIndex < group.conditions.length - 1) {
           code += ` ${group.operator.toUpperCase()}\n`
         } else {
@@ -407,8 +651,22 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
 
         // Get indicator parameter for display
         const indicatorDisplay = getIndicatorDisplayName(condition)
+        const indicatorVariable = getIndicatorVariable(condition)
 
-        code += `  ${indicatorDisplay} ${logicMap[condition.logic] || condition.logic} ${condition.value} [${condition.timeframe}]`
+        // Handle crossover/crossunder between indicators
+        if (condition.logic === "crosses_above" || condition.logic === "crosses_below") {
+          if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+            // Extract the target indicator from the value
+            const targetIndicator = condition.value.split(":")[1]
+            const targetIndicatorDisplay = getIndicatorDisplayName({ indicator: targetIndicator })
+            code += `  ${indicatorDisplay} ${logicMap[condition.logic]} ${targetIndicatorDisplay} [${condition.timeframe}]`
+          } else {
+            code += `  ${indicatorDisplay} ${logicMap[condition.logic]} ${condition.value} [${condition.timeframe}]`
+          }
+        } else {
+          code += `  ${indicatorDisplay} ${logicMap[condition.logic] || condition.logic} ${condition.value} [${condition.timeframe}]`
+        }
+
         if (conditionIndex < group.conditions.length - 1) {
           code += ` ${group.operator.toUpperCase()}\n`
         } else {
@@ -475,8 +733,22 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
 
         // Get indicator parameter for display
         const indicatorDisplay = getIndicatorDisplayName(condition)
+        const indicatorVariable = getIndicatorVariable(condition)
 
-        code += `  ${indicatorDisplay} ${logicMap[condition.logic] || condition.logic} ${condition.value} [${condition.timeframe}]`
+        // Handle crossover/crossunder between indicators
+        if (condition.logic === "crosses_above" || condition.logic === "crosses_below") {
+          if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+            // Extract the target indicator from the value
+            const targetIndicator = condition.value.split(":")[1]
+            const targetIndicatorDisplay = getIndicatorDisplayName({ indicator: targetIndicator })
+            code += `  ${indicatorDisplay} ${logicMap[condition.logic]} ${targetIndicatorDisplay} [${condition.timeframe}]`
+          } else {
+            code += `  ${indicatorDisplay} ${logicMap[condition.logic]} ${condition.value} [${condition.timeframe}]`
+          }
+        } else {
+          code += `  ${indicatorDisplay} ${logicMap[condition.logic] || condition.logic} ${condition.value} [${condition.timeframe}]`
+        }
+
         if (conditionIndex < group.conditions.length - 1) {
           code += ` ${group.operator.toUpperCase()}\n`
         } else {
@@ -652,26 +924,26 @@ maxDrawdown = input.float(${strategy.riskManagement.maxDrawdown}, "Max Drawdown 
           break
         case "sma":
           const smaParams = getIndicatorParams(strategy, "sma")
-          code += `sma${smaParams.period} = ta.sma(${smaParams.source || "close"}, ${smaParams.period})\n`
+          code += `sma(${smaParams.source || "close"}, ${smaParams.period})\n`
           break
         case "ema":
           const emaParams = getIndicatorParams(strategy, "ema")
-          code += `ema${emaParams.period} = ta.ema(${emaParams.source || "close"}, ${emaParams.period})\n`
+          code += `ema(${emaParams.source || "close"}, ${emaParams.period})\n`
           break
         case "wma":
           const wmaParams = getIndicatorParams(strategy, "wma")
-          code += `wma${wmaParams.period} = ta.wma(${wmaParams.source || "close"}, ${wmaParams.period})\n`
+          code += `wma(${wmaParams.source || "close"}, ${wmaParams.period})\n`
           break
         case "hma":
           const hmaParams = getIndicatorParams(strategy, "hma")
-          code += `hma${hmaParams.period} = ta.hma(${hmaParams.source || "close"}, ${hmaParams.period})\n`
+          code += `hma(${hmaParams.source || "close"}, ${hmaParams.period})\n`
           break
         case "vwap":
           code += `vwap = ta.vwap(hlc3)\n`
           break
         case "rsi":
           const rsiParams = getIndicatorParams(strategy, "rsi")
-          code += `rsi${rsiParams.period} = ta.rsi(${rsiParams.source || "close"}, ${rsiParams.period})\n`
+          code += `rsi(${rsiParams.source || "close"}, ${rsiParams.period})\n`
           break
         case "macd":
           const macdParams = getIndicatorParams(strategy, "macd")
@@ -683,7 +955,7 @@ maxDrawdown = input.float(${strategy.riskManagement.maxDrawdown}, "Max Drawdown 
           break
         case "atr":
           const atrParams = getIndicatorParams(strategy, "atr")
-          code += `atr${atrParams.period} = ta.atr(${atrParams.period})\n`
+          code += `atr(${atrParams.period})\n`
           break
         case "stochastic":
           const stochParams = getIndicatorParams(strategy, "stochastic")
@@ -730,7 +1002,7 @@ volumeMA = ta.sma(volume, 20)\n`
           break
         case "momentum":
           const momParams = getIndicatorParams(strategy, "momentum")
-          code += `momentum = ta.mom(${momParams.source || "close"}, ${momParams.period || 10})\n`
+          code += `momentum(${momParams.source || "close"}, ${momParams.period || 10})\n`
           break
         case "custom":
           const customParams = getIndicatorParams(strategy, "custom")
@@ -767,9 +1039,21 @@ customValue = ${customParams.formula || "ta.sma(close, 20) + ta.atr(14) * 2"}\n`
 
           // Handle different logic types
           if (condition.logic === "crosses_above") {
-            code += `ta.crossover(${getIndicatorVariable(condition)}, ${condition.value})`
+            if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+              const targetIndicator = condition.value.split(":")[1]
+              const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+              code += `ta.crossover(${getIndicatorVariable(condition)}, ${targetVariable})`
+            } else {
+              code += `ta.crossover(${getIndicatorVariable(condition)}, ${condition.value})`
+            }
           } else if (condition.logic === "crosses_below") {
-            code += `ta.crossunder(${getIndicatorVariable(condition)}, ${condition.value})`
+            if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+              const targetIndicator = condition.value.split(":")[1]
+              const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+              code += `ta.crossunder(${getIndicatorVariable(condition)}, ${targetVariable})`
+            } else {
+              code += `ta.crossunder(${getIndicatorVariable(condition)}, ${condition.value})`
+            }
           } else if (condition.logic === "center_cross_up") {
             code += `ta.crossover(${getIndicatorVariable(condition)}, 50)`
           } else if (condition.logic === "center_cross_down") {
@@ -920,9 +1204,21 @@ customValue = ${customParams.formula || "ta.sma(close, 20) + ta.atr(14) * 2"}\n`
 
           // Handle different logic types
           if (condition.logic === "crosses_above") {
-            code += `ta.crossover(${getIndicatorVariable(condition)}, ${condition.value})`
+            if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+              const targetIndicator = condition.value.split(":")[1]
+              const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+              code += `ta.crossover(${getIndicatorVariable(condition)}, ${targetVariable})`
+            } else {
+              code += `ta.crossover(${getIndicatorVariable(condition)}, ${condition.value})`
+            }
           } else if (condition.logic === "crosses_below") {
-            code += `ta.crossunder(${getIndicatorVariable(condition)}, ${condition.value})`
+            if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+              const targetIndicator = condition.value.split(":")[1]
+              const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+              code += `ta.crossunder(${getIndicatorVariable(condition)}, ${targetVariable})`
+            } else {
+              code += `ta.crossunder(${getIndicatorVariable(condition)}, ${condition.value})`
+            }
           } else if (condition.logic === "center_cross_up") {
             code += `ta.crossover(${getIndicatorVariable(condition)}, 50)`
           } else if (condition.logic === "center_cross_down") {
@@ -1073,9 +1369,21 @@ customValue = ${customParams.formula || "ta.sma(close, 20) + ta.atr(14) * 2"}\n`
 
           // Handle different logic types using the same pattern as entry conditions
           if (condition.logic === "crosses_above") {
-            code += `ta.crossover(${getIndicatorVariable(condition)}, ${condition.value})`
+            if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+              const targetIndicator = condition.value.split(":")[1]
+              const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+              code += `ta.crossover(${getIndicatorVariable(condition)}, ${targetVariable})`
+            } else {
+              code += `ta.crossover(${getIndicatorVariable(condition)}, ${condition.value})`
+            }
           } else if (condition.logic === "crosses_below") {
-            code += `ta.crossunder(${getIndicatorVariable(condition)}, ${condition.value})`
+            if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+              const targetIndicator = condition.value.split(":")[1]
+              const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+              code += `ta.crossunder(${getIndicatorVariable(condition)}, ${targetVariable})`
+            } else {
+              code += `ta.crossunder(${getIndicatorVariable(condition)}, ${condition.value})`
+            }
           } else if (condition.logic === "center_cross_up") {
             code += `ta.crossover(${getIndicatorVariable(condition)}, 50)`
           } else if (condition.logic === "center_cross_down") {
@@ -1168,9 +1476,21 @@ customValue = ${customParams.formula || "ta.sma(close, 20) + ta.atr(14) * 2"}\n`
 
           // Handle different logic types using the same pattern as entry conditions
           if (condition.logic === "crosses_above") {
-            code += `ta.crossover(${getIndicatorVariable(condition)}, ${condition.value})`
+            if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+              const targetIndicator = condition.value.split(":")[1]
+              const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+              code += `ta.crossover(${getIndicatorVariable(condition)}, ${targetVariable})`
+            } else {
+              code += `ta.crossover(${getIndicatorVariable(condition)}, ${condition.value})`
+            }
           } else if (condition.logic === "crosses_below") {
-            code += `ta.crossunder(${getIndicatorVariable(condition)}, ${condition.value})`
+            if (typeof condition.value === "string" && condition.value.startsWith("indicator:")) {
+              const targetIndicator = condition.value.split(":")[1]
+              const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+              code += `ta.crossunder(${getIndicatorVariable(condition)}, ${targetVariable})`
+            } else {
+              code += `ta.crossunder(${getIndicatorVariable(condition)}, ${condition.value})`
+            }
           } else if (condition.logic === "center_cross_up") {
             code += `ta.crossover(${getIndicatorVariable(condition)}, 50)`
           } else if (condition.logic === "center_cross_down") {
@@ -1550,30 +1870,30 @@ else if (strategy.position_size < 0)
       switch (indicator) {
         case "sma":
           const smaParams = getIndicatorParams(strategy, "sma")
-          code += `plot(sma${smaParams.period}, color=color.blue, title="SMA ${smaParams.period}")\n`
+          code += `plot(sma(${smaParams.source || "close"}, ${smaParams.period}), color=color.blue, title="SMA ${smaParams.period}")\n`
           break
         case "ema":
           const emaParams = getIndicatorParams(strategy, "ema")
-          code += `plot(ema${emaParams.period}, color=color.orange, title="EMA ${emaParams.period}")\n`
+          code += `plot(ema(${emaParams.source || "close"}, ${emaParams.period}), color=color.orange, title="EMA ${emaParams.period}")\n`
           break
         case "wma":
           const wmaParams = getIndicatorParams(strategy, "wma")
-          code += `plot(wma${wmaParams.period}, color=color.purple, title="WMA ${wmaParams.period}")\n`
+          code += `plot(wma(${wmaParams.source || "close"}, ${wmaParams.period}), color=color.purple, title="WMA ${wmaParams.period}")\n`
           break
         case "hma":
           const hmaParams = getIndicatorParams(strategy, "hma")
-          code += `plot(hma${hmaParams.period}, color=color.teal, title="HMA ${hmaParams.period}")\n`
+          code += `plot(hma(${hmaParams.source || "close"}, ${hmaParams.period}), color=color.teal, title="HMA ${hmaParams.period}")\n`
           break
         case "vwap":
           code += `plot(vwap, color=color.blue, title="VWAP")\n`
           break
         case "rsi":
           code += `// RSI plot on separate pane
-rsiPlot = plot(rsi14, color=color.purple, title="RSI", display=display.pane)\n`
+rsiPlot = plot(rsi(${getIndicatorParams(strategy, "rsi").source || "close"}, ${getIndicatorParams(strategy, "rsi").period || 14}), color=color.purple, title="RSI", display=display.pane)\n`
           break
         case "macd":
           code += `// MACD plots on separate pane
-plot(macdLine, color=color.blue, title="MACD Line", display=display.pane)\n`
+plot(macd(${getIndicatorParams(strategy, "macd").source || "close"}, ${getIndicatorParams(strategy, "macd").fastPeriod || 12}, ${getIndicatorParams(strategy, "macd").slowPeriod || 26}, ${getIndicatorParams(strategy, "macd").signalPeriod || 9}), color=color.blue, title="MACD Line", display=display.pane)\n`
           code += `plot(signalLine, color=color.red, title="Signal Line", display=display.pane)\n`
           code += `plot(histogram, color=histogram >= 0 ? color.green : color.red, title="Histogram", style=plot.style_histogram, display=display.pane)\n`
           break
@@ -1595,7 +1915,7 @@ plot(tenkan, color=color.blue, title="Tenkan")\n`
           break
         case "adx":
           code += `// ADX plot on separate pane
-plot(adx, color=color.blue, title="ADX", display=display.pane)\n`
+plot(adx(${getIndicatorParams(strategy, "adx").source || "close"}, ${getIndicatorParams(strategy, "adx").period || 14}), color=color.blue, title="ADX", display=display.pane)\n`
           code += `plot(diPlus, color=color.green, title="DI+", display=display.pane)\n`
           code += `plot(diMinus, color=color.red, title="DI-", display=display.pane)\n`
           break
@@ -1611,7 +1931,7 @@ plot(volume, color=volume > volume[1] ? color.green : color.red, title="Volume",
           break
         case "momentum":
           code += `// Momentum plot on separate pane
-plot(momentum, color=color.blue, title="Momentum", display=display.pane)\n`
+plot(momentum(${getIndicatorParams(strategy, "momentum").source || "close"}, ${getIndicatorParams(strategy, "momentum").period || 10}), color=color.blue, title="Momentum", display=display.pane)\n`
           break
       }
     })
@@ -1619,7 +1939,7 @@ plot(momentum, color=color.blue, title="Momentum", display=display.pane)\n`
     return code
   }
 
-  // Helper function to get the correct variable name for an indicator
+  // Add missing functions for handling conditions
   function getIndicatorVariable(condition: any): string {
     const indicator = condition.indicator
     const parameter = condition.parameter
@@ -1629,21 +1949,21 @@ plot(momentum, color=color.blue, title="Momentum", display=display.pane)\n`
         return condition.params?.source || "close"
       case "sma":
         const smaParams = getIndicatorParams(condition, "sma")
-        return `sma${smaParams.period}`
+        return `ta.sma(${smaParams.source || "close"}, ${smaParams.period})`
       case "ema":
         const emaParams = getIndicatorParams(condition, "ema")
-        return `ema${emaParams.period}`
+        return `ta.ema(${emaParams.source || "close"}, ${emaParams.period})`
       case "wma":
         const wmaParams = getIndicatorParams(condition, "wma")
-        return `wma${wmaParams.period}`
+        return `ta.wma(${wmaParams.source || "close"}, ${wmaParams.period})`
       case "hma":
         const hmaParams = getIndicatorParams(condition, "hma")
-        return `hma${hmaParams.period}`
+        return `ta.hma(${hmaParams.source || "close"}, ${hmaParams.period})`
       case "vwap":
-        return "vwap"
+        return "ta.vwap(hlc3)"
       case "rsi":
         const rsiParams = getIndicatorParams(condition, "rsi")
-        return `rsi${rsiParams.period}`
+        return `ta.rsi(${rsiParams.source || "close"}, ${rsiParams.period})`
       case "macd":
         if (parameter === "histogram") return "histogram"
         if (parameter === "signal") return "signalLine"
@@ -1656,7 +1976,7 @@ plot(momentum, color=color.blue, title="Momentum", display=display.pane)\n`
         return "middleBand"
       case "atr":
         const atrParams = getIndicatorParams(condition, "atr")
-        return `atr${atrParams.period}`
+        return `ta.atr(${atrParams.period})`
       case "stochastic":
         if (parameter === "d") return "d"
         return "k"
@@ -1684,6 +2004,74 @@ plot(momentum, color=color.blue, title="Momentum", display=display.pane)\n`
       default:
         return `${indicator}Value`
     }
+  }
+
+  // Add new function to get indicator logic
+  function getIndicatorLogic(condition: any): string {
+    const indicator = condition.indicator
+    const logic = condition.logic
+    const value = condition.value
+
+    // Handle crossover/crossunder between indicators
+    if (logic === "crosses_above" || logic === "crosses_below") {
+      if (typeof value === "string" && value.startsWith("indicator:")) {
+        const targetIndicator = value.split(":")[1]
+        const targetVariable = getIndicatorVariable({ indicator: targetIndicator })
+        return `ta.${logic === "crosses_above" ? "crossover" : "crossunder"}(${getIndicatorVariable(condition)}, ${targetVariable})`
+      }
+    }
+
+    // Handle other logic types
+    const logicMap: Record<string, string> = {
+      crosses_above: "ta.crossover",
+      crosses_below: "ta.crossunder",
+      greater_than: ">",
+      less_than: "<",
+      equals: "==",
+      inside: "inside",
+      outside: "outside",
+      touches: "touches",
+      increasing: "is increasing",
+      decreasing: "is decreasing",
+      bullish: "is bullish",
+      bearish: "is bearish",
+      overbought: "> 70",
+      oversold: "< 30",
+      center_cross_up: "crosses above 50",
+      center_cross_down: "crosses below 50",
+      zero_cross_up: "crosses above 0",
+      zero_cross_down: "crosses below 0",
+      histogram_positive: "histogram > 0",
+      histogram_negative: "histogram < 0",
+      histogram_increasing: "histogram is increasing",
+      histogram_decreasing: "histogram is decreasing",
+      enters_overbought: "enters overbought zone",
+      exits_overbought: "exits overbought zone",
+      enters_oversold: "enters oversold zone",
+      exits_oversold: "exits oversold zone",
+      bullish_divergence: "shows bullish divergence",
+      bearish_divergence: "shows bearish divergence",
+      strong_trend: "shows strong trend",
+      weak_trend: "shows weak trend",
+      di_plus_above_di_minus: "DI+ > DI-",
+      di_plus_below_di_minus: "DI+ < DI-",
+      above_cloud: "is above cloud",
+      below_cloud: "is below cloud",
+      inside_cloud: "is inside cloud",
+      tenkan_kijun_cross: "tenkan crosses kijun",
+      changes_to_bullish: "changes to bullish",
+      changes_to_bearish: "changes to bearish",
+      squeeze: "is in squeeze",
+      expansion: "is in expansion",
+      percent_change: "percent change",
+      turns_up: "turns up",
+      turns_down: "turns down",
+      above_average: "above average",
+      below_average: "below average",
+      spike: "shows spike",
+    }
+
+    return `${getIndicatorVariable(condition)} ${logicMap[logic] || logic} ${value}`
   }
 
   // Helper function to get indicator parameters
@@ -1717,39 +2105,9 @@ plot(momentum, color=color.blue, title="Momentum", display=display.pane)\n`
     params = searchConditions(strategy.exitShort)
     if (params) return params
 
-    // Default parameters if none found
-    switch (indicatorType) {
-      case "sma":
-        return { period: 20, source: "close" }
-      case "ema":
-        return { period: 20, source: "close" }
-      case "wma":
-        return { period: 20, source: "close" }
-      case "hma":
-        return { period: 20, source: "close" }
-      case "rsi":
-        return { period: 14, source: "close", overbought: 70, oversold: 30 }
-      case "macd":
-        return { fastPeriod: 12, slowPeriod: 26, signalPeriod: 9, source: "close" }
-      case "bollinger":
-        return { period: 20, stdDev: 2, source: "close" }
-      case "atr":
-        return { period: 14 }
-      case "stochastic":
-        return { kPeriod: 14, dPeriod: 3, slowing: 3 }
-      case "adx":
-        return { period: 14 }
-      case "supertrend":
-        return { period: 10, multiplier: 3 }
-      case "ichimoku":
-        return { conversionPeriod: 9, basePeriod: 26, laggingSpanPeriod: 52, displacement: 26 }
-      case "momentum":
-        return { period: 10, source: "close" }
-      case "custom":
-        return { formula: "sma(close, 20) + atr(14) * 2" }
-      default:
-        return {}
-    }
+    // If no params found in any conditions, return empty object
+    // This will force the code to use the values directly from the condition
+    return {}
   }
 
   // Helper function to get a display name for an indicator
@@ -1823,7 +2181,12 @@ plot(momentum, color=color.blue, title="Momentum", display=display.pane)\n`
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{strategy.name}</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>{strategy.name}</CardTitle>
+            <Button onClick={saveStrategy} disabled={isSaving}>
+              <Save className="mr-2 h-4 w-4" /> {isSaving ? "Saving..." : "Save Strategy"}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4 mb-4">

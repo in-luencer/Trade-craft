@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 
 // Replace dynamic progress bar calculation with a pre-rendered value
-const calculateProgress = (currentStep, totalSteps) => {
+const calculateProgress = (currentStep: number, totalSteps: number): number => {
   return Math.round((currentStep / totalSteps) * 100);
 };
 
@@ -61,14 +61,14 @@ export default function SurveyPage() {
     }
   }
 
-  const updateSurveyData = (field, value) => {
+  const updateSurveyData = (field: string, value: string | number[] | boolean | Record<string, boolean>) => {
     setSurveyData({
       ...surveyData,
       [field]: value,
     })
   }
 
-  const updateFeature = (feature, checked) => {
+  const updateFeature = (feature: string, checked: boolean) => {
     setSurveyData({
       ...surveyData,
       features: {
@@ -194,7 +194,7 @@ export default function SurveyPage() {
                 <Checkbox
                   id="backtesting"
                   checked={surveyData.features.backtesting}
-                  onCheckedChange={(checked) => updateFeature("backtesting", checked)}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => updateFeature("backtesting", checked === true)}
                 />
                 <div className="flex-1">
                   <Label htmlFor="backtesting" className="font-medium">
@@ -209,7 +209,7 @@ export default function SurveyPage() {
                 <Checkbox
                   id="automation"
                   checked={surveyData.features.automation}
-                  onCheckedChange={(checked) => updateFeature("automation", checked)}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => updateFeature("automation", checked === true)}
                 />
                 <div className="flex-1">
                   <Label htmlFor="automation" className="font-medium">
@@ -222,7 +222,7 @@ export default function SurveyPage() {
                 <Checkbox
                   id="alerts"
                   checked={surveyData.features.alerts}
-                  onCheckedChange={(checked) => updateFeature("alerts", checked)}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => updateFeature("alerts", checked === true)}
                 />
                 <div className="flex-1">
                   <Label htmlFor="alerts" className="font-medium">
@@ -235,7 +235,7 @@ export default function SurveyPage() {
                 <Checkbox
                   id="optimization"
                   checked={surveyData.features.optimization}
-                  onCheckedChange={(checked) => updateFeature("optimization", checked)}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => updateFeature("optimization", checked === true)}
                 />
                 <div className="flex-1">
                   <Label htmlFor="optimization" className="font-medium">
@@ -248,7 +248,7 @@ export default function SurveyPage() {
                 <Checkbox
                   id="portfolio"
                   checked={surveyData.features.portfolio}
-                  onCheckedChange={(checked) => updateFeature("portfolio", checked)}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => updateFeature("portfolio", checked === true)}
                 />
                 <div className="flex-1">
                   <Label htmlFor="portfolio" className="font-medium">
@@ -261,7 +261,7 @@ export default function SurveyPage() {
                 <Checkbox
                   id="reporting"
                   checked={surveyData.features.reporting}
-                  onCheckedChange={(checked) => updateFeature("reporting", checked)}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => updateFeature("reporting", checked === true)}
                 />
                 <div className="flex-1">
                   <Label htmlFor="reporting" className="font-medium">
@@ -272,15 +272,7 @@ export default function SurveyPage() {
               </div>
             </div>
 
-            <div className="mt-6 space-y-2">
-              <Label htmlFor="feature-request">Feature Request (Optional)</Label>
-              <Textarea
-                id="feature-request"
-                placeholder="Is there a feature you'd like to see that's not listed above?"
-                value={surveyData.featureRequest}
-                onChange={(e) => updateSurveyData("featureRequest", e.target.value)}
-              />
-            </div>
+            
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={prevStep}>
@@ -337,18 +329,6 @@ export default function SurveyPage() {
                 </div>
               </div>
             </RadioGroup>
-
-            <div className="mt-6 space-y-2">
-              <Label htmlFor="strategy-description">Briefly describe your strategy (optional)</Label>
-              <Textarea
-                id="strategy-description"
-                className="w-full rounded-md border p-2"
-                rows={4}
-                placeholder="E.g., I use moving average crossovers with RSI confirmation..."
-                value={surveyData.strategyDescription}
-                onChange={(e) => updateSurveyData("strategyDescription", e.target.value)}
-              ></Textarea>
-            </div>
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={prevStep}>

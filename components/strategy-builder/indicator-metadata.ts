@@ -61,7 +61,7 @@ export interface IndicatorMetadata {
 }
 
 // Define the indicator metadata
-const indicatorMetadata: Record<string, IndicatorMetadata> = {
+export const indicatorMetadata: Record<string, IndicatorMetadata> = {
 
   sma: {
     name: "Simple Moving Average",
@@ -86,37 +86,25 @@ const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "open", label: "Open" },
           { value: "high", label: "High" },
           { value: "low", label: "Low" },
-          { value: "hl2", label: "HL2" },
-          { value: "hlc3", label: "HLC3" },
-          { value: "ohlc4", label: "OHLC4" },
         ],
         description: "Price data point to use in calculation",
-      },
-      offset: {
-        name: "Offset",
-        type: "number",
-        default: 0,
-        min: -100,
-        max: 100,
-        step: 1,
-        description: "Shift the SMA forward (positive) or backward (negative)",
       },
     },
     logicOptions: [
       {
-        value: "above_price",
+        value: "> price",
         label: "Above Price",
         description: "When SMA crosses above the price",
         requiresValue: false
       },
       {
-        value: "below_price",
+        value: "< price",
         label: "Below Price",
         description: "When SMA crosses below the price",
         requiresValue: false
       },
       {
-        value: "crosses_above_indicator",
+        value: "> indicator",
         label: "Crosses Above Indicator",
         description: "When SMA crosses above another indicator",
         requiresValue: true,
@@ -156,7 +144,7 @@ const indicatorMetadata: Record<string, IndicatorMetadata> = {
         }
       },
       {
-        value: "crosses_below_indicator",
+        value: "< indicator",
         label: "Crosses Below Indicator",
         description: "When SMA crosses below another indicator",
         requiresValue: true,
@@ -407,7 +395,7 @@ const indicatorMetadata: Record<string, IndicatorMetadata> = {
       },
       
     ],
-    defaultLogic: "crosses_below",
+    defaultLogic: "crosses_above",
   },
 
   macd: {

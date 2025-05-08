@@ -49,7 +49,7 @@ export type StrategyConfig = {
   isPublic?: boolean
 }
 
-const generateId = (prefix) => `${prefix}-${new Date().toISOString()}`;
+const generateId = (prefix: string) => `${prefix}-${new Date().toISOString()}`
 
 const defaultCondition: IndicatorCondition = {
   id: generateId("condition"),

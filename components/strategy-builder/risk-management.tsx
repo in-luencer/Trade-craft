@@ -96,6 +96,7 @@ export type RiskManagementConfig = {
   profitTarget: number
   riskRewardMinimum: number
   pyramiding: number
+  experienceLevel: "beginner" | "intermediate" | "advanced"
 }
 
 interface RiskManagementProps {

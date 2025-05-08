@@ -32,7 +32,7 @@ export default function DeployPage() {
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <h3 className="font-medium">Exchange Selection</h3>
-                <Select defaultValue="binance" onChange={(e) => setSelectedExchange(e.target.value)}>
+                <Select defaultValue="binance" onValueChange={(value) => setSelectedExchange(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select exchange" />
                   </SelectTrigger>

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 
 import type { StrategyConfig } from "../strategy-builder"
+import type { RiskManagementConfig, StopLossRule, TakeProfitRule, TrailingStopRule, PositionSizingRule, TimeExitRule } from "./risk-management"
 
 import tradingviewChart from "../tradingview-chart"
 
@@ -35,49 +36,8 @@ interface PositionRule {
   conditionGroups: ConditionGroup[]
 }
 
-interface RiskRule {
-  id: string
-  enabled: boolean
-  type: string
-  value: number | string
-  atrPeriod?: number
-  atrMultiplier?: number
-  lookbackPeriod?: number
-  activationThreshold?: number
-  equityPercentage?: number
-  riskPerTrade?: number
-  maxRisk?: number
-  winRate?: number
-  payoffRatio?: number
-  volatilityPeriod?: number
-  volatilityMultiplier?: number
-  riskRewardRatio?: number
-}
-
-interface RiskManagement {
-  stopLoss: RiskRule[]
-  takeProfit: RiskRule[]
-  trailingStop: RiskRule[]
-  timeExit: RiskRule[]
-  positionSizing: RiskRule[]
-  maxOpenPositions: number
-  maxDrawdown: number
-  maxDailyLoss: number
-  maxConsecutiveLosses: number
-  profitTarget: number
-  riskRewardMinimum: number
-  pyramiding: number
-}
-
-interface StrategyConfig {
-  name: string
-  description: string
-  entryLong: PositionRule
-  entryShort: PositionRule
-  exitLong: PositionRule
-  exitShort: PositionRule
-  riskManagement: RiskManagement
-}
+// Use RiskManagementConfig instead of local RiskManagement interface
+type RiskManagement = RiskManagementConfig
 
 // Sample data for the chart
 const sampleData = [
@@ -216,16 +176,7 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
             enabled: rule.enabled,
             atrPeriod: rule.atrPeriod,
             atrMultiplier: rule.atrMultiplier,
-            lookbackPeriod: rule.lookbackPeriod,
-            activationThreshold: rule.activationThreshold,
-            equityPercentage: rule.equityPercentage,
-            riskPerTrade: rule.riskPerTrade,
-            maxRisk: rule.maxRisk,
-            winRate: rule.winRate,
-            payoffRatio: rule.payoffRatio,
-            volatilityPeriod: rule.volatilityPeriod,
-            volatilityMultiplier: rule.volatilityMultiplier,
-            riskRewardRatio: rule.riskRewardRatio
+            lookbackPeriod: rule.lookbackPeriod
           })),
           takeProfit: strategy.riskManagement.takeProfit.map(rule => ({
             id: rule.id || `tp-${Date.now()}`,
@@ -234,52 +185,37 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
             enabled: rule.enabled,
             atrPeriod: rule.atrPeriod,
             atrMultiplier: rule.atrMultiplier,
-            lookbackPeriod: rule.lookbackPeriod,
-            activationThreshold: rule.activationThreshold,
-            equityPercentage: rule.equityPercentage,
-            riskPerTrade: rule.riskPerTrade,
-            maxRisk: rule.maxRisk,
-            winRate: rule.winRate,
-            payoffRatio: rule.payoffRatio,
-            volatilityPeriod: rule.volatilityPeriod,
-            volatilityMultiplier: rule.volatilityMultiplier,
-            riskRewardRatio: rule.riskRewardRatio
+            riskRewardRatio: rule.riskRewardRatio,
+            lookbackPeriod: rule.lookbackPeriod
           })),
           trailingStop: strategy.riskManagement.trailingStop.map(rule => ({
             id: rule.id || `ts-${Date.now()}`,
             type: rule.type,
             value: rule.value,
             enabled: rule.enabled,
+            activationThreshold: rule.activationThreshold,
             atrPeriod: rule.atrPeriod,
             atrMultiplier: rule.atrMultiplier,
-            lookbackPeriod: rule.lookbackPeriod,
-            activationThreshold: rule.activationThreshold,
-            equityPercentage: rule.equityPercentage,
-            riskPerTrade: rule.riskPerTrade,
-            maxRisk: rule.maxRisk,
-            winRate: rule.winRate,
-            payoffRatio: rule.payoffRatio,
-            volatilityPeriod: rule.volatilityPeriod,
-            volatilityMultiplier: rule.volatilityMultiplier,
-            riskRewardRatio: rule.riskRewardRatio
+            accelerationFactor: rule.accelerationFactor,
+            maxAcceleration: rule.maxAcceleration,
+            maType: rule.maType,
+            maPeriod: rule.maPeriod
           })),
           positionSizing: strategy.riskManagement.positionSizing.map(rule => ({
             id: rule.id || `ps-${Date.now()}`,
             type: rule.type,
             value: rule.value,
             enabled: rule.enabled,
-            atrPeriod: rule.atrPeriod,
-            atrMultiplier: rule.atrMultiplier,
-            lookbackPeriod: rule.lookbackPeriod,
-            activationThreshold: rule.activationThreshold,
+            maxRisk: rule.maxRisk,
             equityPercentage: rule.equityPercentage,
             riskPerTrade: rule.riskPerTrade,
-            maxRisk: rule.maxRisk,
             winRate: rule.winRate,
             payoffRatio: rule.payoffRatio,
+            optimalFraction: rule.optimalFraction,
             volatilityPeriod: rule.volatilityPeriod,
             volatilityMultiplier: rule.volatilityMultiplier,
-            riskRewardRatio: rule.riskRewardRatio
+            martingaleFactor: rule.martingaleFactor,
+            customFormula: rule.customFormula
           })),
           timeExit: strategy.riskManagement.timeExit.map(rule => ({
             id: rule.id || `te-${Date.now()}`,
@@ -293,7 +229,8 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
           maxConsecutiveLosses: strategy.riskManagement.maxConsecutiveLosses,
           profitTarget: strategy.riskManagement.profitTarget,
           riskRewardMinimum: strategy.riskManagement.riskRewardMinimum,
-          pyramiding: strategy.riskManagement.pyramiding
+          pyramiding: strategy.riskManagement.pyramiding,
+          experienceLevel: strategy.riskManagement.experienceLevel
         }
       }
       

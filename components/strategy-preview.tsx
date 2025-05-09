@@ -9,8 +9,6 @@ import { ChartContainer } from "@/components/ui/chart"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import type { StrategyConfig } from "./strategy-builder"
-
 // Define interfaces for the strategy configuration
 interface Condition {
   indicator: string
@@ -64,6 +62,7 @@ interface RiskManagement {
 }
 
 interface StrategyConfig {
+  id: string; // Added 'id' property
   name: string
   description: string
   entryLong: PositionRule

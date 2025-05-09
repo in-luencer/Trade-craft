@@ -39,6 +39,7 @@ export type PositionRule = {
 }
 
 export type StrategyConfig = {
+  id: string // Added 'id' property
   name: string
   description: string
   entryLong: PositionRule
@@ -116,6 +117,7 @@ const defaultRiskManagement: RiskManagementConfig = {
 }
 
 const defaultStrategy: StrategyConfig = {
+  id: generateId("strategy"),
   name: "My Trading Strategy",
   description: "A simple trading strategy based on technical indicators",
   entryLong: { ...defaultPositionRule, id: generateId("entry-long") },
@@ -201,10 +203,16 @@ export default function StrategyBuilder() {
     try {
       setIsSaving(true)
 
+      // Generate a new ID if one doesn't exist
+      const strategyWithId = {
+        ...strategy,
+        id: strategy.id || generateId("strategy")
+      }
+
       // Store strategy data in context
-      setStrategyName(strategy.name)
-      setStrategyId(strategy.id || generateId("strategy"))
-      setIsPublic(strategy.isPublic || false)
+      setStrategyName(strategyWithId.name)
+      setStrategyId(strategyWithId.id)
+      setIsPublic(strategyWithId.isPublic || false)
 
       // Collect all indicators used in the strategy
       const indicators = new Set<string>()
@@ -218,15 +226,15 @@ export default function StrategyBuilder() {
         })
       }
 
-      collectIndicators(strategy.entryLong)
-      collectIndicators(strategy.entryShort)
-      collectIndicators(strategy.exitLong)
-      collectIndicators(strategy.exitShort)
+      collectIndicators(strategyWithId.entryLong)
+      collectIndicators(strategyWithId.entryShort)
+      collectIndicators(strategyWithId.exitLong)
+      collectIndicators(strategyWithId.exitShort)
 
       setIndicators(Array.from(indicators))
 
       // In a real app, this would save to your backend
-      await apiClient.saveStrategy(strategy)
+      await apiClient.saveStrategy(strategyWithId)
       alert("Strategy saved successfully!")
       return true
     } catch (error) {

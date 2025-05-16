@@ -83,7 +83,7 @@ const defaultRiskManagement: RiskManagementConfig = {
     {
       id: "sl-default",
       type: "percentage",
-      value: "2",
+      value: 2,
       enabled: true,
     },
   ],
@@ -91,7 +91,7 @@ const defaultRiskManagement: RiskManagementConfig = {
     {
       id: "tp-default",
       type: "percentage",
-      value: "5",
+      value: 5,
       enabled: true,
     },
   ],
@@ -100,8 +100,8 @@ const defaultRiskManagement: RiskManagementConfig = {
     {
       id: "ps-default",
       type: "percentage",
-      value: "2",
-      maxRisk: "2",
+      value: 2,
+      maxRisk: 2,
       enabled: true,
     },
   ],

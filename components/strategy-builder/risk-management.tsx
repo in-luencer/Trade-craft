@@ -18,35 +18,35 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 export type StopLossRule = {
   id: string
   type: "fixed" | "percentage" | "atr" | "volatility" | "equity" | "support" | "swing" | "chandelier" | "custom"
-  value: string
-  atrPeriod?: string
-  atrMultiplier?: string
-  lookbackPeriod?: string
+  value: number
+  atrPeriod?: number
+  atrMultiplier?: number
+  lookbackPeriod?: number
   enabled: boolean
 }
 
 export type TakeProfitRule = {
   id: string
   type: "fixed" | "percentage" | "atr" | "volatility" | "equity" | "resistance" | "risk-reward" | "trailing" | "custom"
-  value: string
-  atrPeriod?: string
-  atrMultiplier?: string
-  riskRewardRatio?: string
-  lookbackPeriod?: string
+  value: number
+  atrPeriod?: number
+  atrMultiplier?: number
+  riskRewardRatio?: number
+  lookbackPeriod?: number
   enabled: boolean
 }
 
 export type TrailingStopRule = {
   id: string
   type: "fixed" | "percentage" | "atr" | "volatility" | "parabolic" | "moving-average" | "custom"
-  value: string
-  activationThreshold?: string
-  atrPeriod?: string
-  atrMultiplier?: string
-  accelerationFactor?: string
-  maxAcceleration?: string
+  value: number
+  activationThreshold?: number
+  atrPeriod?: number
+  atrMultiplier?: number
+  accelerationFactor?: number
+  maxAcceleration?: number
   maType?: "sma" | "ema" | "wma"
-  maPeriod?: string
+  maPeriod?: number
   enabled: boolean
 }
 
@@ -62,16 +62,16 @@ export type PositionSizingRule = {
     | "anti-martingale"
     | "volatility-based"
     | "custom"
-  value: string
-  maxRisk: string
-  equityPercentage?: string
-  riskPerTrade?: string
-  winRate?: string
-  payoffRatio?: string
-  optimalFraction?: string
-  volatilityPeriod?: string
-  volatilityMultiplier?: string
-  martingaleFactor?: string
+  value: number
+  maxRisk: number
+  equityPercentage?: number
+  riskPerTrade?: number
+  winRate?: number
+  payoffRatio?: number
+  optimalFraction?: number
+  volatilityPeriod?: number
+  volatilityMultiplier?: number
+  martingaleFactor?: number
   customFormula?: string
   enabled: boolean
 }
@@ -79,7 +79,7 @@ export type PositionSizingRule = {
 export type TimeExitRule = {
   id: string
   type: "bars" | "time" | "date" | "session-end" | "custom"
-  value: string
+  value: number
   enabled: boolean
 }
 
@@ -116,7 +116,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
     const newRule: StopLossRule = {
       id: `sl-${Date.now()}`,
       type: "percentage",
-      value: "2",
+      value: 2,
       enabled: true,
     }
     updateConfig({ stopLoss: [...config.stopLoss, newRule] })
@@ -139,7 +139,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
     const newRule: TakeProfitRule = {
       id: `tp-${Date.now()}`,
       type: "percentage",
-      value: "5",
+      value: 5,
       enabled: true,
     }
     updateConfig({ takeProfit: [...config.takeProfit, newRule] })
@@ -162,7 +162,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
     const newRule: TrailingStopRule = {
       id: `ts-${Date.now()}`,
       type: "percentage",
-      value: "1.5",
+      value: 1.5,
       enabled: true,
     }
     updateConfig({ trailingStop: [...config.trailingStop, newRule] })
@@ -185,7 +185,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
     const newRule: TimeExitRule = {
       id: `te-${Date.now()}`,
       type: "bars",
-      value: "20",
+      value: 20,
       enabled: true,
     }
     updateConfig({ timeExit: [...config.timeExit, newRule] })
@@ -208,8 +208,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
     const newRule: PositionSizingRule = {
       id: `ps-${Date.now()}`,
       type: "percentage",
-      value: "2",
-      maxRisk: "2",
+      value: 2,
+      maxRisk: 2,
       enabled: true,
     }
     updateConfig({ positionSizing: [...config.positionSizing, newRule] })
@@ -237,8 +237,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>ATR Period</Label>
               <Input
                 type="number"
-                value={rule.atrPeriod || "14"}
-                onChange={(e) => updateStopLossRule(rule.id, { atrPeriod: e.target.value })}
+                value={rule.atrPeriod || 14}
+                onChange={(e) => updateStopLossRule(rule.id, { atrPeriod: Number.parseInt(e.target.value) || 14 })}
                 min="1"
                 step="1"
               />
@@ -247,8 +247,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>ATR Multiplier</Label>
               <Input
                 type="number"
-                value={rule.atrMultiplier || "2"}
-                onChange={(e) => updateStopLossRule(rule.id, { atrMultiplier: e.target.value })}
+                value={rule.atrMultiplier || 2}
+                onChange={(e) => updateStopLossRule(rule.id, { atrMultiplier: Number.parseFloat(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -262,8 +262,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Lookback Period</Label>
               <Input
                 type="number"
-                value={rule.lookbackPeriod || "20"}
-                onChange={(e) => updateStopLossRule(rule.id, { lookbackPeriod: e.target.value })}
+                value={rule.lookbackPeriod || 20}
+                onChange={(e) => updateStopLossRule(rule.id, { lookbackPeriod: Number.parseInt(e.target.value) || 20 })}
                 min="1"
                 step="1"
               />
@@ -272,8 +272,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Multiplier</Label>
               <Input
                 type="number"
-                value={rule.atrMultiplier || "2"}
-                onChange={(e) => updateStopLossRule(rule.id, { atrMultiplier: e.target.value })}
+                value={rule.atrMultiplier || 2}
+                onChange={(e) => updateStopLossRule(rule.id, { atrMultiplier: Number.parseFloat(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -286,8 +286,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
             <Label>Lookback Bars</Label>
             <Input
               type="number"
-              value={rule.lookbackPeriod || "10"}
-              onChange={(e) => updateStopLossRule(rule.id, { lookbackPeriod: e.target.value })}
+              value={rule.lookbackPeriod || 10}
+              onChange={(e) => updateStopLossRule(rule.id, { lookbackPeriod: Number.parseInt(e.target.value) || 10 })}
               min="1"
               step="1"
             />
@@ -300,8 +300,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>ATR Period</Label>
               <Input
                 type="number"
-                value={rule.atrPeriod || "22"}
-                onChange={(e) => updateStopLossRule(rule.id, { atrPeriod: e.target.value })}
+                value={rule.atrPeriod || 22}
+                onChange={(e) => updateStopLossRule(rule.id, { atrPeriod: Number.parseInt(e.target.value) || 22 })}
                 min="1"
                 step="1"
               />
@@ -310,8 +310,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Multiplier</Label>
               <Input
                 type="number"
-                value={rule.atrMultiplier || "3"}
-                onChange={(e) => updateStopLossRule(rule.id, { atrMultiplier: e.target.value })}
+                value={rule.atrMultiplier || 3}
+                onChange={(e) => updateStopLossRule(rule.id, { atrMultiplier: Number.parseFloat(e.target.value) || 3 })}
                 min="0.1"
                 step="0.1"
               />
@@ -333,8 +333,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>ATR Period</Label>
               <Input
                 type="number"
-                value={rule.atrPeriod || "14"}
-                onChange={(e) => updateTakeProfitRule(rule.id, { atrPeriod: e.target.value })}
+                value={rule.atrPeriod || 14}
+                onChange={(e) => updateTakeProfitRule(rule.id, { atrPeriod: Number.parseInt(e.target.value) || 14 })}
                 min="1"
                 step="1"
               />
@@ -343,8 +343,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>ATR Multiplier</Label>
               <Input
                 type="number"
-                value={rule.atrMultiplier || "3"}
-                onChange={(e) => updateTakeProfitRule(rule.id, { atrMultiplier: e.target.value })}
+                value={rule.atrMultiplier || 3}
+                onChange={(e) => updateTakeProfitRule(rule.id, { atrMultiplier: Number.parseFloat(e.target.value) || 3 })}
                 min="0.1"
                 step="0.1"
               />
@@ -357,8 +357,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
             <Label>Risk-Reward Ratio</Label>
             <Input
               type="number"
-              value={rule.riskRewardRatio || "2"}
-              onChange={(e) => updateTakeProfitRule(rule.id, { riskRewardRatio: e.target.value })}
+              value={rule.riskRewardRatio || 2}
+              onChange={(e) => updateTakeProfitRule(rule.id, { riskRewardRatio: Number.parseFloat(e.target.value) || 2 })}
               min="0.1"
               step="0.1"
             />
@@ -370,8 +370,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
             <Label>Lookback Bars</Label>
             <Input
               type="number"
-              value={rule.lookbackPeriod || "20"}
-              onChange={(e) => updateTakeProfitRule(rule.id, { lookbackPeriod: e.target.value })}
+              value={rule.lookbackPeriod || 20}
+              onChange={(e) => updateTakeProfitRule(rule.id, { lookbackPeriod: Number.parseInt(e.target.value) || 20 })}
               min="1"
               step="1"
             />
@@ -392,8 +392,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>ATR Period</Label>
               <Input
                 type="number"
-                value={rule.atrPeriod || "14"}
-                onChange={(e) => updateTrailingStopRule(rule.id, { atrPeriod: e.target.value })}
+                value={rule.atrPeriod || 14}
+                onChange={(e) => updateTrailingStopRule(rule.id, { atrPeriod: Number.parseInt(e.target.value) || 14 })}
                 min="1"
                 step="1"
               />
@@ -402,8 +402,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>ATR Multiplier</Label>
               <Input
                 type="number"
-                value={rule.atrMultiplier || "2"}
-                onChange={(e) => updateTrailingStopRule(rule.id, { atrMultiplier: e.target.value })}
+                value={rule.atrMultiplier || 2}
+                onChange={(e) => updateTrailingStopRule(rule.id, { atrMultiplier: Number.parseFloat(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -412,8 +412,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Activation Threshold (%)</Label>
               <Input
                 type="number"
-                value={rule.activationThreshold || "1"}
-                onChange={(e) => updateTrailingStopRule(rule.id, { activationThreshold: e.target.value })}
+                value={rule.activationThreshold || 1}
+                onChange={(e) => updateTrailingStopRule(rule.id, { activationThreshold: Number.parseFloat(e.target.value) || 1 })}
                 min="0.1"
                 step="0.1"
               />
@@ -427,8 +427,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Acceleration Factor</Label>
               <Input
                 type="number"
-                value={rule.accelerationFactor || "0.02"}
-                onChange={(e) => updateTrailingStopRule(rule.id, { accelerationFactor: e.target.value })}
+                value={rule.accelerationFactor || 0.02}
+                onChange={(e) => updateTrailingStopRule(rule.id, { accelerationFactor: Number.parseFloat(e.target.value) || 0.02 })}
                 min="0.01"
                 step="0.01"
               />
@@ -437,8 +437,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Max Acceleration</Label>
               <Input
                 type="number"
-                value={rule.maxAcceleration || "0.2"}
-                onChange={(e) => updateTrailingStopRule(rule.id, { maxAcceleration: e.target.value })}
+                value={rule.maxAcceleration || 0.2}
+                onChange={(e) => updateTrailingStopRule(rule.id, { maxAcceleration: Number.parseFloat(e.target.value) || 0.2 })}
                 min="0.01"
                 step="0.01"
               />
@@ -468,8 +468,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>MA Period</Label>
               <Input
                 type="number"
-                value={rule.maPeriod || "20"}
-                onChange={(e) => updateTrailingStopRule(rule.id, { maPeriod: e.target.value })}
+                value={rule.maPeriod || 20}
+                onChange={(e) => updateTrailingStopRule(rule.id, { maPeriod: Number.parseInt(e.target.value) || 20 })}
                 min="1"
                 step="1"
               />
@@ -491,8 +491,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Equity Percentage (%)</Label>
               <Input
                 type="number"
-                value={rule.equityPercentage || "2"}
-                onChange={(e) => updatePositionSizingRule(rule.id, { equityPercentage: e.target.value })}
+                value={rule.equityPercentage || 2}
+                onChange={(e) => updatePositionSizingRule(rule.id, { equityPercentage: Number.parseFloat(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -502,7 +502,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Input
                 type="number"
                 value={rule.maxRisk}
-                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: e.target.value })}
+                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: Number.parseInt(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -516,8 +516,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Risk Per Trade (%)</Label>
               <Input
                 type="number"
-                value={rule.riskPerTrade || "1"}
-                onChange={(e) => updatePositionSizingRule(rule.id, { riskPerTrade: e.target.value })}
+                value={rule.riskPerTrade || 1}
+                onChange={(e) => updatePositionSizingRule(rule.id, { riskPerTrade: Number.parseFloat(e.target.value) || 1 })}
                 min="0.1"
                 step="0.1"
               />
@@ -527,7 +527,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Input
                 type="number"
                 value={rule.maxRisk}
-                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: e.target.value })}
+                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: Number.parseInt(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -541,8 +541,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Win Rate (%)</Label>
               <Input
                 type="number"
-                value={rule.winRate || "60"}
-                onChange={(e) => updatePositionSizingRule(rule.id, { winRate: e.target.value })}
+                value={rule.winRate || 60}
+                onChange={(e) => updatePositionSizingRule(rule.id, { winRate: Number.parseInt(e.target.value) || 60 })}
                 min="1"
                 max="99"
                 step="1"
@@ -552,8 +552,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Payoff Ratio</Label>
               <Input
                 type="number"
-                value={rule.payoffRatio || "2"}
-                onChange={(e) => updatePositionSizingRule(rule.id, { payoffRatio: e.target.value })}
+                value={rule.payoffRatio || 2}
+                onChange={(e) => updatePositionSizingRule(rule.id, { payoffRatio: Number.parseFloat(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -563,7 +563,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Input
                 type="number"
                 value={rule.maxRisk}
-                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: e.target.value })}
+                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: Number.parseInt(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -577,8 +577,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Optimal Fraction</Label>
               <Input
                 type="number"
-                value={rule.optimalFraction || "0.25"}
-                onChange={(e) => updatePositionSizingRule(rule.id, { optimalFraction: e.target.value })}
+                value={rule.optimalFraction || 0.25}
+                onChange={(e) => updatePositionSizingRule(rule.id, { optimalFraction: Number.parseFloat(e.target.value) || 0.25 })}
                 min="0.01"
                 max="1"
                 step="0.01"
@@ -589,7 +589,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Input
                 type="number"
                 value={rule.maxRisk}
-                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: e.target.value })}
+                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: Number.parseInt(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -603,8 +603,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Volatility Period</Label>
               <Input
                 type="number"
-                value={rule.volatilityPeriod || "20"}
-                onChange={(e) => updatePositionSizingRule(rule.id, { volatilityPeriod: e.target.value })}
+                value={rule.volatilityPeriod || 20}
+                onChange={(e) => updatePositionSizingRule(rule.id, { volatilityPeriod: Number.parseInt(e.target.value) || 20 })}
                 min="1"
                 step="1"
               />
@@ -613,8 +613,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Volatility Multiplier</Label>
               <Input
                 type="number"
-                value={rule.volatilityMultiplier || "0.5"}
-                onChange={(e) => updatePositionSizingRule(rule.id, { volatilityMultiplier: e.target.value })}
+                value={rule.volatilityMultiplier || 0.5}
+                onChange={(e) => updatePositionSizingRule(rule.id, { volatilityMultiplier: Number.parseFloat(e.target.value) || 0.5 })}
                 min="0.1"
                 step="0.1"
               />
@@ -624,7 +624,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Input
                 type="number"
                 value={rule.maxRisk}
-                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: e.target.value })}
+                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: Number.parseInt(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -639,8 +639,8 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Label>Factor</Label>
               <Input
                 type="number"
-                value={rule.martingaleFactor || "2"}
-                onChange={(e) => updatePositionSizingRule(rule.id, { martingaleFactor: e.target.value })}
+                value={rule.martingaleFactor || 2}
+                onChange={(e) => updatePositionSizingRule(rule.id, { martingaleFactor: Number.parseFloat(e.target.value) || 2 })}
                 min="1.1"
                 step="0.1"
               />
@@ -650,7 +650,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
               <Input
                 type="number"
                 value={rule.maxRisk}
-                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: e.target.value })}
+                onChange={(e) => updatePositionSizingRule(rule.id, { maxRisk: Number.parseInt(e.target.value) || 2 })}
                 min="0.1"
                 step="0.1"
               />
@@ -685,7 +685,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
             <Input
               type="number"
               value={rule.value}
-              onChange={(e) => updateTimeExitRule(rule.id, { value: e.target.value })}
+              onChange={(e) => updateTimeExitRule(rule.id, { value: Number.parseInt(e.target.value) || 20 })}
               min="1"
               step="1"
             />
@@ -696,10 +696,14 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
           <div className="space-y-2 mt-4">
             <Label>Time (HH:MM)</Label>
             <Input
-              type="text"
-              value={rule.value}
-              onChange={(e) => updateTimeExitRule(rule.id, { value: e.target.value })}
-              placeholder="14:30"
+              type="time"
+              value={new Date(rule.value * 60 * 1000).toISOString().slice(11, 16)}
+              onChange={(e) => {
+                const [hours, minutes] = e.target.value.split(':').map(Number);
+                if (!isNaN(hours) && !isNaN(minutes)) {
+                  updateTimeExitRule(rule.id, { value: hours * 60 + minutes });
+                }
+              }}
             />
           </div>
         )
@@ -709,8 +713,13 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
             <Label>Date (YYYY-MM-DD)</Label>
             <Input
               type="date"
-              value={rule.value}
-              onChange={(e) => updateTimeExitRule(rule.id, { value: e.target.value })}
+              value={new Date(rule.value * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+              onChange={(e) => {
+                const date = new Date(e.target.value);
+                if (!isNaN(date.getTime())) {
+                  updateTimeExitRule(rule.id, { value: Math.floor(date.getTime() / (24 * 60 * 60 * 1000)) });
+                }
+              }}
             />
           </div>
         )
@@ -852,7 +861,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
                       <Input
                         type="number"
                         value={rule.value}
-                        onChange={(e) => updateStopLossRule(rule.id, { value: e.target.value })}
+                        onChange={(e) => updateStopLossRule(rule.id, { value: Number.parseFloat(e.target.value) || 0 })}
                         step="0.1"
                       />
                     </div>
@@ -933,7 +942,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
                       <Input
                         type="number"
                         value={rule.value}
-                        onChange={(e) => updateTakeProfitRule(rule.id, { value: e.target.value })}
+                        onChange={(e) => updateTakeProfitRule(rule.id, { value: Number.parseFloat(e.target.value) || 0 })}
                         step="0.1"
                       />
                     </div>
@@ -1018,7 +1027,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
                       <Input
                         type="number"
                         value={rule.value}
-                        onChange={(e) => updatePositionSizingRule(rule.id, { value: e.target.value })}
+                        onChange={(e) => updatePositionSizingRule(rule.id, { value: Number.parseFloat(e.target.value) || 0 })}
                         step="0.1"
                       />
                     </div>
@@ -1102,7 +1111,7 @@ export default function RiskManagement({ config, onChange }: RiskManagementProps
                       <Input
                         type="number"
                         value={rule.value}
-                        onChange={(e) => updateTrailingStopRule(rule.id, { value: e.target.value })}
+                        onChange={(e) => updateTrailingStopRule(rule.id, { value: Number.parseFloat(e.target.value) || 0 })}
                         step="0.1"
                       />
                     </div>

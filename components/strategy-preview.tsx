@@ -29,6 +29,7 @@ interface PositionRule {
 }
 
 interface RiskRule {
+  id: string
   enabled: boolean
   type: string
   value: number | string
@@ -44,6 +45,11 @@ interface RiskRule {
   volatilityPeriod?: number
   volatilityMultiplier?: number
   riskRewardRatio?: number
+  accelerationFactor?: number
+  maxAcceleration?: number
+  maType?: "sma" | "ema" | "wma"
+  maPeriod?: number
+  customFormula?: string
 }
 
 interface RiskManagement {

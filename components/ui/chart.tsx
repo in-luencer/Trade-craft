@@ -358,7 +358,7 @@ function getPayloadConfigFromPayload(
 }
 
 function TradingViewWidget({ symbol = 'NASDAQ:AAPL', interval = 'D', theme = 'dark' }) {
-  const container = useRef();
+  const container = useRef<HTMLDivElement>(null);
   const { indicators } = useStrategy();
   
   useEffect(() => {

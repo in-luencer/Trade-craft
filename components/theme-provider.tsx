@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useEffect, useState } from "react";
-import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { useEffect, useState, useContext } from "react";
+import { ThemeProvider as NextThemesProvider, type ThemeProviderProps as NextThemeProviderProps, useTheme as useNextTheme } from "next-themes"
 
 type Theme = "dark" | "light" | "system"
 
@@ -10,7 +10,7 @@ type ThemeProviderProps = {
   children: React.ReactNode
   defaultTheme?: Theme
   storageKey?: string
-  attribute?: string
+  attribute?: NextThemeProviderProps["attribute"]
   enableSystem?: boolean
 }
 
@@ -41,12 +41,4 @@ export function ThemeProvider({ children, attribute, defaultTheme, enableSystem 
   );
 }
 
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext)
-
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider")
-  }
-
-  return context
-}
+export const useTheme = useNextTheme;

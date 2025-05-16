@@ -39,6 +39,7 @@ export type PositionRule = {
 }
 
 export type StrategyConfig = {
+  id: string
   name: string
   description: string
   entryLong: PositionRule
@@ -82,7 +83,7 @@ const defaultRiskManagement: RiskManagementConfig = {
     {
       id: "sl-default",
       type: "percentage",
-      value: "2",
+      value: 2,
       enabled: true,
     },
   ],
@@ -90,7 +91,7 @@ const defaultRiskManagement: RiskManagementConfig = {
     {
       id: "tp-default",
       type: "percentage",
-      value: "5",
+      value: 5,
       enabled: true,
     },
   ],
@@ -99,8 +100,8 @@ const defaultRiskManagement: RiskManagementConfig = {
     {
       id: "ps-default",
       type: "percentage",
-      value: "2",
-      maxRisk: "2",
+      value: 2,
+      maxRisk: 2,
       enabled: true,
     },
   ],
@@ -116,6 +117,7 @@ const defaultRiskManagement: RiskManagementConfig = {
 }
 
 const defaultStrategy: StrategyConfig = {
+  id: generateId("strategy"),
   name: "My Trading Strategy",
   description: "A simple trading strategy based on technical indicators",
   entryLong: { ...defaultPositionRule, id: generateId("entry-long") },
@@ -192,6 +194,58 @@ export default function StrategyBuilder() {
   const [isSaving, setIsSaving] = useState(false)
   const router = useRouter()
   const { setStrategyName, setStrategyId, setIsPublic, setIndicators } = useStrategy()
+
+  // Convert string properties to number for preview compatibility
+  function convertRiskRuleStringsToNumbers<T extends Record<string, any>>(rule: T): T {
+    const numericFields = [
+      'value',
+      'atrPeriod',
+      'atrMultiplier',
+      'lookbackPeriod',
+      'riskRewardRatio',
+      'activationThreshold',
+      'accelerationFactor',
+      'maxAcceleration',
+      'maPeriod',
+      'equityPercentage',
+      'riskPerTrade',
+      'winRate',
+      'payoffRatio',
+      'optimalFraction',
+      'volatilityPeriod',
+      'volatilityMultiplier',
+      'martingaleFactor'
+    ]
+
+    const converted = { ...rule } as T
+    for (const field of numericFields) {
+      if (field in converted && converted[field] !== undefined) {
+        const num = parseFloat(converted[field])
+        if (!isNaN(num)) {
+          (converted as any)[field] = num
+        }
+      }
+    }
+    return converted
+  }
+
+  // Utility to deeply convert all risk rule arrays in a strategy config
+  function convertStrategyForPreview(strategy: StrategyConfig): StrategyConfig {
+    return {
+      ...strategy,
+      riskManagement: {
+        ...strategy.riskManagement,
+        stopLoss: strategy.riskManagement.stopLoss.map(convertRiskRuleStringsToNumbers),
+        takeProfit: strategy.riskManagement.takeProfit.map(convertRiskRuleStringsToNumbers),
+        trailingStop: strategy.riskManagement.trailingStop.map(convertRiskRuleStringsToNumbers),
+        positionSizing: strategy.riskManagement.positionSizing.map(convertRiskRuleStringsToNumbers),
+        timeExit: strategy.riskManagement.timeExit.map(convertRiskRuleStringsToNumbers),
+      },
+    }
+  }
+
+  // Prepare strategy for preview with number conversion
+  const strategyForPreview = convertStrategyForPreview(strategy);
 
   const updateStrategy = (newStrategy: Partial<StrategyConfig>) => {
     setStrategy({ ...strategy, ...newStrategy })
@@ -353,7 +407,7 @@ export default function StrategyBuilder() {
         </TabsContent>
 
         <TabsContent value="preview">
-          <StrategyPreview strategy={strategy} />
+          <StrategyPreview strategy={strategyForPreview} />
         </TabsContent>
       </Tabs>
 

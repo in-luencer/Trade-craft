@@ -1564,9 +1564,199 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     defaultLogic: "crosses_below",
   },
 
-  // Add more indicators as needed
-  // Example of a custom indicator
-  
+  orb: {
+    name: "Opening Range Breakout",
+    description: "Trade breakouts of the opening range defined by a custom time window.",
+    category: "custom",
+    parameters: {
+      rangeStartTime: {
+        name: "Range Start Time",
+        type: "timeframe",
+        default: "09:15",
+        description: "Start time of the opening range (e.g., 09:15)",
+        required: true,
+      },
+      rangeEndTime: {
+        name: "Range End Time",
+        type: "timeframe",
+        default: "09:30",
+        description: "End time of the opening range (e.g., 09:30)",
+        required: true,
+      },
+      confirmationType: {
+        name: "Confirmation Type",
+        type: "select",
+        default: "breakout",
+        options: [
+          { value: "breakout", label: "Breakout" },
+          { value: "close_above", label: "Close Above" },
+          { value: "candle_body_break", label: "Candle Body Break" },
+        ],
+        description: "How to confirm the breakout.",
+        required: true,
+      },
+      requireRetest: {
+        name: "Require Retest After Breakout",
+        type: "boolean",
+        default: false,
+        description: "Whether to require a retest of the breakout level before entering",
+      },
+      retestType: {
+        name: "Retest Type",
+        type: "select",
+        default: "touch",
+        options: [
+          { value: "touch", label: "Touch" },
+          { value: "close_to", label: "Close To" },
+          { value: "candle_wick", label: "Candle Wick" },
+        ],
+        description: "Define how exact the retest should be",
+        showIf: (values) => values.requireRetest === true,
+      },
+      retestTolerance: {
+        name: "Retest Tolerance (%)",
+        type: "number",
+        default: 0.1,
+        min: 0.01,
+        max: 5,
+        step: 0.01,
+        description: "How close price must get to ORB High/Low",
+        showIf: (values) => values.requireRetest === true,
+      },
+      retestTimeWindow: {
+        name: "Retest Time Window (min)",
+        type: "number",
+        default: 10,
+        min: 1,
+        max: 120,
+        step: 1,
+        description: "Max time after breakout to look for retest",
+        showIf: (values) => values.requireRetest === true,
+      },
+      retestConfirmation: {
+        name: "Retest Confirmation",
+        type: "select",
+        default: "none",
+        options: [
+          { value: "none", label: "None" },
+          { value: "bounce", label: "Bounce" },
+          { value: "candle_close_above", label: "Candle Close Above" },
+          { value: "volume_spike", label: "Volume Spike" },
+        ],
+        description: "Optional validation for the retest",
+        showIf: (values) => values.requireRetest === true,
+      },
+      volumeFilter: {
+        name: "Volume Filter (optional)",
+        type: "select",
+        default: "none",
+        options: [
+          { value: "none", label: "None" },
+          { value: ">", label: ">" },
+          { value: "<", label: "<" },
+        ],
+        description: "Apply a volume filter to the breakout.",
+        required: false,
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+          { value: "orb_high", label: "ORB High" },
+          { value: "orb_low", label: "ORB Low" },
+        ],
+        description: "Data source for ORB logic (e.g., Close, ORB High, ORB Low)",
+        required: false,
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When price crosses above the ORB High",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "orb_high", label: "ORB High" },
+          { value: "orb_low", label: "ORB Low" },
+        ],
+        customInput: true,
+        inputLabel: "ORB Level"
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When price crosses below the ORB Low",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "orb_high", label: "ORB High" },
+          { value: "orb_low", label: "ORB Low" },
+        ],
+        customInput: true,
+        inputLabel: "ORB Level"
+      },
+      {
+        value: "greater_than",
+        label: "Greater Than",
+        description: "When price is greater than the ORB High",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "orb_high", label: "ORB High" },
+          { value: "orb_low", label: "ORB Low" },
+        ],
+        customInput: true,
+        inputLabel: "ORB Level"
+      },
+      {
+        value: "less_than",
+        label: "Less Than",
+        description: "When price is less than the ORB Low",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "orb_high", label: "ORB High" },
+          { value: "orb_low", label: "ORB Low" },
+        ],
+        customInput: true,
+        inputLabel: "ORB Level"
+      },
+      {
+        value: "closes_above",
+        label: "Closes Above",
+        description: "When candle closes above the ORB High",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "orb_high", label: "ORB High" },
+          { value: "orb_low", label: "ORB Low" },
+        ],
+        customInput: true,
+        inputLabel: "ORB Level"
+      },
+      {
+        value: "touches",
+        label: "Touches",
+        description: "When price touches the ORB High or Low",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "orb_high", label: "ORB High" },
+          { value: "orb_low", label: "ORB Low" },
+        ],
+        customInput: true,
+        inputLabel: "ORB Level"
+      },
+    ],
+    defaultLogic: "crosses_above",
+  },
+
 }
 
 export default indicatorMetadata

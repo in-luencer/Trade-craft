@@ -147,85 +147,87 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
               <h3 className="text-sm font-medium">Parameters</h3>
               <div className="grid grid-cols-2 gap-4">
                 {standardParams.map(([key, param]) => (
-                  <div key={key} className="space-y-2">
-                    <div className="flex items-center gap-1">
-                      <Label>{param.name}</Label>
-                      {param.description && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{param.description}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
-                    </div>
-                    {param.type === "select" ? (
-                      <Select
-                        value={condition.params?.[key]?.toString() || param.default.toString()}
-                        onValueChange={(value) => handleParamChange(key, value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {param.options?.map((option) => (
-                            <SelectItem
-                              key={typeof option === "string" ? option : option.value}
-                              value={typeof option === "string" ? option : option.value}
-                            >
-                              {typeof option === "string" ? option : option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    ) : param.type === "number" ? (
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center justify-between">
-                          <Input
-                            type="number"
-                            value={condition.params?.[key]?.toString() || param.default.toString()}
-                            onChange={(e) => handleParamChange(key, Number.parseFloat(e.target.value))}
-                            min={param.min}
-                            max={param.max}
-                            step={param.step}
-                            className="w-full"
-                          />
-                          <span className="text-xs text-muted-foreground ml-2 w-12 text-right">
-                            {condition.params?.[key] || param.default}
-                          </span>
-                        </div>
-                        {param.min !== undefined && param.max !== undefined && (
-                          <Slider
-                            value={[Number(condition.params?.[key] || param.default)]}
-                            min={param.min}
-                            max={param.max}
-                            step={param.step}
-                            onValueChange={(values) => handleParamChange(key, values[0])}
-                          />
+                  (typeof param.showIf !== "function" || param.showIf(condition.params ?? {})) && (
+                    <div key={key} className="space-y-2">
+                      <div className="flex items-center gap-1">
+                        <Label>{param.name}</Label>
+                        {param.description && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{param.description}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         )}
                       </div>
-                    ) : param.type === "boolean" ? (
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          checked={Boolean(condition.params?.[key] ?? param.default)}
-                          onCheckedChange={(checked) => handleParamChange(key, checked)}
+                      {param.type === "select" ? (
+                        <Select
+                          value={condition.params?.[key]?.toString() || param.default.toString()}
+                          onValueChange={(value) => handleParamChange(key, value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {param.options?.map((option) => (
+                              <SelectItem
+                                key={typeof option === "string" ? option : option.value}
+                                value={typeof option === "string" ? option : option.value}
+                              >
+                                {typeof option === "string" ? option : option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : param.type === "number" ? (
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center justify-between">
+                            <Input
+                              type="number"
+                              value={condition.params?.[key]?.toString() || param.default.toString()}
+                              onChange={(e) => handleParamChange(key, Number.parseFloat(e.target.value))}
+                              min={param.min}
+                              max={param.max}
+                              step={param.step}
+                              className="w-full"
+                            />
+                            <span className="text-xs text-muted-foreground ml-2 w-12 text-right">
+                              {condition.params?.[key] || param.default}
+                            </span>
+                          </div>
+                          {param.min !== undefined && param.max !== undefined && (
+                            <Slider
+                              value={[Number(condition.params?.[key] || param.default)]}
+                              min={param.min}
+                              max={param.max}
+                              step={param.step}
+                              onValueChange={(values) => handleParamChange(key, values[0])}
+                            />
+                          )}
+                        </div>
+                      ) : param.type === "boolean" ? (
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            checked={Boolean(condition.params?.[key] ?? param.default)}
+                            onCheckedChange={(checked) => handleParamChange(key, checked)}
+                          />
+                          <span className="text-sm text-muted-foreground">
+                            {Boolean(condition.params?.[key] ?? param.default) ? "Enabled" : "Disabled"}
+                          </span>
+                        </div>
+                      ) : (
+                        <Input
+                          type="text"
+                          value={condition.params?.[key]?.toString() || param.default.toString()}
+                          onChange={(e) => handleParamChange(key, e.target.value)}
                         />
-                        <span className="text-sm text-muted-foreground">
-                          {Boolean(condition.params?.[key] ?? param.default) ? "Enabled" : "Disabled"}
-                        </span>
-                      </div>
-                    ) : (
-                      <Input
-                        type="text"
-                        value={condition.params?.[key]?.toString() || param.default.toString()}
-                        onChange={(e) => handleParamChange(key, e.target.value)}
-                      />
-                    )}
-                  </div>
+                      )}
+                    </div>
+                  )
                 ))}
               </div>
             </div>

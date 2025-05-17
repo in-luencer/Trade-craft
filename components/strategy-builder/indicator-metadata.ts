@@ -1391,7 +1391,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "sma", label: "Simple Moving Average (SMA)" },
           { value: "ema", label: "Exponential Moving Average (EMA)" },
           { value: "wma", label: "Weighted Moving Average (WMA)" },
-          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
+          
         ],
         customInput: true,
         syncKey: "crossover_indicator",

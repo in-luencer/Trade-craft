@@ -1,8 +1,14 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-// Define the strategy context type
+interface Strategy {
+  name: string
+  type: string
+  parameters: Record<string, any>
+  indicators: string[]
+}
+
 interface StrategyContextType {
   strategyName: string
   setStrategyName: (name: string) => void
@@ -14,7 +20,13 @@ interface StrategyContextType {
   setIndicators: (indicators: string[]) => void
 }
 
-// Create the context with default values
+const defaultStrategy: Strategy = {
+  name: '',
+  type: '',
+  parameters: {},
+  indicators: []
+}
+
 const StrategyContext = createContext<StrategyContextType>({
   strategyName: "",
   setStrategyName: () => {},
@@ -26,14 +38,12 @@ const StrategyContext = createContext<StrategyContextType>({
   setIndicators: () => {},
 })
 
-// Create a provider component
 export function StrategyProvider({ children }: { children: ReactNode }) {
   const [strategyName, setStrategyName] = useState<string>("")
   const [strategyId, setStrategyId] = useState<string>("")
   const [isPublic, setIsPublic] = useState<boolean>(false)
   const [indicators, setIndicators] = useState<string[]>([])
 
-  // Load strategy data from localStorage on component mount
   useEffect(() => {
     const storedStrategyName = localStorage.getItem("strategyName")
     const storedStrategyId = localStorage.getItem("strategyId")
@@ -46,7 +56,6 @@ export function StrategyProvider({ children }: { children: ReactNode }) {
     if (storedIndicators) setIndicators(JSON.parse(storedIndicators))
   }, [])
 
-  // Save strategy data to localStorage when it changes
   useEffect(() => {
     if (strategyName) localStorage.setItem("strategyName", strategyName)
     if (strategyId) localStorage.setItem("strategyId", strategyId)
@@ -72,11 +81,10 @@ export function StrategyProvider({ children }: { children: ReactNode }) {
   )
 }
 
-// Create a custom hook to use the strategy context
 export function useStrategy() {
   const context = useContext(StrategyContext)
   if (context === undefined) {
-    throw new Error("useStrategy must be used within a StrategyProvider")
+    throw new Error('useStrategy must be used within a StrategyProvider')
   }
   return context
 }

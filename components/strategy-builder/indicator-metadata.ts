@@ -1437,7 +1437,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
 
   cci: {
     name: "Commodity Channel Index",
-    description: "Identifies cyclical trends in a security.",
+    description: "Momentum oscillator that measures current price level relative to an average price level.",
     category: "momentum",
     parameters: {
       period: {
@@ -1454,10 +1454,10 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         type: "number",
         default: 0.015,
         min: 0.001,
-        max: 1,
+        max: 0.1,
         step: 0.001,
         description: "Constant used in CCI calculation",
-      },
+      }
     },
     logicOptions: [
       {
@@ -1471,8 +1471,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 100,
         customInput: true,
-        syncKey: "cci_value",
-        inputLabel: "CCI Value"
+        syncKey: "cci_value"
       },
       {
         value: "crosses_below",
@@ -1485,8 +1484,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: -100,
         customInput: true,
-        syncKey: "cci_value",
-        inputLabel: "CCI Value"
+        syncKey: "cci_value"
       },
       {
         value: "overbought",
@@ -1506,7 +1504,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
 
   mfi: {
     name: "Money Flow Index",
-    description: "Volume-weighted version of RSI, identifies overbought or oversold conditions.",
+    description: "Volume-weighted RSI that measures buying and selling pressure.",
     category: "volume",
     parameters: {
       period: {
@@ -1517,7 +1515,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         description: "Number of bars used in calculation",
-      },
+      }
     },
     logicOptions: [
       {
@@ -1531,8 +1529,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 80,
         customInput: true,
-        syncKey: "mfi_value",
-        inputLabel: "MFI Value"
+        syncKey: "mfi_value"
       },
       {
         value: "crosses_below",
@@ -1545,8 +1542,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 20,
         customInput: true,
-        syncKey: "mfi_value",
-        inputLabel: "MFI Value"
+        syncKey: "mfi_value"
       },
       {
         value: "overbought",
@@ -1646,31 +1642,15 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "Optional validation for the retest",
         showIf: (values) => values.requireRetest === true,
       },
-      volumeFilter: {
-        name: "Volume Filter (optional)",
-        type: "select",
-        default: "none",
-        options: [
-          { value: "none", label: "None" },
-          { value: ">", label: ">" },
-          { value: "<", label: "<" },
-        ],
-        description: "Apply a volume filter to the breakout.",
-        required: false,
-      },
       source: {
         name: "Source",
         type: "select",
         default: "close",
         options: [
-          { value: "close", label: "Close" },
-          { value: "open", label: "Open" },
-          { value: "high", label: "High" },
-          { value: "low", label: "Low" },
           { value: "orb_high", label: "ORB High" },
           { value: "orb_low", label: "ORB Low" },
         ],
-        description: "Data source for ORB logic (e.g., Close, ORB High, ORB Low)",
+        description: "Data source for ORB logic (e.g. ORB High, ORB Low)",
         required: false,
       },
     },
@@ -1757,6 +1737,878 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     defaultLogic: "crosses_above",
   },
 
+  hma: {
+    name: "Hull Moving Average",
+    description: "A fast and smooth moving average that reduces lag.",
+    category: "trend",
+    parameters: {
+      period: {
+        name: "Length",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 500,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+          { value: "hl2", label: "HL2" },
+          { value: "hlc3", label: "HLC3" },
+          { value: "ohlc4", label: "OHLC4" },
+        ],
+        description: "Price data point to use in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_price",
+        label: "Crosses Above Price",
+        description: "When HMA crosses above the price",
+        requiresValue: false
+      },
+      {
+        value: "crosses_below_price",
+        label: "Crosses Below Price",
+        description: "When HMA crosses below the price",
+        requiresValue: false
+      },
+      {
+        value: "crosses_above_indicator",
+        label: "Crosses Above Indicator",
+        description: "When HMA crosses above another indicator",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "sma", label: "Simple Moving Average (SMA)" },
+          { value: "ema", label: "Exponential Moving Average (EMA)" },
+          { value: "wma", label: "Weighted Moving Average (WMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+          { value: "hma", label: "Hull Moving Average (HMA)" }
+        ],
+        customInput: true,
+        syncKey: "crossover_indicator",
+        logicParams: {
+          indicator: {
+            name: "Indicator",
+            type: "select",
+            default: "sma",
+            options: [
+              { value: "sma", label: "Simple Moving Average (SMA)" },
+              { value: "ema", label: "Exponential Moving Average (EMA)" },
+              { value: "wma", label: "Weighted Moving Average (WMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+              { value: "hma", label: "Hull Moving Average (HMA)" }
+            ],
+            description: "Select the indicator to cross with"
+          },
+          period: {
+            name: "Period",
+            type: "number",
+            default: 20,
+            min: 1,
+            max: 500,
+            step: 1,
+            description: "Number of bars used in calculation"
+          },
+        }
+      },
+      {
+        value: "crosses_below_indicator",
+        label: "Crosses Below Indicator",
+        description: "When HMA crosses below another indicator",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "sma", label: "Simple Moving Average (SMA)" },
+          { value: "ema", label: "Exponential Moving Average (EMA)" },
+          { value: "wma", label: "Weighted Moving Average (WMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+          { value: "hma", label: "Hull Moving Average (HMA)" }
+        ],
+        customInput: true,
+        syncKey: "crossover_indicator",
+        logicParams: {
+          indicator: {
+            name: "Indicator",
+            type: "select",
+            default: "sma",
+            options: [
+              { value: "sma", label: "Simple Moving Average (SMA)" },
+              { value: "ema", label: "Exponential Moving Average (EMA)" },
+              { value: "wma", label: "Weighted Moving Average (WMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+              { value: "hma", label: "Hull Moving Average (HMA)" }
+            ],
+            description: "Select the indicator to cross with"
+          },
+          period: {
+            name: "Period",
+            type: "number",
+            default: 20,
+            min: 1,
+            max: 500,
+            step: 1,
+            description: "Number of bars used in calculation"
+          },
+        }
+      },
+    ],
+    defaultLogic: "crosses_above_price",
+  },
+  rvi: {
+    name: "Relative Vigor Index",
+    description: "Measures the conviction of a recent price action and the likelihood that it will continue.",
+    category: "momentum",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 10,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_signal",
+        label: "Crosses Above Signal Line",
+        description: "When RVI crosses above its signal line",
+        requiresValue: false
+      },
+      {
+        value: "crosses_below_signal",
+        label: "Crosses Below Signal Line",
+        description: "When RVI crosses below its signal line",
+        requiresValue: false
+      },
+      {
+        value: "greater_than_value",
+        label: "Greater Than Value",
+        description: "When RVI is greater than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -1,
+        max: 1,
+        step: 0.01
+      },
+      {
+        value: "less_than_value",
+        label: "Less Than Value",
+        description: "When RVI is less than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -1,
+        max: 1,
+        step: 0.01
+      }
+    ],
+    defaultLogic: "crosses_above_signal",
+  },
+
+  keltner: {
+    name: "Keltner Channel",
+    description: "Volatility-based envelope set above and below an EMA.",
+    category: "volatility",
+    parameters: {
+      period: {
+        name: "EMA Period",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars for EMA calculation",
+      },
+      atrPeriod: {
+        name: "ATR Period",
+        type: "number",
+        default: 10,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars for ATR calculation",
+      },
+      multiplier: {
+        name: "ATR Multiplier",
+        type: "number",
+        default: 2,
+        min: 0.1,
+        max: 10,
+        step: 0.1,
+        description: "Multiplier for ATR to set channel width",
+      },
+    },
+    logicOptions: [
+      {
+        value: "close_crosses_above_upper",
+        label: "Close Crosses Above Upper Band",
+        description: "When price closes above the upper Keltner band",
+        requiresValue: false
+      },
+      {
+        value: "close_crosses_below_lower",
+        label: "Close Crosses Below Lower Band",
+        description: "When price closes below the lower Keltner band",
+        requiresValue: false
+      },
+      {
+        value: "inside_channel",
+        label: "Price Inside Channel",
+        description: "When price is inside the Keltner channel",
+        requiresValue: false
+      }
+    ],
+    defaultLogic: "close_crosses_above_upper",
+  },
+
+  choppiness: {
+    name: "Choppiness Index",
+    description: "Quantifies whether the market is trending or ranging.",
+    category: "volatility",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 14,
+        min: 2,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "greater_than_value",
+        label: "Greater Than Value",
+        description: "When Choppiness Index is above a threshold",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 100,
+        step: 0.1
+      },
+      {
+        value: "less_than_value",
+        label: "Less Than Value",
+        description: "When Choppiness Index is below a threshold",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 100,
+        step: 0.1
+      }
+    ],
+    defaultLogic: "greater_than_value",
+  },
+
+  atr: {
+    name: "Average True Range",
+    description: "Measures market volatility by decomposing the entire range of an asset price for that period.",
+    category: "volatility",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 14,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When ATR crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 1000,
+        step: 0.1,
+        defaultValue: 2,
+        customInput: true,
+        syncKey: "atr_value"
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When ATR crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 1000,
+        step: 0.1,
+        defaultValue: 1,
+        customInput: true,
+        syncKey: "atr_value"
+      },
+      {
+        value: "increasing",
+        label: "Increasing",
+        description: "When ATR is increasing (volatility rising)",
+        requiresValue: false
+      },
+      {
+        value: "decreasing",
+        label: "Decreasing",
+        description: "When ATR is decreasing (volatility falling)",
+        requiresValue: false
+      }
+    ],
+    defaultLogic: "crosses_above",
+  },
+
+  obv: {
+    name: "On Balance Volume",
+    description: "Momentum indicator that uses volume flow to predict changes in price.",
+    category: "volume",
+    parameters: {
+      maType: {
+        name: "MA Type",
+        type: "select",
+        default: "sma",
+        options: [
+          { value: "sma", label: "Simple" },
+          { value: "ema", label: "Exponential" },
+        ],
+        description: "Type of moving average to use",
+      },
+      maPeriod: {
+        name: "MA Period",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Period for the moving average",
+      }
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_ma",
+        label: "Crosses Above MA",
+        description: "When OBV crosses above its moving average",
+        requiresValue: false
+      },
+      {
+        value: "crosses_below_ma",
+        label: "Crosses Below MA",
+        description: "When OBV crosses below its moving average",
+        requiresValue: false
+      },
+      {
+        value: "divergence_bullish",
+        label: "Bullish Divergence",
+        description: "When price makes lower lows but OBV makes higher lows",
+        requiresValue: false
+      },
+      {
+        value: "divergence_bearish",
+        label: "Bearish Divergence",
+        description: "When price makes higher highs but OBV makes lower highs",
+        requiresValue: false
+      }
+    ],
+    defaultLogic: "crosses_above_ma",
+  },
+
+  williams_r: {
+    name: "Williams %R",
+    description: "Momentum oscillator that measures overbought and oversold levels.",
+    category: "momentum",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 14,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      }
+    },
+    logicOptions: [
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When Williams %R crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 0,
+        step: 1,
+        defaultValue: -20,
+        customInput: true,
+        syncKey: "williams_value"
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When Williams %R crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 0,
+        step: 1,
+        defaultValue: -80,
+        customInput: true,
+        syncKey: "williams_value"
+      },
+      {
+        value: "overbought",
+        label: "Overbought",
+        description: "When Williams %R is above -20",
+        requiresValue: false
+      },
+      {
+        value: "oversold",
+        label: "Oversold",
+        description: "When Williams %R is below -80",
+        requiresValue: false
+      }
+    ],
+    defaultLogic: "crosses_below",
+  },
+
+  dmi: {
+    name: "Directional Movement Index",
+    description: "Trend indicator that measures the strength of a trend and its direction.",
+    category: "trend",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 14,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "di_plus_crosses_above_di_minus",
+        label: "+DI Crosses Above -DI",
+        description: "When +DI crosses above -DI (bullish)",
+        requiresValue: false
+      },
+      {
+        value: "di_plus_crosses_below_di_minus",
+        label: "+DI Crosses Below -DI",
+        description: "When +DI crosses below -DI (bearish)",
+        requiresValue: false
+      },
+      {
+        value: "adx_above_25",
+        label: "ADX Above 25",
+        description: "When ADX is above 25 (strong trend)",
+        requiresValue: false
+      },
+      {
+        value: "adx_below_25",
+        label: "ADX Below 25",
+        description: "When ADX is below 25 (weak trend)",
+        requiresValue: false
+      }
+    ],
+    defaultLogic: "di_plus_crosses_above_di_minus",
+  },
+
+  parabolic_sar: {
+    name: "Parabolic SAR",
+    description: "Trend-following indicator that identifies potential reversals in price direction.",
+    category: "trend",
+    parameters: {
+      acceleration: {
+        name: "Acceleration",
+        type: "number",
+        default: 0.02,
+        min: 0.01,
+        max: 0.2,
+        step: 0.01,
+        description: "Acceleration factor",
+      },
+      maximum: {
+        name: "Maximum",
+        type: "number",
+        default: 0.2,
+        min: 0.1,
+        max: 0.5,
+        step: 0.01,
+        description: "Maximum acceleration factor",
+      }
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_price",
+        label: "Crosses Above Price",
+        description: "When SAR crosses above price (bearish)",
+        requiresValue: false
+      },
+      {
+        value: "crosses_below_price",
+        label: "Crosses Below Price",
+        description: "When SAR crosses below price (bullish)",
+        requiresValue: false
+      },
+      {
+        value: "trend_change_bullish",
+        label: "Trend Change Bullish",
+        description: "When SAR changes from bearish to bullish",
+        requiresValue: false
+      },
+      {
+        value: "trend_change_bearish",
+        label: "Trend Change Bearish",
+        description: "When SAR changes from bullish to bearish",
+        requiresValue: false
+      }
+    ],
+    defaultLogic: "crosses_below_price",
+  },
+
+  momentum: {
+    name: "Momentum",
+    description: "Measures the rate of change of price over a specified period.",
+    category: "momentum",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 10,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
+      }
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_zero",
+        label: "Crosses Above Zero",
+        description: "When Momentum crosses above zero",
+        requiresValue: false
+      },
+      {
+        value: "crosses_below_zero",
+        label: "Crosses Below Zero",
+        description: "When Momentum crosses below zero",
+        requiresValue: false
+      },
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When Momentum crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -1000,
+        max: 1000,
+        step: 0.1,
+        defaultValue: 0,
+        customInput: true,
+        syncKey: "momentum_value"
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When Momentum crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -1000,
+        max: 1000,
+        step: 0.1,
+        defaultValue: 0,
+        customInput: true,
+        syncKey: "momentum_value"
+      }
+    ],
+    defaultLogic: "crosses_above_zero",
+  },
+
+  roc: {
+    name: "Rate of Change",
+    description: "Momentum oscillator that measures the percentage change in price over a specified period.",
+    category: "momentum",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 9,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
+      }
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_zero",
+        label: "Crosses Above Zero",
+        description: "When ROC crosses above zero",
+        requiresValue: false
+      },
+      {
+        value: "crosses_below_zero",
+        label: "Crosses Below Zero",
+        description: "When ROC crosses below zero",
+        requiresValue: false
+      },
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When ROC crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 0.1,
+        defaultValue: 0,
+        customInput: true,
+        syncKey: "roc_value"
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When ROC crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 0.1,
+        defaultValue: 0,
+        customInput: true,
+        syncKey: "roc_value"
+      }
+    ],
+    defaultLogic: "crosses_above_zero",
+  },
+
+  cmf: {
+    name: "Chaikin Money Flow",
+    description: "Volume-weighted average of accumulation/distribution over a specified period.",
+    category: "volume",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      }
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_zero",
+        label: "Crosses Above Zero",
+        description: "When CMF crosses above zero (bullish)",
+        requiresValue: false
+      },
+      {
+        value: "crosses_below_zero",
+        label: "Crosses Below Zero",
+        description: "When CMF crosses below zero (bearish)",
+        requiresValue: false
+      },
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When CMF crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -1,
+        max: 1,
+        step: 0.01,
+        defaultValue: 0.2,
+        customInput: true,
+        syncKey: "cmf_value"
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When CMF crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -1,
+        max: 1,
+        step: 0.01,
+        defaultValue: -0.2,
+        customInput: true,
+        syncKey: "cmf_value"
+      }
+    ],
+    defaultLogic: "crosses_above_zero",
+  },
+
+  bbp: {
+    name: "Bollinger Bands %B",
+    description: "Measures where price is relative to Bollinger Bands.",
+    category: "volatility",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      stdDev: {
+        name: "Standard Deviation",
+        type: "number",
+        default: 2,
+        min: 0.1,
+        max: 5,
+        step: 0.1,
+        description: "Number of standard deviations for the bands",
+      }
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_one",
+        label: "Crosses Above 1",
+        description: "When %B crosses above 1 (price above upper band)",
+        requiresValue: false
+      },
+      {
+        value: "crosses_below_zero",
+        label: "Crosses Below 0",
+        description: "When %B crosses below 0 (price below lower band)",
+        requiresValue: false
+      },
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When %B crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 1,
+        step: 0.01,
+        defaultValue: 0.8,
+        customInput: true,
+        syncKey: "bbp_value"
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When %B crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 1,
+        step: 0.01,
+        defaultValue: 0.2,
+        customInput: true,
+        syncKey: "bbp_value"
+      }
+    ],
+    defaultLogic: "crosses_above_one",
+  },
+
+  bbr: {
+    name: "Bollinger Bands Range",
+    description: "Measures the width of Bollinger Bands relative to the middle band.",
+    category: "volatility",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      stdDev: {
+        name: "Standard Deviation",
+        type: "number",
+        default: 2,
+        min: 0.1,
+        max: 5,
+        step: 0.1,
+        description: "Number of standard deviations for the bands",
+      }
+    },
+    logicOptions: [
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When BBR crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 10,
+        step: 0.01,
+        defaultValue: 0.05,
+        customInput: true,
+        syncKey: "bbr_value"
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When BBR crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 10,
+        step: 0.01,
+        defaultValue: 0.02,
+        customInput: true,
+        syncKey: "bbr_value"
+      },
+      {
+        value: "increasing",
+        label: "Increasing",
+        description: "When BBR is increasing (volatility rising)",
+        requiresValue: false
+      },
+      {
+        value: "decreasing",
+        label: "Decreasing",
+        description: "When BBR is decreasing (volatility falling)",
+        requiresValue: false
+      }
+    ],
+    defaultLogic: "crosses_above",
+  }
 }
 
 export default indicatorMetadata

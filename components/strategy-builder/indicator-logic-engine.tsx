@@ -40,7 +40,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
         params: initialValues
       })
     }
-  }, [condition.indicator])
+  }, [condition, onChange, indicator]) // Added condition, onChange, and indicator (derived from condition.indicator)
 
   const handleIndicatorChange = (value: string) => {
     const newIndicator = indicatorMetadata[value]

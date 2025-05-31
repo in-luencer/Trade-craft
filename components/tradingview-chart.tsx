@@ -84,11 +84,13 @@ function TradingViewChart({
     copyright.innerHTML = '<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span className="blue-text">Track all markets on TradingView</span></a>';
     container.current.appendChild(copyright);
 
+    const currentContainer = container.current; // Capture container.current
+
     return () => {
       // Cleanup
-      if (container.current) {
-        while (container.current.firstChild) {
-          container.current.removeChild(container.current.firstChild);
+      if (currentContainer) { // Use the captured value
+        while (currentContainer.firstChild) {
+          currentContainer.removeChild(currentContainer.firstChild);
         }
       }
     };

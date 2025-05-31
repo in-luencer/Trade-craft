@@ -1,5 +1,5 @@
 "use client"
-
+"use client"
 import { useState } from "react"
 import Link from "next/link"
 import {
@@ -28,7 +28,8 @@ export default function DashboardPage() {
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, John! Here's an overview of your trading strategies.</p>
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          <p className="text-muted-foreground">Welcome back, John! Here&apos;s an overview of your trading strategies.</p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button variant="outline" asChild>
@@ -104,7 +105,8 @@ export default function DashboardPage() {
             <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
               <div>
                 <CardTitle>Performance Overview</CardTitle>
-                <CardDescription>Track your strategies' performance over time</CardDescription>
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
+                <CardDescription>Track your strategies&apos; performance over time</CardDescription>
               </div>
               <Select value={timeframe} onValueChange={setTimeframe}>
                 <SelectTrigger className="w-[180px]">

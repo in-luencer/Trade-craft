@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image" // Import next/image
 import { useRouter } from "next/navigation"
 import { ArrowRight, BarChart4, Edit, Plus, TrendingUp } from "lucide-react"
 
@@ -189,9 +190,11 @@ export default function StrategyChoicePage() {
                           </div>
 
                           <div className="mt-4">
-                            <img
-                              src={strategy.image || "/placeholder.svg"}
+                            <Image
+                              src={strategy.image?.split("?")[0] || "/placeholder.svg"} // Use base path for src
                               alt={`${strategy.title} chart example`}
+                              width={400} // Default or extracted width
+                              height={200} // Default or extracted height
                               className="rounded-md w-full h-auto"
                             />
                           </div>

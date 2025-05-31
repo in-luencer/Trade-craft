@@ -406,9 +406,11 @@ function TradingViewWidget({ symbol = 'NASDAQ:AAPL', interval = 'D', theme = 'da
       container.current.appendChild(script);
     }
 
+    const currentContainer = container.current; // Capture container.current
+
     return () => {
-      if (container.current) {
-        container.current.innerHTML = '';
+      if (currentContainer) { // Use the captured value
+        currentContainer.innerHTML = '';
       }
     };
   }, [symbol, interval, theme, indicators]);

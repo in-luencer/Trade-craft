@@ -11,7 +11,7 @@ export default function OnboardingPage() {
     <div className="container max-w-4xl py-10">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold">Welcome to TradeCraft</h1>
-        <p className="text-muted-foreground">Let's get to know your trading preferences</p>
+        <p className="text-muted-foreground">Let&apos;s get to know your trading preferences</p>
       </div>
 
       <div className="space-y-8">
@@ -79,7 +79,7 @@ export default function OnboardingPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>What's your preferred trading style?</CardTitle>
+            <CardTitle>What&apos;s your preferred trading style?</CardTitle>
             <CardDescription>Choose the approach that best matches your strategy</CardDescription>
           </CardHeader>
           <CardContent>

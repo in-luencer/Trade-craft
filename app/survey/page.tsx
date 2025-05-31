@@ -1,5 +1,5 @@
 "use client"
-
+"use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowRight, MessageSquare } from "lucide-react"
@@ -110,7 +110,8 @@ export default function SurveyPage() {
       {currentStep === 1 && (
         <Card>
           <CardHeader>
-            <CardTitle>What's your risk tolerance?</CardTitle>
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
+            <CardTitle>What\u0027s your risk tolerance?</CardTitle>
             <CardDescription>This helps us customize your risk management settings</CardDescription>
           </CardHeader>
           <CardContent>
@@ -136,7 +137,7 @@ export default function SurveyPage() {
                     Moderate
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    I'm okay with some losses if it means better overall returns in the long run
+                    I&apos;m okay with some losses if it means better overall returns in the long run
                   </p>
                 </div>
               </div>
@@ -315,7 +316,7 @@ export default function SurveyPage() {
                     No, I need help creating one
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    I'd like to explore pre-built strategies or create a new one
+                    I&apos;d like to explore pre-built strategies or create a new one
                   </p>
                 </div>
               </div>

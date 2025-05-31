@@ -211,7 +211,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-col justify-center">
-              <h2 className="mb-4 text-3xl font-bold">Our Founder's Story</h2>
+              <h2 className="mb-4 text-3xl font-bold">Our Founder&apos;s Story</h2>
               <p className="mb-6 text-muted-foreground">
               I was you—a beginner trader losing money with every random YouTube strategy I tried. I’d stare at charts for hours, hoping for a breakthrough... but all I got was emotional burnout and a blown-up account.
               I knew there had to be a better way.
@@ -235,7 +235,7 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold sm:text-4xl">Ready to Transform Your Trading?</h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Join thousands of traders who have improved their results with in_luencer's strategy builder and backtesting
+            Join thousands of traders who have improved their results with in_luencer&apos;s strategy builder and backtesting
             tools.
           </p>
           <div className="mx-auto mt-6 max-w-md rounded-lg border border-primary/20 bg-card p-4 shadow-lg">

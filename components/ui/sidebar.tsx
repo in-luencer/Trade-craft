@@ -644,7 +644,8 @@ const SidebarMenuBadge = React.forwardRef<
 ))
 SidebarMenuBadge.displayName = "SidebarMenuBadge"
 
-const generateRandomPercentage = () => {
+// Renamed to be a custom hook
+const useRandomPercentage = () => {
   const [width, setWidth] = React.useState("50%") // Default value for server-side rendering
 
   React.useEffect(() => {
@@ -662,9 +663,7 @@ const SidebarMenuSkeleton = React.forwardRef<
     showIcon?: boolean
   }
 >(({ className, showIcon = false, ...props }, ref) => {
-  const width = React.useMemo(() => {
-    return generateRandomPercentage()
-  }, [])
+  const width = useRandomPercentage() // Call the custom hook directly
 
   return (
     <div

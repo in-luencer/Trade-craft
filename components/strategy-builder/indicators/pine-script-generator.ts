@@ -1,8 +1,8 @@
-import { StrategyConfig } from '../types'
+import { Strategy } from '../types'
 import { getIndicatorVariable, getIndicatorLogic } from './utils'
 import { INDICATOR_CONFIGS } from './constants'
 
-export function generatePineScript(strategy: StrategyConfig): string {
+export function generatePineScript(strategy: Strategy): string {
   let code = `//@version=5
 strategy("${strategy.name}", overlay=true, margin_long=100, margin_short=100)
 
@@ -52,7 +52,7 @@ maxDrawdown = input.float(${strategy.riskManagement.maxDrawdown}, "Max Drawdown 
   return code
 }
 
-function generateEntryExitConditions(strategy: StrategyConfig): string {
+function generateEntryExitConditions(strategy: Strategy): string {
   let code = '\n// Entry/Exit Conditions\n'
 
   // Entry Long
@@ -93,7 +93,7 @@ function generateConditionCode(positionRule: any): string {
   }).join('')
 }
 
-function generateRiskManagement(strategy: StrategyConfig): string {
+function generateRiskManagement(strategy: Strategy): string {
   let code = '\n// Risk Management\n'
 
   // Stop Loss
@@ -234,7 +234,7 @@ if (strategy.position_size < 0)
   return code
 }
 
-function generateStrategyExecution(strategy: StrategyConfig): string {
+function generateStrategyExecution(strategy: Strategy): string {
   return `
 // Strategy execution
 if (strategy.position_size == 0)

@@ -139,6 +139,8 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
             <div className="flex items-center space-x-2">
               <div className="space-y-4">
                 <h3 className="text-sm font-bold">Select Indicator</h3>
+
+                
                 <Select value={condition.indicator} onValueChange={handleIndicatorChange}>
                   <SelectTrigger className="w-[200px]">
                     <SelectValue />

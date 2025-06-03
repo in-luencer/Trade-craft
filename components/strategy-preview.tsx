@@ -238,8 +238,8 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
           decreasing: "is decreasing",
           bullish: "is bullish",
           bearish: "is bearish",
-          overbought: "> 70",
-          oversold: "< 30",
+          //overbought: "> 70",
+         // oversold: "< 30",
           center_cross_up: "crosses above 50",
           center_cross_down: "crosses below 50",
           zero_cross_up: "crosses above 0",
@@ -1733,7 +1733,7 @@ plot(momentum, color=color.blue, title="Momentum", display=display.pane)\n`
       case "hma":
         return { period: 20, source: "close" }
       case "rsi":
-        return { period: 14, source: "close", overbought: 70, oversold: 30 }
+        return { period: 14, source: "close"  }
       case "macd":
         return { fastPeriod: 12, slowPeriod: 26, signalPeriod: 9, source: "close" }
       case "bollinger":

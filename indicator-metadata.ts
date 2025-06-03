@@ -351,28 +351,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         ],
         description: "Price data point to use in calculation",
       },
-
-       // REMOVED: overbought and oversold parameters as requested by user
-      // These parameters were causing unwanted data in strategy JSON
-      // overbought: {
-      //   name: "Overbought Level",
-      //   type: "number",
-      //   default: 70,
-      //   min: 50,
-      //   max: 100,
-      //   step: 1,
-      //   description: "Level considered overbought",
-      // },
-      // oversold: {
-      //   name: "Oversold Level", 
-      //   type: "number",
-      //   default: 30,
-      //   min: 0,
-      //   max: 50,
-      //   step: 1,
-      //   description: "Level considered oversold",
-      // },
-    
     },
     logicOptions: [
       

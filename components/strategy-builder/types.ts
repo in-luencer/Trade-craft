@@ -17,7 +17,8 @@ export type IndicatorType =
   | "momentum"
   | "custom"
 
-export type IndicatorLogic =
+
+  export type IndicatorLogic =
   | "crosses_above"
   | "crosses_below"
   | "greater_than"
@@ -30,8 +31,8 @@ export type IndicatorLogic =
   | "decreasing"
   | "bullish"
   | "bearish"
-  | "overbought"
-  | "oversold"
+//  | "overbought"
+//  | "oversold"
   | "center_cross_up"
   | "center_cross_down"
   | "zero_cross_up"
@@ -64,6 +65,8 @@ export type IndicatorLogic =
   | "above_average"
   | "below_average"
   | "spike"
+
+
 
 export type IndicatorParams = {
   // Common parameters

@@ -28,8 +28,8 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
           params: {
             period: 14,
             source: "close",
-            overbought: 70,
-            oversold: 30,
+           // overbought: 70,
+           // oversold: 30,
           },
         },
       ],
@@ -69,8 +69,8 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
       params: {
         period: 14,
         source: "close",
-        overbought: 70,
-        oversold: 30,
+     //   overbought: 70,
+       // oversold: 30,
       },
     }
 

@@ -40,7 +40,8 @@ export const INDICATORS: Record<IndicatorType, {
     parameters: ["value"],
     logics: [
       "crosses_above", "crosses_below", "greater_than", "less_than", "equals",
-      "overbought", "oversold", "enters_overbought", "exits_overbought",
+      //"overbought", "oversold",
+       "enters_overbought", "exits_overbought",
       "enters_oversold", "exits_oversold", "center_cross_up", "center_cross_down"
     ]
   },

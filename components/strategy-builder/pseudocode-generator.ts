@@ -67,10 +67,10 @@ Entry Rules:
     }
 
     // Handle threshold-based logic (like RSI overbought/oversold)
-    if (logic === "overbought" || logic === "oversold") {
-      const threshold = condition.value || (logic === "overbought" ? "70" : "30")
-      return `${logic} (${threshold})`
-    }
+  //  if (logic === "overbought" || logic === "oversold") {
+  //    const threshold = condition.value || (logic === "overbought" ? "70" : "30")
+      //return `${logic} (${threshold})`
+  //  }
 
     // Handle comparison logic with values
     if (logic === "greater_than" || logic === ">" || logic === "less_than" || logic === "<") {

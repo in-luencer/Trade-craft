@@ -132,4 +132,41 @@ export type Strategy = {
   exitLong: PositionRule
   exitShort: PositionRule
   riskManagement: RiskManagementConfig
-} 
+}
+
+// For compatibility with string indicator keys in builder.tsx
+export type AnyIndicatorCondition = {
+  id: string;
+  indicator: string;
+  parameter: string;
+  logic: string;
+  value: string | number;
+  timeframe: string;
+  params?: Record<string, any>;
+};
+
+export type AnyConditionGroup = {
+  id?: string;
+  operator: "and" | "or";
+  conditions: AnyIndicatorCondition[];
+};
+
+export type AnyPositionRule = {
+  id?: string;
+  conditionGroups: AnyConditionGroup[];
+};
+
+export type AnyStrategy = {
+  id?: string;
+  name: string;
+  description: string;
+  entryLong: AnyPositionRule;
+  entryShort: AnyPositionRule;
+  exitLong: AnyPositionRule;
+  exitShort: AnyPositionRule;
+  riskManagement: any;
+  isPublic?: boolean;
+};
+
+// Re-export StrategyConfig from strategy-builder.tsx for use in other modules
+export type { StrategyConfig } from "../strategy-builder";

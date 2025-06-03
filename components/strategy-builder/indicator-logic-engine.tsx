@@ -357,7 +357,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                   <Label>Average Volume Bar</Label>
                   <Input
                     type="number"
-                    value={condition.params?.averageVolumeBar || ""}
+                    value={condition.params?.averageVolumeBar || "15"}
                     onChange={(e) => handleParamChange("averageVolumeBar", Number(e.target.value))}
                     min={1}
                     max={100}

@@ -12,6 +12,39 @@ import { Strategy } from "./types"
 import { generatePineScript } from "./pine-script-generator"
 import { generatePseudocode } from "./pseudocode-generator"
 
+// Utility: Convert string indicator keys to typed ones for preview
+function normalizeStrategy(strategy: any): Strategy {
+  function normalizeCondition(condition: any): any {
+    return {
+      ...condition,
+      // If indicator is a string, try to map to IndicatorType, else fallback
+      indicator: (condition.indicator || "custom") as any,
+      logic: (condition.logic || "greater_than") as any,
+      value: typeof condition.value === "string" && !isNaN(Number(condition.value)) ? Number(condition.value) : condition.value,
+    };
+  }
+  function normalizeGroup(group: any): any {
+    return {
+      ...group,
+      conditions: group.conditions.map(normalizeCondition),
+    };
+  }
+  function normalizeRule(rule: any): any {
+    return {
+      ...rule,
+      conditionGroups: rule.conditionGroups.map(normalizeGroup),
+    };
+  }
+  return {
+    ...strategy,
+    entryLong: normalizeRule(strategy.entryLong),
+    entryShort: normalizeRule(strategy.entryShort),
+    exitLong: normalizeRule(strategy.exitLong),
+    exitShort: normalizeRule(strategy.exitShort),
+    riskManagement: strategy.riskManagement,
+  };
+}
+
 interface StrategyPreviewProps {
   strategy: Strategy
 }
@@ -100,12 +133,15 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
     }
   }
 
+  // Use normalized strategy for preview rendering
+  const normalizedStrategy = normalizeStrategy(strategy);
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>{strategy.name}</CardTitle>
+            <CardTitle>{normalizedStrategy.name}</CardTitle>
             <Button onClick={saveStrategy} disabled={isSaving}>
               <Save className="mr-2 h-4 w-4" /> {isSaving ? "Saving..." : "Save Strategy"}
             </Button>
@@ -119,12 +155,12 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
             </TabsList>
             <TabsContent value="pine" className="mt-4">
               <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
-                <code>{generatePineScript(strategy)}</code>
+                <code>{generatePineScript(normalizedStrategy)}</code>
               </pre>
             </TabsContent>
             <TabsContent value="pseudocode" className="mt-4">
               <pre className="bg-muted p-4 rounded-lg overflow-x-auto whitespace-pre-wrap">
-                <code>{generatePseudocode(strategy)}</code>
+                <code>{generatePseudocode(normalizedStrategy)}</code>
               </pre>
             </TabsContent>
           </Tabs>

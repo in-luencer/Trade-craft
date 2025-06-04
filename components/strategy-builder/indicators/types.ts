@@ -61,8 +61,8 @@ export interface RiskManagement {
   stopLoss: RiskRule[]
   takeProfit: RiskRule[]
   trailingStop: RiskRule[]
-  timeExit: RiskRule[]
   positionSizing: RiskRule[]
+  timeExit: RiskRule[]
   maxOpenPositions: number
   maxDrawdown: number
   maxDailyLoss: number
@@ -80,4 +80,4 @@ export interface StrategyConfig {
   exitLong: PositionRule
   exitShort: PositionRule
   riskManagement: RiskManagement
-} 
+}

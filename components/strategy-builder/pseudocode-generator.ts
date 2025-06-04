@@ -235,10 +235,9 @@ Entry Rules:
     })
   }
 
-  // Indicators used
-  code += "\nIndicators Used:\n"
+  // Indicators used  code += "\nIndicators Used:\n"
   const indicators = collectIndicators(strategy)
-  if (indicators.length === 0) {
+  if (indicators.size === 0) {
     code += "- No indicators used\n"
   } else {
     indicators.forEach((indicator) => {

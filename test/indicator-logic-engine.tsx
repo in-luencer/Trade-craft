@@ -15,8 +15,8 @@ import { Slider } from "@/components/ui/slider"
 import { Card, CardContent } from "@/components/ui/card"
 import { HelpCircle } from "lucide-react"
 
-import type { IndicatorCondition } from "./strategy-builder"
-import indicatorMetadata from "./indicator-metadata"
+import type { IndicatorCondition, IndicatorType, IndicatorLogic } from "@/components/strategy-builder/types"
+import indicatorMetadata from "@/components/strategy-builder/indicator-metadata"
 
 interface IndicatorLogicEngineProps {
   condition: IndicatorCondition
@@ -42,8 +42,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
       })
     }
   }, [condition.indicator])
-
-  const handleIndicatorChange = (value: string) => {
+  const handleIndicatorChange = (value: IndicatorType) => {
     const newIndicator = indicatorMetadata[value]
     if (newIndicator) {
       const initialParams = Object.entries(newIndicator.parameters).reduce((acc: Record<string, any>, [key, param]) => ({
@@ -51,22 +50,22 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
         [key]: param.default
       }), {})
 
+      const defaultLogic = (newIndicator.defaultLogic || newIndicator.logicOptions[0].value) as IndicatorLogic
       onChange({
         ...condition,
         indicator: value,
-        logic: newIndicator.defaultLogic || newIndicator.logicOptions[0].value,
+        logic: defaultLogic,
         value: newIndicator.logicOptions[0]?.defaultValue?.toString() || "0",
         params: initialParams
       })
     }
   }
 
-  const handleLogicChange = (value: string) => {
+  const handleLogicChange = (value: IndicatorLogic) => {
     const newLogic = indicator?.logicOptions.find(opt => opt.value === value)
     onChange({
       ...condition,
       logic: value,
-      // Preserve the current value if it exists, otherwise use the new logic's default
       value: condition.value || newLogic?.defaultValue?.toString() || "0"
     })
   }

@@ -1,5 +1,53 @@
-import { Strategy } from "./types"
-import { collectIndicators, getIndicatorDisplayName, getIndicatorLogic } from "./utils"
+import type { StrategyConfig } from "@/components/strategy-builder/types"
+import { collectIndicators, getIndicatorDisplayName, getIndicatorLogic } from "@/components/strategy-builder/utils"
+
+export interface Strategy {
+  id: string;
+  name: string;
+  description: string;
+  riskManagement: {
+    positionSizing: Array<{
+      maxRisk: number;
+    }>;
+    stopLoss: Array<{
+      enabled: boolean;
+      type: string;
+      value: number;
+    }>;
+    takeProfit: Array<{
+      enabled: boolean;
+      type: string;
+      value: number;
+    }>;
+    trailingStop: Array<{
+      enabled: boolean;
+      type: string;
+      value: number;
+    }>;
+    maxOpenPositions: number;
+    maxDrawdown: number;
+  };
+  entryLong: {
+    conditionGroups: Array<{
+      conditions: Array<IndicatorCondition>;
+    }>;
+  };
+  entryShort: {
+    conditionGroups: Array<{
+      conditions: Array<IndicatorCondition>;
+    }>;
+  };
+  exitLong: {
+    conditionGroups: Array<{
+      conditions: Array<IndicatorCondition>;
+    }>;
+  };
+  exitShort: {
+    conditionGroups: Array<{
+      conditions: Array<IndicatorCondition>;
+    }>;
+  };
+}
 
 export function generatePseudocode(strategy: Strategy): string {
   let code = `Strategy: ${strategy.name}
@@ -71,4 +119,4 @@ Entry Rules:
   })
 
   return code
-} 
+}

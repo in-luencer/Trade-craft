@@ -1,8 +1,8 @@
-import type { StrategyConfig } from "./strategy-builder"
+import type { Strategy } from "./types"
 import { collectIndicators } from "./utils"
 import indicatorMetadata from "./indicator-metadata"
 
-export function generatePseudocode(strategy: StrategyConfig): string {
+export function generatePseudocode(strategy: Strategy): string {
   let code = `Strategy: ${strategy.name}
 Description: ${strategy.description}
 
@@ -238,7 +238,7 @@ Entry Rules:
   // Indicators used
   code += "\nIndicators Used:\n"
   const indicators = collectIndicators(strategy)
-  if (indicators.length === 0) {
+  if (indicators.size === 0) {
     code += "- No indicators used\n"
   } else {
     indicators.forEach((indicator) => {

@@ -1,7 +1,7 @@
-import type { StrategyConfig } from "./strategy-builder"
+import type { Strategy } from "./types"
 import { collectIndicators, getIndicatorParams, getIndicatorVariable } from "./utils"
 
-export function generatePineScript(strategy: StrategyConfig): string {
+export function generatePineScript(strategy: Strategy): string {
   let code = `//@version=5
 strategy("${strategy.name}", overlay=true, margin_long=100, margin_short=100)
 

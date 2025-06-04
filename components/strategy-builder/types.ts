@@ -31,8 +31,8 @@ export type IndicatorType =
   | "decreasing"
   | "bullish"
   | "bearish"
-//  | "overbought"
-//  | "oversold"
+  | "overbought"
+  | "oversold"
   | "center_cross_up"
   | "center_cross_down"
   | "zero_cross_up"
@@ -125,7 +125,26 @@ export type RiskManagementConfig = {
   }[]
   maxOpenPositions: number
   maxDrawdown: number
+  stopLoss?: StopLossConfig
+  takeProfit?: TakeProfitConfig
+  trailingStop?: TrailingStopConfig
 }
+
+export type StopLossConfig = {
+  type: "fixed" | "trailing" | "atr";
+  value: number; // Percentage or ATR multiplier
+};
+
+export type TakeProfitConfig = {
+  type: "fixed" | "risk_reward";
+  value: number; // Percentage or R:R ratio
+};
+
+export type TrailingStopConfig = {
+  type: "fixed" | "atr";
+  value: number; // Percentage or ATR multiplier
+  activation_price_delta?: number; // Optional: activate trailing stop only after price moves X% in favor
+};
 
 export type Strategy = {
   name: string

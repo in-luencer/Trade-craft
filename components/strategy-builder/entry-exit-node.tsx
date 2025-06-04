@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-import type { PositionRule, ConditionGroup, IndicatorCondition } from "./strategy-builder"
+import type { PositionRule, ConditionGroup, IndicatorCondition } from "./types"
 import IndicatorLogicEngine from "./indicator-logic-engine"
 
 interface EntryExitNodeProps {
@@ -38,6 +38,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
 
     onChange({
       ...positionRule,
+      id: positionRule.id,
       conditionGroups: [...positionRule.conditionGroups, newGroup],
     })
   }
@@ -45,6 +46,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
   const removeConditionGroup = (groupId: string) => {
     onChange({
       ...positionRule,
+      id: positionRule.id,
       conditionGroups: positionRule.conditionGroups.filter((group) => group.id !== groupId),
     })
   }
@@ -52,6 +54,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
   const updateConditionGroup = (groupId: string, updatedGroup: Partial<ConditionGroup>) => {
     onChange({
       ...positionRule,
+      id: positionRule.id,
       conditionGroups: positionRule.conditionGroups.map((group) =>
         group.id === groupId ? { ...group, ...updatedGroup } : group,
       ),
@@ -76,6 +79,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
 
     onChange({
       ...positionRule,
+      id: positionRule.id,
       conditionGroups: positionRule.conditionGroups.map((group) =>
         group.id === groupId
           ? {
@@ -90,6 +94,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
   const removeCondition = (groupId: string, conditionId: string) => {
     onChange({
       ...positionRule,
+      id: positionRule.id,
       conditionGroups: positionRule.conditionGroups.map((group) =>
         group.id === groupId
           ? {
@@ -104,6 +109,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
   const updateCondition = (groupId: string, conditionId: string, updatedCondition: Partial<IndicatorCondition>) => {
     onChange({
       ...positionRule,
+      id: positionRule.id,
       conditionGroups: positionRule.conditionGroups.map((group) =>
         group.id === groupId
           ? {

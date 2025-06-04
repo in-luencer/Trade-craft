@@ -17,38 +17,7 @@ import RiskManagement, { type RiskManagementConfig } from "@/components/strategy
 import StrategyPreview from "./strategy-preview"
 import { useStrategy } from "@/context/strategy-context"
 
-export type IndicatorCondition = {
-  id: string
-  indicator: string
-  parameter: string
-  logic: string
-  value: string
-  timeframe: string
-  params?: Record<string, any>
-}
-
-export type ConditionGroup = {
-  id: string
-  conditions: IndicatorCondition[]
-  operator: "and" | "or"
-}
-
-export type PositionRule = {
-  id: string
-  conditionGroups: ConditionGroup[]
-}
-
-export type StrategyConfig = {
-  id: string
-  name: string
-  description: string
-  entryLong: PositionRule
-  entryShort: PositionRule
-  exitLong: PositionRule
-  exitShort: PositionRule
-  riskManagement: RiskManagementConfig
-  isPublic?: boolean
-}
+import type { IndicatorCondition, ConditionGroup, PositionRule, StrategyConfig } from "./strategy-builder/types"
 
 const generateId = (prefix: string) => `${prefix}-${new Date().toISOString()}`
 
@@ -229,17 +198,46 @@ export default function StrategyBuilder() {
     return converted
   }
 
-  // Utility to deeply convert all risk rule arrays in a strategy config
+  function ensureConditionValues<T extends { value?: any }>(condition: T): T {
+    return {
+      ...condition,
+      value: condition.value !== undefined ? condition.value : "",
+    };
+  }
+
   function convertStrategyForPreview(strategy: StrategyConfig): StrategyConfig {
+    function mapConditionGroups(groups: ConditionGroup[]): ConditionGroup[] {
+      return groups.map(group => ({
+        ...group,
+        conditions: group.conditions.map(ensureConditionValues),
+      }));
+    }
     return {
       ...strategy,
+      id: strategy.id || generateId("strategy"),
+      entryLong: {
+        ...strategy.entryLong,
+        conditionGroups: mapConditionGroups(strategy.entryLong.conditionGroups),
+      },
+      entryShort: {
+        ...strategy.entryShort,
+        conditionGroups: mapConditionGroups(strategy.entryShort.conditionGroups),
+      },
+      exitLong: {
+        ...strategy.exitLong,
+        conditionGroups: mapConditionGroups(strategy.exitLong.conditionGroups),
+      },
+      exitShort: {
+        ...strategy.exitShort,
+        conditionGroups: mapConditionGroups(strategy.exitShort.conditionGroups),
+      },
       riskManagement: {
         ...strategy.riskManagement,
         stopLoss: strategy.riskManagement.stopLoss.map(convertRiskRuleStringsToNumbers),
         takeProfit: strategy.riskManagement.takeProfit.map(convertRiskRuleStringsToNumbers),
         trailingStop: strategy.riskManagement.trailingStop.map(convertRiskRuleStringsToNumbers),
         positionSizing: strategy.riskManagement.positionSizing.map(convertRiskRuleStringsToNumbers),
-        timeExit: strategy.riskManagement.timeExit.map(convertRiskRuleStringsToNumbers),
+        timeExit: strategy.riskManagement.timeExit?.map(convertRiskRuleStringsToNumbers) || [],
       },
     }
   }

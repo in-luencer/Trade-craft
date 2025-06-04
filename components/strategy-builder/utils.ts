@@ -1,4 +1,4 @@
-import type { IndicatorCondition, StrategyConfig } from "./strategy-builder" // Updated import
+import type { IndicatorCondition, StrategyConfig, Strategy } from "./types"
 import { DEFAULT_INDICATOR_PARAMS } from "./constants"
 
 export function getIndicatorVariable(condition: IndicatorCondition): string {
@@ -257,21 +257,20 @@ export function getIndicatorDisplayName(condition: IndicatorCondition): string {
   }
 }
 
-export function collectIndicators(strategy: StrategyConfig): Set<string> {
+export function collectIndicators(strategy: StrategyConfig | Strategy): Set<string> {
   const indicators = new Set<string>()
-
-  const collectFromRule = (positionRule: any) => {
-    positionRule.conditionGroups.forEach((group: any) => {
-      group.conditions.forEach((condition: any) => {
+  const addIndicators = (conditionGroups: Array<{conditions: Array<{indicator: string}>}>) => {
+    conditionGroups.forEach(group => {
+      group.conditions.forEach(condition => {
         indicators.add(condition.indicator)
       })
     })
   }
 
-  collectFromRule(strategy.entryLong)
-  collectFromRule(strategy.entryShort)
-  collectFromRule(strategy.exitLong)
-  collectFromRule(strategy.exitShort)
+  addIndicators(strategy.entryLong.conditionGroups)
+  addIndicators(strategy.entryShort.conditionGroups)
+  addIndicators(strategy.exitLong.conditionGroups)
+  addIndicators(strategy.exitShort.conditionGroups)
 
   return indicators
 }

@@ -17,38 +17,8 @@ import RiskManagement, { type RiskManagementConfig } from "./risk-management"
 import StrategyPreview from "./strategy-preview"
 import { useStrategy } from "@/context/strategy-context"
 
-export type IndicatorCondition = {
-  id: string
-  indicator: string
-  parameter: string
-  logic: string
-  value: string
-  timeframe: string
-  params?: Record<string, any>
-}
-
-export type ConditionGroup = {
-  id: string
-  conditions: IndicatorCondition[]
-  operator: "and" | "or"
-}
-
-export type PositionRule = {
-  id: string
-  conditionGroups: ConditionGroup[]
-}
-
-export type StrategyConfig = {
-  id: string // Added 'id' property
-  name: string
-  description: string
-  entryLong: PositionRule
-  entryShort: PositionRule
-  exitLong: PositionRule
-  exitShort: PositionRule
-  riskManagement: RiskManagementConfig
-  isPublic?: boolean
-}
+import type { IndicatorType, IndicatorLogic, BaseIndicatorCondition, ConditionGroup, PositionRule, StrategyConfig } from "./types"
+export type IndicatorCondition = BaseIndicatorCondition<IndicatorType>
 
 const generateId = (prefix: string) => `${prefix}-${new Date().toISOString()}`
 

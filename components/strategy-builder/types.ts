@@ -1,3 +1,5 @@
+import type { RiskManagementConfig, StopLossRule, TakeProfitRule, TrailingStopRule, PositionSizingRule, TimeExitRule } from "./risk-management"
+
 export type IndicatorType = 
   | "price"
   | "sma"
@@ -17,7 +19,6 @@ export type IndicatorType =
   | "momentum"
   | "custom"
 
-
   export type IndicatorLogic =
   | "crosses_above"
   | "crosses_below"
@@ -31,8 +32,11 @@ export type IndicatorType =
   | "decreasing"
   | "bullish"
   | "bearish"
-  | "overbought"
-  | "oversold"
+
+  |// "overbought"
+  | //"oversold"
+=======
+
   | "center_cross_up"
   | "center_cross_down"
   | "zero_cross_up"
@@ -49,6 +53,10 @@ export type IndicatorType =
   | "bearish_divergence"
   | "strong_trend"
   | "weak_trend"
+  | "> indicator"
+  | "< indicator"
+  | "crosses_above_indicator"
+  | "crosses_below_indicator"
   | "di_plus_above_di_minus"
   | "di_plus_below_di_minus"
   | "above_cloud"
@@ -68,55 +76,69 @@ export type IndicatorType =
 
 
 
-export type IndicatorParams = {
-  // Common parameters
-  source?: string
-  period?: number
-  
-  // MACD specific
-  fastPeriod?: number
-  slowPeriod?: number
-  signalPeriod?: number
-  
-  // Bollinger Bands specific
-  stdDev?: number
-  
-  // Stochastic specific
-  kPeriod?: number
-  dPeriod?: number
-  slowing?: number
-  
-  // SuperTrend specific
-  multiplier?: number
-  
-  // Ichimoku specific
-  conversionPeriod?: number
-  basePeriod?: number
-  laggingSpanPeriod?: number
-  displacement?: number
-  
-  // Custom indicator specific
-  formula?: string
+export interface IndicatorParam {
+  name: string;
+  type: 'number' | 'string' | 'boolean' | 'select';
+  default: any;
+  min?: number;
+  max?: number;
+  step?: number;
+  advanced?: boolean;
+  description?: string;
+  options?: Array<string | { label: string; value: string }>;
+  showIf?: (params: Record<string, any>) => boolean;
 }
 
-export type IndicatorCondition = {
-  id: string
-  indicator: IndicatorType
-  parameter: string
-  logic: IndicatorLogic
-  value: string | number
-  timeframe: string
-  params?: IndicatorParams
+export interface IndicatorParams {
+  [key: string]: IndicatorParam;
 }
 
-export type ConditionGroup = {
-  operator: "and" | "or"
-  conditions: IndicatorCondition[]
+export interface IndicatorMetadata {
+  name: string;
+  description: string;
+  parameters: IndicatorParams;
+  defaultLogic?: IndicatorLogic;
+  logicOptions: Array<{
+    value: IndicatorLogic;
+    label: string;
+    description?: string;
+    customInput?: boolean;
+    inputLabel?: string;
+    valueType?: 'number' | 'string';
+    defaultValue?: string | number;
+    min?: number;
+    max?: number;
+    step?: number;
+    logicParams?: Record<string, IndicatorParam>;
+  }>;
 }
 
-export type PositionRule = {
-  conditionGroups: ConditionGroup[]
+export interface BaseIndicatorCondition<T extends string = string> {
+  indicator: T;
+  logic: IndicatorLogic;
+  value?: string;
+  params?: Record<string, any>;
+  id?: string;
+  parameter?: string;
+  timeframe?: string;
 }
+
+export interface IndicatorCondition {
+  id: string;
+  indicator: IndicatorType;
+  logic: IndicatorLogic;
+  value: string | number;
+  params?: Record<string, any>;
+  parameter?: string;
+  timeframe?: string;
+}
+
+export interface ConditionGroup {
+  id: string;
+  operator: "and" | "or";
+  conditions: IndicatorCondition[];
+}
+
 
 export type RiskManagementConfig = {
   positionSizing: {
@@ -155,3 +177,21 @@ export type Strategy = {
   exitShort: PositionRule
   riskManagement: RiskManagementConfig
 } 
+=======
+export interface PositionRule {
+  id: string;
+  conditionGroups: ConditionGroup[];
+}
+
+export interface StrategyConfig {
+  id: string;
+  name: string;
+  description: string;
+  isPublic?: boolean;
+  entryLong: PositionRule;
+  entryShort: PositionRule;
+  exitLong: PositionRule;
+  exitShort: PositionRule;
+  riskManagement: RiskManagementConfig;
+}
+

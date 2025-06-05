@@ -28,8 +28,10 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
           params: {
             period: 14,
             source: "close",
-            overbought: 70,
-            oversold: 30,
+
+           // overbought: 70,
+            //oversold: 30,
+
           },
         },
       ],
@@ -69,8 +71,10 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
       params: {
         period: 14,
         source: "close",
-        overbought: 70,
-        oversold: 30,
+
+     //   overbought: 70,
+       // oversold: 30,
+
       },
     }
 
@@ -151,7 +155,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
                         <div className="flex-1 flex justify-center">
                           <Select
                             value={group.operator}
-                            onValueChange={(value) =>
+                            onValueChange={(value:any) =>
                               updateConditionGroup(group.id, { operator: value as "and" | "or" })
                             }
                           >

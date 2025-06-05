@@ -62,8 +62,10 @@ const defaultCondition: IndicatorCondition = {
   params: {
     period: 14,
     source: "close",
-    overbought: 70,
-    oversold: 30,
+
+    //overbought: 70,
+    //oversold: 30,
+
   },
 }
 
@@ -138,6 +140,8 @@ const apiClient = {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(strategy),
+      
+
       })
 
       if (!response.ok) {

@@ -334,7 +334,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         description: "Number of bars used in calculation",
-
+        
       },
       source: {
         name: "Source",
@@ -351,7 +351,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         ],
         description: "Price data point to use in calculation",
       },
-
     },
     logicOptions: [
       
@@ -683,7 +682,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         description: "Slowing period",
       },
-
     overbought: {
        name: "Overbought Level",
         type: "number",
@@ -702,7 +700,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         description: "Level considered oversold",
      },
-
     },
     logicOptions: [
       

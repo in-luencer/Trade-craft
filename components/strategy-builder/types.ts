@@ -17,7 +17,10 @@ export type IndicatorType =
   | "momentum"
   | "custom"
 
-export type IndicatorLogic =
+
+
+  export type IndicatorLogic =
+
   | "crosses_above"
   | "crosses_below"
   | "greater_than"
@@ -30,8 +33,10 @@ export type IndicatorLogic =
   | "decreasing"
   | "bullish"
   | "bearish"
-  | "overbought"
-  | "oversold"
+
+| "overbought"
+ | "oversold"
+
   | "center_cross_up"
   | "center_cross_down"
   | "zero_cross_up"
@@ -64,6 +69,10 @@ export type IndicatorLogic =
   | "above_average"
   | "below_average"
   | "spike"
+
+
+
+
 
 export type IndicatorParams = {
   // Common parameters
@@ -132,41 +141,6 @@ export type Strategy = {
   exitLong: PositionRule
   exitShort: PositionRule
   riskManagement: RiskManagementConfig
-}
 
-// For compatibility with string indicator keys in builder.tsx
-export type AnyIndicatorCondition = {
-  id: string;
-  indicator: string;
-  parameter: string;
-  logic: string;
-  value: string | number;
-  timeframe: string;
-  params?: Record<string, any>;
-};
+} 
 
-export type AnyConditionGroup = {
-  id?: string;
-  operator: "and" | "or";
-  conditions: AnyIndicatorCondition[];
-};
-
-export type AnyPositionRule = {
-  id?: string;
-  conditionGroups: AnyConditionGroup[];
-};
-
-export type AnyStrategy = {
-  id?: string;
-  name: string;
-  description: string;
-  entryLong: AnyPositionRule;
-  entryShort: AnyPositionRule;
-  exitLong: AnyPositionRule;
-  exitShort: AnyPositionRule;
-  riskManagement: any;
-  isPublic?: boolean;
-};
-
-// Re-export StrategyConfig from strategy-builder.tsx for use in other modules
-export type { StrategyConfig } from "../strategy-builder";

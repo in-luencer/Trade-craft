@@ -1,4 +1,4 @@
-import { StrategyConfig } from '../types'
+import { StrategyConfig } from '../strategy-builder'
 import { getIndicatorVariable, getIndicatorLogic } from './utils'
 import { INDICATOR_CONFIGS } from './constants'
 

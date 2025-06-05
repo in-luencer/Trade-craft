@@ -1,7 +1,7 @@
-import { Strategy } from "./types"
+import type { StrategyConfig } from "./strategy-builder"
 import { collectIndicators, getIndicatorParams, getIndicatorVariable } from "./utils"
 
-export function generatePineScript(strategy: Strategy): string {
+export function generatePineScript(strategy: StrategyConfig): string {
   let code = `//@version=5
 strategy("${strategy.name}", overlay=true, margin_long=100, margin_short=100)
 
@@ -317,8 +317,8 @@ function getIndicatorLogic(condition: any): string {
     turns_down: "turns down",
     above_average: "above average",
     below_average: "below average",
-    spike: "shows spike"
+    spike: "shows spike",
   }
 
   return `${getIndicatorVariable(condition)} ${logicMap[logic] || logic} ${value}`
-} 
+}

@@ -62,8 +62,10 @@ const defaultCondition: IndicatorCondition = {
   params: {
     period: 14,
     source: "close",
-    overbought: 70,
-    oversold: 30,
+
+    //overbought: 70,
+   // oversold: 30,
+
   },
 }
 
@@ -336,10 +338,13 @@ export default function StrategyBuilder() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="builder">Entry/Exit Rules</TabsTrigger>
           <TabsTrigger value="risk">Risk Management</TabsTrigger>
-          <TabsTrigger value="preview">Preview</TabsTrigger>
+          
+       {/*   <TabsTrigger value="preview">Preview</TabsTrigger> */  }
+
         </TabsList>
 
         <TabsContent value="builder" className="space-y-6">
@@ -406,9 +411,11 @@ export default function StrategyBuilder() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="preview">
+
+       <TabsContent value="preview">
           <StrategyPreview strategy={strategyForPreview} />
-        </TabsContent>
+        </TabsContent> 
+
       </Tabs>
 
       <Button onClick={saveStrategy} className="w-full mb-4" disabled={isSaving}>

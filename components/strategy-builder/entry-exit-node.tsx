@@ -150,32 +150,40 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
                       onRemove={() => removeCondition(group.id, condition.id)}
                     />
 
-                    <div className="flex justify-between items-center">
-                      {conditionIndex < group.conditions.length - 1 && (
-                        <div className="flex-1 flex justify-center">
+                    {/* Only show the timeframe and add button for the last condition in the group */}
+                    {conditionIndex === group.conditions.length - 1 && (
+                      <div className="flex justify-between items-center">
+                        <div className="space-y-4">
+                          <h4 className="font-medium">Timeframe</h4>
                           <Select
-                            value={group.operator}
-                            onValueChange={(value:any) =>
-                              updateConditionGroup(group.id, { operator: value as "and" | "or" })
+                            value={condition.timeframe}
+                            onValueChange={(value: string) =>
+                              updateCondition(group.id, condition.id, { timeframe: value })
                             }
                           >
-                            <SelectTrigger className="w-24">
+                            <SelectTrigger className="w-32">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="and">AND</SelectItem>
-                              <SelectItem value="or">OR</SelectItem>
+                              <SelectItem value="1m">1 Minute</SelectItem>
+                              <SelectItem value="5m">5 Minutes</SelectItem>
+                              <SelectItem value="15m">15 Minutes</SelectItem>
+                              <SelectItem value="30m">30 Minutes</SelectItem>
+                              <SelectItem value="45m">45 Minutes</SelectItem>
+                              <SelectItem value="1h">1 Hour</SelectItem>
+                              <SelectItem value="2h">2 Hours</SelectItem>
+                              <SelectItem value="4h">4 Hours</SelectItem>
+                              <SelectItem value="1d">1 Day</SelectItem>
+                              <SelectItem value="1w">1 Week</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
-                      )}
 
-                      {conditionIndex === group.conditions.length - 1 && (
                         <Button variant="outline" size="sm" onClick={() => addCondition(group.id)} className="ml-auto">
                           <Plus className="h-4 w-4 mr-2" /> Add Condition
                         </Button>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

@@ -404,7 +404,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                 condition.indicator !== "wma" &&
                 condition.indicator !== "hma" && (
                   <div className="space-y-2">
-                    <h1>RSI</h1>
+                   
                     <Label>{selectedLogic.inputLabel || "Custom Value"}</Label>
                     <Input
                       type={selectedLogic.valueType === "number" ? "number" : "text"}

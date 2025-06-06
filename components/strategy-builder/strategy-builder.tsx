@@ -251,47 +251,41 @@ export default function StrategyBuilder() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Strategy Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="strategy-name">Strategy Name</Label>
-              <Input
-                id="strategy-name"
-                value={strategy.name}
-                onChange={(e) => updateStrategy({ name: e.target.value })}
-                placeholder="Enter strategy name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="strategy-description">Description</Label>
-              <Textarea
-                id="strategy-description"
-                value={strategy.description}
-                onChange={(e) => updateStrategy({ description: e.target.value })}
-                placeholder="Describe your strategy"
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="public-strategy">Make Strategy Public</Label>
-                <p className="text-sm text-muted-foreground">
-                  Public strategies appear in the templates for other users
-                </p>
-              </div>
-              <Switch
-                id="public-strategy"
-                checked={strategy.isPublic || false}
-                onCheckedChange={(checked) => updateStrategy({ isPublic: checked })}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+      <div className="w-full sm:w-1/2">
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="text-base sm:text-lg font-bold">Entry Rules</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EntryExitNode
+              positionRule={strategy.entryLong}
+              onChange={(updatedRule) => updateStrategy({ entryLong: updatedRule })}
+            />
+            <EntryExitNode
+              positionRule={strategy.entryShort}
+              onChange={(updatedRule) => updateStrategy({ entryShort: updatedRule })}
+            />
+          </CardContent>
+        </Card>
+      </div>
+      <div className="w-full sm:w-1/2">
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="text-base sm:text-lg font-bold">Exit Rules</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EntryExitNode
+              positionRule={strategy.exitLong}
+              onChange={(updatedRule) => updateStrategy({ exitLong: updatedRule })}
+            />
+            <EntryExitNode
+              positionRule={strategy.exitShort}
+              onChange={(updatedRule) => updateStrategy({ exitShort: updatedRule })}
+            />
+          </CardContent>
+        </Card>
+      </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">

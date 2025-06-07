@@ -6,16 +6,13 @@ import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
 
 import EntryExitNode from "./entry-exit-node"
 import RiskManagement, { type RiskManagementConfig } from "./risk-management"
 import StrategyPreview from "./strategy-preview"
 import { useStrategy } from "@/context/strategy-context"
+import StrategyJsonExporter from "./strategy-json-exporter"
 
 export type IndicatorCondition = {
   id: string
@@ -30,7 +27,7 @@ export type IndicatorCondition = {
 export type ConditionGroup = {
   id: string
   conditions: IndicatorCondition[]
-  operator: "and" | "or"
+  operator: "or"
 }
 
 export type PositionRule = {
@@ -62,6 +59,7 @@ const defaultCondition: IndicatorCondition = {
   params: {
     period: 14,
     source: "close",
+
     //overbought: 70,
     //oversold: 30,
   },
@@ -70,7 +68,7 @@ const defaultCondition: IndicatorCondition = {
 const defaultConditionGroup: ConditionGroup = {
   id: generateId("group"),
   conditions: [{ ...defaultCondition, id: generateId("condition") }],
-  operator: "and",
+  operator: "or",
 }
 
 const defaultPositionRule: PositionRule = {
@@ -119,7 +117,7 @@ const defaultRiskManagement: RiskManagementConfig = {
 const defaultStrategy: StrategyConfig = {
   id: generateId("strategy"),
   name: "My Trading Strategy",
-  description: "A simple trading strategy based on technical indicators",
+  description: "A comprehensive trading strategy with independent indicator values",
   entryLong: { ...defaultPositionRule, id: generateId("entry-long") },
   entryShort: { ...defaultPositionRule, id: generateId("entry-short") },
   exitLong: { ...defaultPositionRule, id: generateId("exit-long") },
@@ -138,8 +136,6 @@ const apiClient = {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(strategy),
-      
-        
       })
 
       if (!response.ok) {
@@ -208,7 +204,48 @@ export default function StrategyBuilder() {
       // Generate a new ID if one doesn't exist
       const strategyWithId = {
         ...strategy,
-        id: strategy.id || generateId("strategy")
+        id: strategy.id || generateId("strategy"),
+        // Ensure all condition parameters are properly structured
+        entryLong: {
+          ...strategy.entryLong,
+          conditionGroups: strategy.entryLong.conditionGroups.map((group) => ({
+            ...group,
+            conditions: group.conditions.map((condition) => ({
+              ...condition,
+              params: condition.params || {},
+            })),
+          })),
+        },
+        entryShort: {
+          ...strategy.entryShort,
+          conditionGroups: strategy.entryShort.conditionGroups.map((group) => ({
+            ...group,
+            conditions: group.conditions.map((condition) => ({
+              ...condition,
+              params: condition.params || {},
+            })),
+          })),
+        },
+        exitLong: {
+          ...strategy.exitLong,
+          conditionGroups: strategy.exitLong.conditionGroups.map((group) => ({
+            ...group,
+            conditions: group.conditions.map((condition) => ({
+              ...condition,
+              params: condition.params || {},
+            })),
+          })),
+        },
+        exitShort: {
+          ...strategy.exitShort,
+          conditionGroups: strategy.exitShort.conditionGroups.map((group) => ({
+            ...group,
+            conditions: group.conditions.map((condition) => ({
+              ...condition,
+              params: condition.params || {},
+            })),
+          })),
+        },
       }
 
       // Store strategy data in context
@@ -224,6 +261,10 @@ export default function StrategyBuilder() {
         positionRule.conditionGroups.forEach((group) => {
           group.conditions.forEach((condition) => {
             indicators.add(condition.indicator)
+            // Also collect secondary indicators from crossover logic
+            if (condition.params?.secondary_indicator) {
+              indicators.add(condition.params.secondary_indicator)
+            }
           })
         })
       }
@@ -249,53 +290,48 @@ export default function StrategyBuilder() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Strategy Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="strategy-name">Strategy Name</Label>
-              <Input
-                id="strategy-name"
-                value={strategy.name}
-                onChange={(e) => updateStrategy({ name: e.target.value })}
-                placeholder="Enter strategy name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="strategy-description">Description</Label>
-              <Textarea
-                id="strategy-description"
-                value={strategy.description}
-                onChange={(e) => updateStrategy({ description: e.target.value })}
-                placeholder="Describe your strategy"
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="public-strategy">Make Strategy Public</Label>
-                <p className="text-sm text-muted-foreground">
-                  Public strategies appear in the templates for other users
-                </p>
-              </div>
-              <Switch
-                id="public-strategy"
-                checked={strategy.isPublic || false}
-                onCheckedChange={(checked) => updateStrategy({ isPublic: checked })}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+      <div className="w-full sm:w-1/2">
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="text-base sm:text-lg font-bold">Entry Rules</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EntryExitNode
+              positionRule={strategy.entryLong}
+              onChange={(updatedRule) => updateStrategy({ entryLong: updatedRule })}
+            />
+            <EntryExitNode
+              positionRule={strategy.entryShort}
+              onChange={(updatedRule) => updateStrategy({ entryShort: updatedRule })}
+            />
+          </CardContent>
+        </Card>
+      </div>
+      <div className="w-full sm:w-1/2">
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="text-base sm:text-lg font-bold">Exit Rules</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EntryExitNode
+              positionRule={strategy.exitLong}
+              onChange={(updatedRule) => updateStrategy({ exitLong: updatedRule })}
+            />
+            <EntryExitNode
+              positionRule={strategy.exitShort}
+              onChange={(updatedRule) => updateStrategy({ exitShort: updatedRule })}
+            />
+          </CardContent>
+        </Card>
+      </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="builder">Entry/Exit Rules</TabsTrigger>
           <TabsTrigger value="risk">Risk Management</TabsTrigger>
           <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsTrigger value="json">JSON Export</TabsTrigger>
         </TabsList>
 
         <TabsContent value="builder" className="space-y-6">
@@ -362,8 +398,13 @@ export default function StrategyBuilder() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="preview">
+        <TabsContent value="preview" className="space-y-6">
           <StrategyPreview strategy={strategy} />
+          <StrategyJsonExporter strategy={strategy} />
+        </TabsContent>
+
+        <TabsContent value="json">
+          <StrategyJsonExporter strategy={strategy} />
         </TabsContent>
       </Tabs>
 

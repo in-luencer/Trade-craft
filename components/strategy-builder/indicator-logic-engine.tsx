@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -76,19 +75,19 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
       setIsInitialized(false) // Reset initialization for new indicator
     }
   }
-
   const handleLogicChange = (value: string) => {
     const newLogic = indicator?.logicOptions.find((opt) => opt.value === value)
+    // Always use our dedicated 'value' property, not a shared sync via params[syncKey]
     onChange({
       ...condition,
       logic: value,
-      value: condition.value || newLogic?.defaultValue?.toString() || "0",
+      value: newLogic?.defaultValue?.toString() || "0", // Always reset to the new logic's default value if changing
     })
   }
 
   const handleValueChange = (value: string) => {
     const numericValue = Number(value)
-    if (!isNaN(numericValue) && numericValue >= 0 && numericValue <= 100) {
+    if (!isNaN(numericValue)) {
       onChange({
         ...condition,
         value: numericValue.toString(),
@@ -112,11 +111,8 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
 
     const updatedParams = {
       ...condition.params,
-      [paramName]: value,
-      // If setting secondary indicator, ensure default period
-      ...(paramName === "indicator" && !condition.params?.crossPeriod
-        ? { crossPeriod: indicatorMetadata[value]?.parameters?.period?.default || 50 }
-        : {}),
+      // Use prefixed parameter names for secondary indicators to avoid conflicts
+      [`secondary_${paramName}`]: value,
     }
 
     onChange({
@@ -140,7 +136,6 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
               <div className="space-y-4">
                 <h3 className="text-sm font-bold">Select Indicator</h3>
 
-                
                 <Select value={condition.indicator} onValueChange={handleIndicatorChange}>
                   <SelectTrigger className="w-[200px]">
                     <SelectValue />
@@ -398,37 +393,49 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
               )}
 
               {/* Additional Input for Custom Logic */}
-              {selectedLogic?.customInput &&
-                condition.indicator !== "sma" &&
-                condition.indicator !== "ema" &&
-                condition.indicator !== "wma" &&
-                condition.indicator !== "hma" && (
-                  <div className="space-y-2">
-                    <h1>RSI</h1>
-                    <Label>{selectedLogic.inputLabel || "Custom Value"}</Label>
-                    <Input
-                      type={selectedLogic.valueType === "number" ? "number" : "text"}
-                      value={condition.value || selectedLogic.defaultValue || ""}
-                      onChange={(e) => handleValueChange(e.target.value)}
-                      min={selectedLogic.min}
-                      max={selectedLogic.max}
-                      step={selectedLogic.step}
-                    />
+              {selectedLogic?.customInput && condition.indicator !== "vwma" && (
+                <div className="space-y-2">
+                  <Label>{selectedLogic.inputLabel || "Custom Value"}</Label>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <Input
+                        type={selectedLogic.valueType === "number" ? "number" : "text"}
+                        value={condition.value || selectedLogic.defaultValue || ""}
+                        onChange={(e) => handleValueChange(e.target.value)}
+                        min={selectedLogic.min}
+                        max={selectedLogic.max}
+                        step={selectedLogic.step}
+                        className="w-full"
+                      />
+                      <span className="text-xs text-muted-foreground ml-2 w-12 text-right">
+                        {condition.value || selectedLogic.defaultValue || ""}
+                      </span>
+                    </div>
+                    {selectedLogic.min !== undefined && selectedLogic.max !== undefined && (
+                      <Slider
+                        value={[Number(condition.value || selectedLogic.defaultValue || 0)]}
+                        min={selectedLogic.min}
+                        max={selectedLogic.max}
+                        step={selectedLogic.step}
+                        onValueChange={(values) => handleValueChange(values[0].toString())}
+                      />
+                    )}
                   </div>
-                )}
+                </div>
+              )}
             </div>
 
             {/* Secondary Indicator Parameters for Custom Logic */}
             {selectedLogic?.customInput && selectedLogic?.logicParams && (
               <div className="space-y-4 mt-4">
-                <h3 className="text-sm font-medium">Additional Parameters</h3>
+                <h3 className="text-sm font-medium">Secondary Indicator Parameters</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {Object.entries(selectedLogic.logicParams).map(([key, param]) => (
                     <div key={key} className="space-y-2">
                       <Label>{param.name}</Label>
                       {param.type === "select" ? (
                         <Select
-                          value={condition.params?.[key] || param.default}
+                          value={condition.params?.[`secondary_${key}`] || param.default}
                           onValueChange={(value) => handleLogicParamChange(key, value)}
                         >
                           <SelectTrigger>
@@ -436,28 +443,38 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                           </SelectTrigger>
                           <SelectContent>
                             {param.options?.map((option) => (
-                             
-                              <SelectItem key={option.value} value={option.value}
-                                 
-                              >
+                              <SelectItem key={option.value} value={option.value}>
                                 {option.label}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                      ) : 
-                      (
-                       <div className="">
-                        <Input
-                          type="number"
-                          value={condition.params?.[key] || param.default}
-                          onChange={(e) => handleLogicParamChange(key, Number(e.target.value))}
-                          min={param.min}
-                          max={param.max}
-                          step={param.step}
-
-                        
-                        />  </div>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center justify-between">
+                            <Input
+                              type="number"
+                              value={condition.params?.[`secondary_${key}`] || param.default}
+                              onChange={(e) => handleLogicParamChange(key, Number(e.target.value))}
+                              min={param.min}
+                              max={param.max}
+                              step={param.step}
+                              className="w-full"
+                            />
+                            <span className="text-xs text-muted-foreground ml-2 w-12 text-right">
+                              {condition.params?.[`secondary_${key}`] || param.default}
+                            </span>
+                          </div>
+                          {param.min !== undefined && param.max !== undefined && (
+                            <Slider
+                              value={[Number(condition.params?.[`secondary_${key}`] || param.default)]}
+                              min={param.min}
+                              max={param.max}
+                              step={param.step}
+                              onValueChange={(values) => handleLogicParamChange(key, values[0])}
+                            />
+                          )}
+                        </div>
                       )}
                     </div>
                   ))}

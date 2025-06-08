@@ -317,6 +317,61 @@ export default function StrategyBuilder() {
     }
   }
 
+  // Utility to deeply convert all risk rule arrays in a strategy config
+  function convertStrategyForPreview(strategy: StrategyConfig): any {
+    // Convert all .value fields to string|number, never undefined
+    function fixConditionValue(condition: any) {
+      return {
+        ...condition,
+        value: condition.value === undefined ? "" : condition.value,
+      }
+    }
+    function fixGroup(group: any) {
+      return {
+        ...group,
+        conditions: group.conditions.map(fixConditionValue),
+      }
+    }
+    function fixRule(rule: any) {
+      return {
+        ...rule,
+        conditionGroups: rule.conditionGroups.map(fixGroup),
+      }
+    }
+    // Convert positionSizing to RiskRule[] for preview compatibility
+    function fixRiskManagement(rm: any) {
+      return {
+        ...rm,
+        positionSizing: (rm.positionSizing || []).map((ps: any) => ({
+          ...ps,
+          // Remove fields not in RiskRule
+          id: ps.id,
+          enabled: ps.enabled,
+          type: ps.type,
+          value: ps.value,
+          maxRisk: ps.maxRisk,
+          equityPercentage: ps.equityPercentage,
+          riskPerTrade: ps.riskPerTrade,
+          winRate: ps.winRate,
+          payoffRatio: ps.payoffRatio,
+          optimalFraction: ps.optimalFraction,
+          volatilityPeriod: ps.volatilityPeriod,
+          volatilityMultiplier: ps.volatilityMultiplier,
+          martingaleFactor: ps.martingaleFactor,
+          customFormula: ps.customFormula,
+        })),
+      }
+    }
+    return {
+      ...strategy,
+      entryLong: fixRule(strategy.entryLong),
+      entryShort: fixRule(strategy.entryShort),
+      exitLong: fixRule(strategy.exitLong),
+      exitShort: fixRule(strategy.exitShort),
+      riskManagement: fixRiskManagement(strategy.riskManagement),
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
       <div className="w-full sm:w-1/2">

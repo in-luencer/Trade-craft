@@ -1,8 +1,9 @@
 import { StrategyConfig } from '../types'
 import { getIndicatorVariable, getIndicatorLogic } from './utils'
 import { INDICATOR_CONFIGS } from './constants'
+import type { RiskManagementConfig } from '../risk-management'
 
-export function generatePineScript(strategy: StrategyConfig): string {
+export function generatePineScript(strategy: StrategyConfig & { riskManagement: any }): string {
   let code = `//@version=5
 strategy("${strategy.name}", overlay=true, margin_long=100, margin_short=100)
 
@@ -95,26 +96,27 @@ function generateConditionCode(positionRule: any): string {
 
 function generateRiskManagement(strategy: StrategyConfig): string {
   let code = '\n// Risk Management\n'
+  const risk = strategy.riskManagement as any;
 
   // Stop Loss
-  if (strategy.riskManagement.stopLoss.length > 0) {
-    const stopLoss = strategy.riskManagement.stopLoss.find((sl) => sl.enabled)
+  if (risk.stopLoss && risk.stopLoss.length > 0) {
+    const stopLoss = risk.stopLoss.find((sl: any) => sl.enabled)
     if (stopLoss) {
       code += generateStopLossCode(stopLoss)
     }
   }
 
   // Take Profit
-  if (strategy.riskManagement.takeProfit.length > 0) {
-    const takeProfit = strategy.riskManagement.takeProfit.find((tp) => tp.enabled)
+  if (risk.takeProfit && risk.takeProfit.length > 0) {
+    const takeProfit = risk.takeProfit.find((tp: any) => tp.enabled)
     if (takeProfit) {
       code += generateTakeProfitCode(takeProfit)
     }
   }
 
   // Trailing Stop
-  if (strategy.riskManagement.trailingStop.length > 0) {
-    const trailingStop = strategy.riskManagement.trailingStop.find((ts) => ts.enabled)
+  if (risk.trailingStop && risk.trailingStop.length > 0) {
+    const trailingStop = risk.trailingStop.find((ts: any) => ts.enabled)
     if (trailingStop) {
       code += generateTrailingStopCode(trailingStop)
     }
@@ -266,4 +268,4 @@ function generatePlots(indicators: Set<string>): string {
   })
 
   return code
-} 
+}

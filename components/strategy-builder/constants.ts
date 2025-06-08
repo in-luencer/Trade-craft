@@ -71,8 +71,7 @@ export const INDICATORS: Record<IndicatorType, {
     name: "Stochastic Oscillator",
     parameters: ["k", "d"],
     logics: [
-      "crosses_above", "crosses_below", "greater_than", "less_than", "equals",
-      "overbought", "oversold", "enters_overbought", "exits_overbought",
+      "crosses_above", "crosses_below", "greater_than", "less_than", "equals","enters_overbought", "exits_overbought",
       "enters_oversold", "exits_oversold", "center_cross_up", "center_cross_down"
     ]
   },
@@ -120,6 +119,66 @@ export const INDICATORS: Record<IndicatorType, {
     name: "Custom Indicator",
     parameters: ["value"],
     logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  vwma: {
+    name: "Volume Weighted Moving Average",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  williams_r: {
+    name: "Williams %R",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "enters_overbought", "exits_overbought", "enters_oversold", "exits_oversold"]
+  },
+  bollinger_b: {
+    name: "Bollinger Bands %B",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  parabolic_sar: {
+    name: "Parabolic SAR",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals" ]
+  },
+  dpo: {
+    name: "Detrended Price Oscillator",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  ppo: {
+    name: "Percentage Price Oscillator",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  cmo: {
+    name: "Chande Momentum Oscillator",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  trix: {
+    name: "TRIX",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  keltner: {
+    name: "Keltner Channel",
+    parameters: ["upper", "middle", "lower"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "inside", "outside"]
+  },
+  roc: {
+    name: "Rate of Change",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  awesome: {
+    name: "Awesome Oscillator",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  cci: {
+    name: "Commodity Channel Index",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
   }
 }
 
@@ -133,10 +192,19 @@ export const DEFAULT_INDICATOR_PARAMS: Record<IndicatorType, any> = {
   ema: { period: 20, source: "close" },
   wma: { period: 20, source: "close" },
   hma: { period: 20, source: "close" },
-  vwap: {},
-  rsi: { period: 14, source: "close" },
-  macd: { fastPeriod: 12, slowPeriod: 26, signalPeriod: 9, source: "close" },
-  bollinger: { period: 20, stdDev: 2, source: "close" },
+  vwap: { source: "close" },
+  vwma: { period: 20, source: "close" },
+  williams_r: { period: 14, source: "close" },
+  bollinger_b: { period: 20, stdDev: 2, source: "close" },
+  parabolic_sar: { acceleration: 0.02, maxAcceleration: 0.2 },
+  dpo: { period: 20, source: "close" },
+  ppo: { fastPeriod: 12, slowPeriod: 26, signalPeriod: 9, source: "close" },
+  cmo: { period: 14, source: "close" },
+  trix: { period: 15, source: "close" },
+  keltner: { period: 20, multiplier: 2, source: "close" },
+  roc: { period: 12, source: "close" },
+  awesome: { fastPeriod: 5, slowPeriod: 34 },
+  cci: { period: 20, source: "close" },
   atr: { period: 14 },
   stochastic: { kPeriod: 14, dPeriod: 3, slowing: 3 },
   adx: { period: 14 },
@@ -144,5 +212,8 @@ export const DEFAULT_INDICATOR_PARAMS: Record<IndicatorType, any> = {
   ichimoku: { conversionPeriod: 9, basePeriod: 26, laggingSpanPeriod: 52, displacement: 26 },
   volume: {},
   momentum: { period: 10, source: "close" },
+  rsi: { period: 14, source: "close" },
+  macd: { fastPeriod: 12, slowPeriod: 26, signalPeriod: 9, source: "close" },
+  bollinger: { period: 20, stdDev: 2, source: "close" },
   custom: { formula: "sma(close, 20) + atr(14) * 2" }
-} 
+}

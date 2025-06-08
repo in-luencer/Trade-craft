@@ -304,21 +304,14 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {param.options?.map((option) => {
-                                if (typeof option === "string") {
-                                  return (
-                                    <SelectItem key={option} value={option}>
-                                      {option}
-                                    </SelectItem>
-                                  );
-                                } else {
-                                  return (
-                                    <SelectItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </SelectItem>
-                                  );
-                                }
-                              })}
+                              {param.options?.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         ) : param.type === "number" ? (
@@ -404,21 +397,11 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {param.options?.map((option) => {
-                                if (typeof option === "string") {
-                                  return (
-                                    <SelectItem key={option} value={option}>
-                                      {option}
-                                    </SelectItem>
-                                  );
-                                } else {
-                                  return (
-                                    <SelectItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </SelectItem>
-                                  );
-                                }
-                              })}
+                              {param.options?.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         ) : param.type === "number" ? (
@@ -577,21 +560,11 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {param.options?.map((option) => {
-                                if (typeof option === "string") {
-                                  return (
-                                    <SelectItem key={option} value={option}>
-                                      {option}
-                                    </SelectItem>
-                                  );
-                                } else {
-                                  return (
-                                    <SelectItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </SelectItem>
-                                  );
-                                }
-                              })}
+                              {param.options?.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         ) : param.type === "number" ? (

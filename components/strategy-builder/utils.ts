@@ -1,4 +1,4 @@
-import type { IndicatorCondition, StrategyConfig } from "./types" // Updated import
+import type { IndicatorCondition, StrategyConfig } from "./strategy-builder" // Updated import
 import { DEFAULT_INDICATOR_PARAMS } from "./constants"
 
 export function getIndicatorVariable(condition: IndicatorCondition): string {
@@ -70,24 +70,44 @@ export function getIndicatorVariable(condition: IndicatorCondition): string {
 export function getIndicatorLogic(condition: IndicatorCondition): string {
   const indicator = condition.indicator
   const logic = condition.logic
-  const value = condition.value as string | number | undefined;
+  const value = condition.value
   const params = condition.params || {}
 
-  // Handle cross-indicator logic only for valid IndicatorLogic values
+  // Handle crossover/crossunder between indicators - UPDATED to use crossPeriod
+  if (logic === "> indicator" || logic === "< indicator") {
+    const logicDescription = logic === "> indicator" ? "crosses above" : "crosses below"
+
+    // Get secondary indicator info from params - try both crossPeriod and period
+    const secondaryIndicator = params.indicator
+    const secondaryPeriod = params.crossPeriod || params.period
+
+    if (secondaryIndicator && secondaryPeriod) {
+      const secondaryDisplayName = `${secondaryIndicator.toUpperCase()}(${secondaryPeriod})`
+      return `${logicDescription} ${secondaryDisplayName}`
+    }
+  }
+
+  // Handle alternative cross indicator logic formats
+  if (logic === "crosses_above_indicator" || logic === "crosses_below_indicator") {
+    const logicDescription = logic === "crosses_above_indicator" ? "crosses above" : "crosses below"
+
+    // Get secondary indicator info from params - try both crossPeriod and period
+    const secondaryIndicator = params.indicator
+    const secondaryPeriod = params.crossPeriod || params.period
+
+    if (secondaryIndicator && secondaryPeriod) {
+      const secondaryDisplayName = `${secondaryIndicator.toUpperCase()}(${secondaryPeriod})`
+      return `${logicDescription} ${secondaryDisplayName}`
+    }
+  }
+
+  // Handle crossover/crossunder between indicators - LEGACY FORMAT
   if (logic === "crosses_above" || logic === "crosses_below") {
-    // Support cross-indicator logic if value is a special indicator reference
     if (typeof value === "string" && value.startsWith("indicator:")) {
       const targetIndicator = value.split(":")[1]
       const targetIndicatorDisplayName = getIndicatorDisplayName({ indicator: targetIndicator } as IndicatorCondition)
       const logicDescription = logic === "crosses_above" ? "crosses above" : "crosses below"
       return `${logicDescription} ${targetIndicatorDisplayName}`
-    }
-    // Support cross-indicator logic if secondaryIndicator is present
-    if (condition.secondaryIndicator) {
-      const secondary = condition.secondaryIndicator
-      const secondaryDisplayName = `${String(secondary.type).toUpperCase()}(${secondary.params?.period ?? ""})`
-      const logicDescription = logic === "crosses_above" ? "crosses above" : "crosses below"
-      return `${logicDescription} ${secondaryDisplayName}`
     }
   }
 

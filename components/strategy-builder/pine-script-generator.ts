@@ -1,4 +1,4 @@
-import type { StrategyConfig } from "./types"
+import type { StrategyConfig } from "./strategy-builder"
 import { collectIndicators, getIndicatorParams, getIndicatorVariable } from "./utils"
 
 export function generatePineScript(strategy: StrategyConfig): string {

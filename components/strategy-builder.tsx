@@ -208,37 +208,21 @@ export default function StrategyBuilder() {
   }
 
   // Utility to deeply convert all risk rule arrays in a strategy config
-  function convertStrategyForPreview(strategy: StrategyConfig): any {
-    // Convert all .value fields to string|number, never undefined
-    function fixConditionValue(condition: any) {
-      return {
-        ...condition,
-        value: condition.value === undefined ? "" : condition.value,
-      }
-    }
-    function fixGroup(group: any) {
-      return {
-        ...group,
-        conditions: group.conditions.map(fixConditionValue),
-      }
-    }
-    function fixRule(rule: any) {
-      return {
-        ...rule,
-        conditionGroups: rule.conditionGroups.map(fixGroup),
-      }
-    }
+  function convertStrategyForPreview(strategy: StrategyConfig): StrategyConfig {
     return {
       ...strategy,
-      entryLong: fixRule(strategy.entryLong),
-      entryShort: fixRule(strategy.entryShort),
-      exitLong: fixRule(strategy.exitLong),
-      exitShort: fixRule(strategy.exitShort),
-      riskManagement: strategy.riskManagement,
+      riskManagement: {
+        ...strategy.riskManagement,
+        stopLoss: strategy.riskManagement.stopLoss.map(convertRiskRuleStringsToNumbers),
+        takeProfit: strategy.riskManagement.takeProfit.map(convertRiskRuleStringsToNumbers),
+        trailingStop: strategy.riskManagement.trailingStop.map(convertRiskRuleStringsToNumbers),
+        positionSizing: strategy.riskManagement.positionSizing.map(convertRiskRuleStringsToNumbers),
+        timeExit: strategy.riskManagement.timeExit.map(convertRiskRuleStringsToNumbers),
+      },
     }
   }
 
-  // Prepare strategy for preview with value fix
+  // Prepare strategy for preview with number conversion
   const strategyForPreview = convertStrategyForPreview(strategy);
 
   const updateStrategy = (newStrategy: Partial<StrategyConfig>) => {

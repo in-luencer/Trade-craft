@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 
 import EntryExitNode from "./entry-exit-node"
-import RiskManagement, { type RiskManagementConfig } from "./risk-management"
+import RiskManagement, { type RiskManagementConfig } from "./risk-management/risk-management-main"
 import StrategyPreview from "./strategy-preview"
 import { useStrategy } from "@/context/strategy-context"
 

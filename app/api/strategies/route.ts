@@ -7,10 +7,31 @@ let strategies: any[] = []
 export async function POST(request: Request) {
   try {
     const strategy = await request.json()
-    
+    // Validate required fields
+    if (!strategy.name || !strategy.description) {
+      return NextResponse.json(
+        { success: false, message: "Strategy name and description are required" },
+        { status: 400 }
+      )
+    }
+    if (!strategy.entryLong?.conditionGroups || !strategy.entryShort?.conditionGroups ||
+        !strategy.exitLong?.conditionGroups || !strategy.exitShort?.conditionGroups) {
+      return NextResponse.json(
+        { success: false, message: "Entry and exit rules are required" },
+        { status: 400 }
+      )
+    }
+    if (!strategy.riskManagement) {
+      return NextResponse.json(
+        { success: false, message: "Risk management configuration is required" },
+        { status: 400 }
+      )
+    }
+    // Advanced risk management fields (documented for backend use)
+    // maxDrawdown, maxDailyLoss, maxMonthlyDrawdown, maxTradesPerDay, maxTradesPerWeek, sessionStart, sessionEnd, leverageEnabled, leverageRatio, advancedLogic
+    // These fields are included in the riskManagement object and will be available for backend calculations
     // Generate a unique ID for the strategy
     const id = uuidv4()
-    
     // Add metadata
     const strategyWithMetadata = {
       ...strategy,
@@ -20,38 +41,8 @@ export async function POST(request: Request) {
       status: "active",
       version: 1,
     }
-
-    // Store the strategy
     strategies.push(strategyWithMetadata)
-
-    // Log the complete strategy data
     console.log("Saving strategy:", JSON.stringify(strategyWithMetadata, null, 2))
-
-    // Validate required fields
-    if (!strategy.name || !strategy.description) {
-      return NextResponse.json(
-        { success: false, message: "Strategy name and description are required" },
-        { status: 400 }
-      )
-    }
-
-    // Validate entry/exit rules
-    if (!strategy.entryLong?.conditionGroups || !strategy.entryShort?.conditionGroups ||
-        !strategy.exitLong?.conditionGroups || !strategy.exitShort?.conditionGroups) {
-      return NextResponse.json(
-        { success: false, message: "Entry and exit rules are required" },
-        { status: 400 }
-      )
-    }
-
-    // Validate risk management
-    if (!strategy.riskManagement) {
-      return NextResponse.json(
-        { success: false, message: "Risk management configuration is required" },
-        { status: 400 }
-      )
-    }
-
     return NextResponse.json({
       success: true,
       message: "Strategy saved successfully",

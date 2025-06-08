@@ -109,28 +109,112 @@ export type IndicatorCondition = {
   id: string
   indicator: IndicatorType
   parameter: string
-  logic: IndicatorLogic
-  value: string | number
+  logic: string
+  value: string
   timeframe: string
-  params?: IndicatorParams
+  params?: Record<string, any>
 }
 
 export type ConditionGroup = {
-  operator: "and" | "or"
+  id: string
   conditions: IndicatorCondition[]
+  operator: "and" | "or"
 }
 
 export type PositionRule = {
+  id: string
   conditionGroups: ConditionGroup[]
 }
 
+export type StopLossRule = {
+  id: string
+  type: "percentage" | "atr" | "fixed-dollar" | "time"
+  value: number
+  atrPeriod?: number
+  atrMultiplier?: number
+  lookbackPeriod?: number
+  enabled: boolean
+}
+
+export type TakeProfitRule = {
+  id: string
+  type: "percentage" | "r:r" | "atr" | "trailing"
+  value: number
+  atrPeriod?: number
+  atrMultiplier?: number
+  riskRewardRatio?: number
+  lookbackPeriod?: number
+  enabled: boolean
+}
+
+export type TrailingStopRule = {
+  id: string
+  type: "percentage" | "atr" | "volatility" | "parabolic" | "moving-average" | "custom"
+  value: number
+  activationThreshold?: number
+  atrPeriod?: number
+  atrMultiplier?: number
+  accelerationFactor?: number
+  maxAcceleration?: number
+  maType?: "sma" | "ema" | "wma"
+  maPeriod?: number
+  enabled: boolean
+}
+
+export type TimeExitRule = {
+  id: string
+  type: "bars" | "time" | "date" | "session-end" | "custom"
+  value: number
+  enabled: boolean
+}
+
 export type RiskManagementConfig = {
-  positionSizing: {
-    maxRisk: number
-    maxPositions: number
-  }[]
+  stopLoss: StopLossRule[]
+  takeProfit: TakeProfitRule[]
+  trailingStop: TrailingStopRule[]
+  positionSizing: PositionSizingRule[]
+  timeExit: TimeExitRule[]
   maxOpenPositions: number
   maxDrawdown: number
+  maxDailyLoss: number
+  maxMonthlyDrawdown?: number
+  maxTradesPerDay?: number
+  maxTradesPerWeek?: number
+  sessionStart?: string
+  sessionEnd?: string
+  maxConsecutiveLosses: number
+  profitTarget: number
+  riskRewardMinimum: number
+  pyramiding: number
+  experienceLevel: "beginner" | "intermediate" | "advanced"
+  leverageEnabled?: boolean
+  leverageRatio?: number
+  advancedLogic?: { id: string; description: string; enabled: boolean }[]
+}
+
+export type PositionSizingRule = {
+  id: string
+  type:
+    | "fixed-units"
+    | "fixed-amount"
+    | "percentage"
+    | "risk-reward"
+    | "kelly"
+    | "optimal-f"
+    | "volatility-based"
+    | "custom"
+  value: number
+  maxRisk: number
+  equityPercentage?: number
+  riskPerTrade?: number
+  winRate?: number
+  payoffRatio?: number
+  optimalFraction?: number
+  volatilityPeriod?: number
+  volatilityMultiplier?: number
+  customFormula?: string
+  useStopLossRisk?: boolean
+  enabled: boolean
 }
 
 export type Strategy = {
@@ -142,5 +226,7 @@ export type Strategy = {
   exitShort: PositionRule
   riskManagement: RiskManagementConfig
 
-} 
+}
+
+export type StrategyConfig = Strategy;
 

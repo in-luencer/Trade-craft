@@ -135,18 +135,20 @@ export type IndicatorCondition = {
   id: string
   indicator: IndicatorType
   parameter: string
-  logic: IndicatorLogic
-  value: string | number
+  logic: string
+  value: string
   timeframe: string
-  params?: IndicatorParams
+  params?: Record<string, any>
 }
 
 export type ConditionGroup = {
-  operator: "and" | "or"
+  id: string
   conditions: IndicatorCondition[]
+  operator: "and" | "or"
 }
 
 export type PositionRule = {
+  id: string
   conditionGroups: ConditionGroup[]
 }
 
@@ -242,14 +244,15 @@ export type PositionSizingRule = {
 }
 
 export type Strategy = {
-  id?: string;
-  name: string;
-  description: string;
-  entryLong: PositionRule;
-  entryShort: PositionRule;
-  exitLong: PositionRule;
-  exitShort: PositionRule;
-  riskManagement: RiskManagementConfig;
-  isPublic?: boolean;
+  name: string
+  description: string
+  entryLong: PositionRule
+  entryShort: PositionRule
+  exitLong: PositionRule
+  exitShort: PositionRule
+  riskManagement: RiskManagementConfig
+
 }
+
+export type StrategyConfig = Strategy;
 

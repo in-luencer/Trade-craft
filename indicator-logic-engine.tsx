@@ -14,7 +14,8 @@ import { Slider } from "@/components/ui/slider"
 import { Card, CardContent } from "@/components/ui/card"
 import { HelpCircle } from "lucide-react"
 
-import type { IndicatorCondition } from "./strategy-builder"
+import type { IndicatorType, IndicatorCondition, IndicatorParams } from "./components/strategy-builder/types";
+import type { IndicatorParameter } from "./components/strategy-builder/indicator-metadata";
 import indicatorMetadata from "./indicator-metadata"
 
 interface IndicatorLogicEngineProps {
@@ -23,7 +24,16 @@ interface IndicatorLogicEngineProps {
   onRemove: () => void
 }
 
+// Utility: Type guard for IndicatorType
+function isIndicatorType(value: string): value is IndicatorType {
+  return Object.keys(indicatorMetadata).includes(value)
+}
+
+// Utility: Get default indicator params for a type
+const defaultIndicatorParams: IndicatorParams = { period: 14, source: "close" }
+
 export default function IndicatorLogicEngine({ condition, onChange, onRemove }: IndicatorLogicEngineProps) {
+  // Fix: Use correct type for indicator
   const indicator = indicatorMetadata[condition.indicator]
   const selectedLogic = indicator?.logicOptions.find((opt) => opt.value === condition.logic)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -32,7 +42,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
   useEffect(() => {
     if (indicator && !isInitialized) {
       const initialValues: Record<string, any> = {}
-      Object.entries(indicator.parameters).forEach(([key, param]) => {
+      Object.entries(indicator.parameters).forEach(([key, param]: [string, IndicatorParameter]) => {
         initialValues[key] = condition.params?.[key] ?? param.default
       })
 
@@ -58,7 +68,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
     const newIndicator = indicatorMetadata[value]
     if (newIndicator) {
       const initialParams = Object.entries(newIndicator.parameters).reduce(
-        (acc: Record<string, any>, [key, param]) => ({
+        (acc: Record<string, any>, [key, param]: [string, IndicatorParameter]) => ({
           ...acc,
           [key]: param.default,
         }),
@@ -67,7 +77,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
 
       onChange({
         ...condition,
-        indicator: value,
+        indicator: value as IndicatorType,
         logic: newIndicator.defaultLogic || newIndicator.logicOptions[0].value,
         value: newIndicator.logicOptions[0]?.defaultValue?.toString() || "0",
         params: initialParams,
@@ -171,7 +181,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
               <h3 className="text-sm font-medium">Parameters</h3>
               <div className="grid grid-cols-2 gap-4">
                 {standardParams.map(
-                  ([key, param]) =>
+                  ([key, param]: [string, IndicatorParameter]) =>
                     (typeof param.showIf !== "function" || param.showIf(condition.params ?? {})) && (
                       <div key={key} className="space-y-2">
                         <div className="flex items-center gap-1">
@@ -198,13 +208,16 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {param.options?.map((option) => (
-                                <SelectItem
-                                  key={typeof option === "string" ? option : option.value}
-                                  value={typeof option === "string" ? option : option.value}
-                                >
-                                  {typeof option === "string" ? option : option.label}
-                                </SelectItem>
+                              {param.options?.map((option: string | { value: string; label: string }) => (
+                                typeof option === "string" ? (
+                                  <SelectItem key={option} value={option}>
+                                    {option}
+                                  </SelectItem>
+                                ) : (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                )
                               ))}
                             </SelectContent>
                           </Select>
@@ -265,7 +278,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                 <AccordionTrigger className="text-sm font-medium">Advanced Parameters</AccordionTrigger>
                 <AccordionContent>
                   <div className="grid grid-cols-2 gap-4 pt-2">
-                    {advancedParams.map(([key, param]) => (
+                    {advancedParams.map(([key, param]: [string, IndicatorParameter]) => (
                       <div key={key} className="space-y-2">
                         <div className="flex items-center gap-1">
                           <Label>{param.name}</Label>
@@ -291,13 +304,16 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {param.options?.map((option) => (
-                                <SelectItem
-                                  key={typeof option === "string" ? option : option.value}
-                                  value={typeof option === "string" ? option : option.value}
-                                >
-                                  {typeof option === "string" ? option : option.label}
-                                </SelectItem>
+                              {param.options?.map((option: string | { value: string; label: string }) => (
+                                typeof option === "string" ? (
+                                  <SelectItem key={option} value={option}>
+                                    {option}
+                                  </SelectItem>
+                                ) : (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                )
                               ))}
                             </SelectContent>
                           </Select>
@@ -434,7 +450,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
 
 
                 <div className="grid grid-cols-2 gap-4">
-                  {Object.entries(selectedLogic.logicParams).map(([key, param]) => (
+                  {Object.entries(selectedLogic.logicParams).map(([key, param]: [string, IndicatorParameter]) => (
                     <div key={key} className="space-y-2">
                       <Label>{param.name}</Label>
                       {param.type === "select" ? (

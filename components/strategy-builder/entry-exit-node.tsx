@@ -1,19 +1,21 @@
 "use client"
+
 import { Plus, Trash2 } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-import type { PositionRule, ConditionGroup, IndicatorCondition } from "./strategy-builder"
+import { Button } from "../ui/button"
+import { Card, CardContent } from "../ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import type { ConditionGroup, IndicatorLogic, IndicatorType, IndicatorCondition, PositionRule } from "./types"
 import IndicatorLogicEngine from "./indicator-logic-engine"
 
 interface EntryExitNodeProps {
-  positionRule: PositionRule
-  onChange: (updatedRule: PositionRule) => void
+  positionRule: PositionRule;
+  onChange: (updatedRule: PositionRule) => void;
+  title?: string;
 }
 
-export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeProps) {
+const EntryExitNode = ({ positionRule, onChange, title = "Entry/Exit Rules" }: EntryExitNodeProps) => {
+  const groups = positionRule.conditionGroups;
+
   const addConditionGroup = () => {
     const newGroup: ConditionGroup = {
       id: "group-" + Date.now(),
@@ -27,37 +29,33 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
           timeframe: "1d",
           params: {
             period: 14,
-            source: "close",
-
-           // overbought: 70,
-            //oversold: 30,
-
+            source: "close" 
           },
         },
       ],
-      operator: "and",
+      operator: "or",
     }
 
     onChange({
       ...positionRule,
-      conditionGroups: [...positionRule.conditionGroups, newGroup],
-    })
+      conditionGroups: [...groups, newGroup]
+    });
   }
 
   const removeConditionGroup = (groupId: string) => {
     onChange({
       ...positionRule,
-      conditionGroups: positionRule.conditionGroups.filter((group) => group.id !== groupId),
-    })
+      conditionGroups: groups.filter((group) => group.id !== groupId)
+    });
   }
 
   const updateConditionGroup = (groupId: string, updatedGroup: Partial<ConditionGroup>) => {
     onChange({
       ...positionRule,
-      conditionGroups: positionRule.conditionGroups.map((group) =>
-        group.id === groupId ? { ...group, ...updatedGroup } : group,
+      conditionGroups: groups.map((group) => 
+        group.id === groupId ? { ...group, ...updatedGroup } : group
       ),
-    })
+    });
   }
 
   const addCondition = (groupId: string) => {
@@ -71,16 +69,12 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
       params: {
         period: 14,
         source: "close",
-
-     //   overbought: 70,
-       // oversold: 30,
-
       },
     }
 
     onChange({
       ...positionRule,
-      conditionGroups: positionRule.conditionGroups.map((group) =>
+      conditionGroups: groups.map((group) =>
         group.id === groupId
           ? {
               ...group,
@@ -88,13 +82,13 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
             }
           : group,
       ),
-    })
+    });
   }
 
   const removeCondition = (groupId: string, conditionId: string) => {
     onChange({
       ...positionRule,
-      conditionGroups: positionRule.conditionGroups.map((group) =>
+      conditionGroups: groups.map((group) =>
         group.id === groupId
           ? {
               ...group,
@@ -102,13 +96,13 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
             }
           : group,
       ),
-    })
+    });
   }
 
   const updateCondition = (groupId: string, conditionId: string, updatedCondition: Partial<IndicatorCondition>) => {
     onChange({
       ...positionRule,
-      conditionGroups: positionRule.conditionGroups.map((group) =>
+      conditionGroups: groups.map((group) =>
         group.id === groupId
           ? {
               ...group,
@@ -118,7 +112,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
             }
           : group,
       ),
-    })
+    });
   }
 
   return (
@@ -129,8 +123,8 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
             <CardContent className="pt-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium">When</h4>
-                  {positionRule.conditionGroups.length > 1 && (
+                  <h4 className="font-medium">{title}</h4>
+                  {groups.length > 1 && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -150,7 +144,12 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
                       onRemove={() => removeCondition(group.id, condition.id)}
                     />
 
-                    {/* Only show the timeframe and add button for the last condition in the group */}
+                    {conditionIndex < group.conditions.length - 1 && (
+                      <div className="flex justify-center">
+                        <div className="bg-muted px-4 py-2 rounded-md font-medium text-sm">OR</div>
+                      </div>
+                    )}
+
                     {conditionIndex === group.conditions.length - 1 && (
                       <div className="flex justify-between items-center">
                         <div className="space-y-4">
@@ -190,7 +189,7 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
             </CardContent>
           </Card>
 
-          {groupIndex < positionRule.conditionGroups.length - 1 && (
+          {groupIndex < groups.length - 1 && (
             <div className="flex justify-center">
               <div className="bg-muted px-4 py-2 rounded-md font-medium">OR</div>
             </div>
@@ -204,3 +203,5 @@ export default function EntryExitNode({ positionRule, onChange }: EntryExitNodeP
     </div>
   )
 }
+
+export default EntryExitNode

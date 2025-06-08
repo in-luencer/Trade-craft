@@ -158,26 +158,12 @@ const EntryExitNode = ({ positionRule, onChange, title = "Entry/Exit Rules" }: E
                             value={condition.timeframe}
                             onValueChange={(value: string) =>
                               updateCondition(group.id, condition.id, { timeframe: value })
-                            value={condition.timeframe}
-                            onValueChange={(value: string) =>
-                              updateCondition(group.id, condition.id, { timeframe: value })
                             }
                           >
-                            <SelectTrigger className="w-32">
                             <SelectTrigger className="w-32">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="1m">1 Minute</SelectItem>
-                              <SelectItem value="5m">5 Minutes</SelectItem>
-                              <SelectItem value="15m">15 Minutes</SelectItem>
-                              <SelectItem value="30m">30 Minutes</SelectItem>
-                              <SelectItem value="45m">45 Minutes</SelectItem>
-                              <SelectItem value="1h">1 Hour</SelectItem>
-                              <SelectItem value="2h">2 Hours</SelectItem>
-                              <SelectItem value="4h">4 Hours</SelectItem>
-                              <SelectItem value="1d">1 Day</SelectItem>
-                              <SelectItem value="1w">1 Week</SelectItem>
                               <SelectItem value="1m">1 Minute</SelectItem>
                               <SelectItem value="5m">5 Minutes</SelectItem>
                               <SelectItem value="15m">15 Minutes</SelectItem>
@@ -195,8 +181,6 @@ const EntryExitNode = ({ positionRule, onChange, title = "Entry/Exit Rules" }: E
                         <Button variant="outline" size="sm" onClick={() => addCondition(group.id)} className="ml-auto">
                           <Plus className="h-4 w-4 mr-2" /> Add Condition
                         </Button>
-                      </div>
-                    )}
                       </div>
                     )}
                   </div>

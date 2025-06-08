@@ -85,6 +85,7 @@ export const INDICATOR_CONFIGS: Record<string, IndicatorConfig> = {
     logicTypes: ["crosses_above", "crosses_below", 
      // "overbought", "oversold", 
       "bullish_divergence", "bearish_divergence"],
+
     pineScriptGenerator: (params) => `ta.rsi(${params.source || "close"}, ${params.period})`,
     pseudocodeGenerator: (params) => `RSI(${params.period})`,
     plotGenerator: (params) => `plot(ta.rsi(${params.source || "close"}, ${params.period}), color=color.purple, title="RSI ${params.period}", display=display.pane)`

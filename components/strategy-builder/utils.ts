@@ -1,4 +1,6 @@
+
 import type { IndicatorCondition, StrategyConfig } from "./strategy-builder" // Updated import
+
 import { DEFAULT_INDICATOR_PARAMS } from "./constants"
 
 export function getIndicatorVariable(condition: IndicatorCondition): string {
@@ -71,6 +73,7 @@ export function getIndicatorLogic(condition: IndicatorCondition): string {
   const indicator = condition.indicator
   const logic = condition.logic
   const value = condition.value
+
   const params = condition.params || {}
 
   // Handle crossover/crossunder between indicators - UPDATED to use crossPeriod
@@ -108,6 +111,7 @@ export function getIndicatorLogic(condition: IndicatorCondition): string {
       const targetIndicatorDisplayName = getIndicatorDisplayName({ indicator: targetIndicator } as IndicatorCondition)
       const logicDescription = logic === "crosses_above" ? "crosses above" : "crosses below"
       return `${logicDescription} ${targetIndicatorDisplayName}`
+
     }
   }
 
@@ -115,8 +119,10 @@ export function getIndicatorLogic(condition: IndicatorCondition): string {
   const logicMap: Record<string, string> = {
     crosses_above: "crosses above",
     crosses_below: "crosses below",
+
     crosses_above_price: "crosses above price",
     crosses_below_price: "crosses below price",
+
     greater_than: ">",
     less_than: "<",
     equals: "==",
@@ -155,11 +161,14 @@ export function getIndicatorLogic(condition: IndicatorCondition): string {
     changes_to_bearish: "changes to bearish",
     squeeze: "is in a squeeze",
     expansion: "is in expansion",
+
     percent_change: "percent change is",
+
     turns_up: "turns up",
     turns_down: "turns down",
     above_average: "is above average",
     below_average: "is below average",
+
     spike: "shows a spike",
     // Add more mappings from your metadata
     price_above: "price above",
@@ -182,6 +191,7 @@ export function getIndicatorLogic(condition: IndicatorCondition): string {
 }
 
 export function getIndicatorParams(condition: IndicatorCondition, indicatorType: string): any {
+
   // First check if the condition itself has params
   if (condition.params) {
     return condition.params
@@ -257,8 +267,10 @@ export function getIndicatorDisplayName(condition: IndicatorCondition): string {
   }
 }
 
+
 export function collectIndicators(strategy: StrategyConfig): Set<string> {
   const indicators = new Set<string>()
+
 
   const collectFromRule = (positionRule: any) => {
     positionRule.conditionGroups.forEach((group: any) => {
@@ -274,4 +286,6 @@ export function collectIndicators(strategy: StrategyConfig): Set<string> {
   collectFromRule(strategy.exitShort)
 
   return indicators
+
 }
+

@@ -92,7 +92,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       "/dashboard",
       "/builder",
       "/backtest",
-      "/strategies",
+      "/marketplace",
       "/settings",
       "/survey",
       "/strategy-choice",
@@ -142,8 +142,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <Link href="/dashboard" className="transition-colors hover:text-foreground/80">
                     Dashboard
                   </Link>
-                  <Link href="/strategies" className="transition-colors hover:text-foreground/80">
-                    Strategies
+                  <Link href="/marketplace" className="transition-colors hover:text-foreground/80">
+                    Marketplace
                   </Link>
                   <Link href="/builder" className="transition-colors hover:text-foreground/80">
                     Builder

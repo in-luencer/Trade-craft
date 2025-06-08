@@ -9,12 +9,14 @@ export const metadata: Metadata = {
 
 export default function BuilderPage() {
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Strategy Builder</h1>
-        <p className="text-muted-foreground">Create your trading strategy visually without code</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">Strategy Builder</h1>
+        <p className="text-sm sm:text-base text-muted-foreground text-center sm:text-left">Create your trading strategy visually without code</p>
       </div>
-      <StrategyBuilder />
+      <div className="overflow-x-auto">
+        <StrategyBuilder />
+      </div>
     </div>
   )
 }

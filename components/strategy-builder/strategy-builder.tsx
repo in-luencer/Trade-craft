@@ -44,6 +44,12 @@ const defaultCondition: IndicatorCondition = {
   timeframe: "1d",
   params: {
     period: 14,
+    source: "close",
+
+    //overbought: 70,
+    //oversold: 30,
+
+  },
     source: "close" as const
   },
   secondaryIndicator: {

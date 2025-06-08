@@ -1,8 +1,10 @@
+
 import type { StrategyConfig } from "./strategy-builder"
 import { collectIndicators } from "./utils"
 import indicatorMetadata from "./indicator-metadata"
 
 export function generatePseudocode(strategy: StrategyConfig): string {
+
   let code = `Strategy: ${strategy.name}
 Description: ${strategy.description}
 
@@ -13,6 +15,7 @@ Risk Management:
 
 Entry Rules:
 `
+
 
   function getLogicDescription(condition: any): string {
     const logic = condition.logic
@@ -245,6 +248,5 @@ Entry Rules:
       code += `- ${indicator.toUpperCase()}\n`
     })
   }
+  return code}
 
-  return code
-}

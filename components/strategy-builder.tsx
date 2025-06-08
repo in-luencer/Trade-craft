@@ -314,11 +314,13 @@ export default function StrategyBuilder() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
+
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="builder">Entry/Exit Rules</TabsTrigger>
           <TabsTrigger value="risk">Risk Management</TabsTrigger>
           
        {/*   <TabsTrigger value="preview">Preview</TabsTrigger> */  }
+
         </TabsList>
 
         <TabsContent value="builder" className="space-y-6">
@@ -385,9 +387,11 @@ export default function StrategyBuilder() {
           </Card>
         </TabsContent>
 
+
        <TabsContent value="preview">
           <StrategyPreview strategy={strategyForPreview} />
         </TabsContent> 
+
       </Tabs>
 
       <Button onClick={saveStrategy} className="w-full mb-4" disabled={isSaving}>

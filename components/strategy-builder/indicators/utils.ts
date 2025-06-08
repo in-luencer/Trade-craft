@@ -35,6 +35,8 @@ export function getIndicatorParams(condition: Condition, indicatorType: string):
   return {}
 }
 
+
+
 export function getIndicatorLogic(condition: Condition): string {
   const config = INDICATOR_CONFIGS[condition.indicator]
   if (!config) return `${condition.indicator}Value ${condition.logic} ${condition.value}`
@@ -46,6 +48,8 @@ export function getIndicatorLogic(condition: Condition): string {
     greater_than: ">",
     less_than: "<",
     equals: "==",
+
+
   }
 
   if (condition.logic === "crosses_above" || condition.logic === "crosses_below") {
@@ -57,4 +61,6 @@ export function getIndicatorLogic(condition: Condition): string {
   }
 
   return `${variable} ${logicMap[condition.logic] || condition.logic} ${condition.value}`
+
 } 
+

@@ -5,6 +5,7 @@ export type IndicatorType =
   | "wma"
   | "hma"
   | "vwap"
+  | "vwma"
   | "rsi"
   | "macd"
   | "bollinger"
@@ -15,6 +16,17 @@ export type IndicatorType =
   | "ichimoku"
   | "volume"
   | "momentum"
+  | "williams_r"
+  | "bollinger_b"
+  | "parabolic_sar"
+  | "dpo"
+  | "ppo"
+  | "cmo"
+  | "trix"
+  | "keltner"
+  | "roc"
+  | "awesome"
+  | "cci"
   | "custom"
 
 
@@ -76,7 +88,7 @@ export type IndicatorType =
 
 export type IndicatorParams = {
   // Common parameters
-  source?: string
+  source?: "open" | "high" | "low" | "close" | "hl2" | "hlc3" | "ohlc4"
   period?: number
   
   // MACD specific
@@ -103,26 +115,38 @@ export type IndicatorParams = {
   
   // Custom indicator specific
   formula?: string
+
+  // Volume specific
+  averageVolumeBar?: number
+
+  // Secondary indicator
+  secondary_indicator?: IndicatorType
+
+  // Allow string indexing for dynamic access
+  [key: string]: string | number | boolean | undefined | IndicatorType
+}
+
+export type SecondaryIndicator = {
+  type: IndicatorType;
+  params: IndicatorParams;
 }
 
 export type IndicatorCondition = {
   id: string
   indicator: IndicatorType
   parameter: string
-  logic: string
-  value: string
+  logic: IndicatorLogic
+  value: string | number
   timeframe: string
-  params?: Record<string, any>
+  params?: IndicatorParams
 }
 
 export type ConditionGroup = {
-  id: string
-  conditions: IndicatorCondition[]
   operator: "and" | "or"
+  conditions: IndicatorCondition[]
 }
 
 export type PositionRule = {
-  id: string
   conditionGroups: ConditionGroup[]
 }
 
@@ -218,15 +242,14 @@ export type PositionSizingRule = {
 }
 
 export type Strategy = {
-  name: string
-  description: string
-  entryLong: PositionRule
-  entryShort: PositionRule
-  exitLong: PositionRule
-  exitShort: PositionRule
-  riskManagement: RiskManagementConfig
-
+  id?: string;
+  name: string;
+  description: string;
+  entryLong: PositionRule;
+  entryShort: PositionRule;
+  exitLong: PositionRule;
+  exitShort: PositionRule;
+  riskManagement: RiskManagementConfig;
+  isPublic?: boolean;
 }
-
-export type StrategyConfig = Strategy;
 

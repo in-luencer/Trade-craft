@@ -18,16 +18,19 @@ export type LogicOption = {
   customInput?: boolean
   syncKey?: string
   inputLabel?: string
-  logicParams?: Record<string, {
-    name: string
-    type: "number" | "select"
-    default: string | number
-    min?: number
-    max?: number
-    step?: number
-    options?: { value: string; label: string }[]
-    description: string
-  }>
+  logicParams?: Record<
+    string,
+    {
+      name: string
+      type: "number" | "select"
+      default: string | number
+      min?: number
+      max?: number
+      step?: number
+      options?: { value: string; label: string }[]
+      description: string
+    }
+  >
 }
 
 export interface IndicatorParameter {
@@ -65,7 +68,6 @@ export interface IndicatorMetadata {
 
 // Define the indicator metadata
 export const indicatorMetadata: Record<string, IndicatorMetadata> = {
-
   sma: {
     name: "Simple Moving Average",
     description: "Average price over a specified period",
@@ -98,18 +100,302 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "> price",
         label: "Greater than Price",
         description: "When SMA crosses above the price",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "< price",
         label: "Less than Price",
         description: "When SMA crosses below the price",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "crosses above",
         label: "Crosses Above another moving average",
         description: "When SMA crosses above another indicator",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "sma", label: "Simple Moving Average (SMA)" },
+          { value: "ema", label: "Exponential Moving Average (EMA)" },
+          { value: "wma", label: "Weighted Moving Average (WMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+          { value: "hma", label: "Hull Moving Average (HMA)" },
+        ],
+        customInput: true,
+        logicParams: {
+          indicator: {
+            name: "Indicator",
+            type: "select",
+            default: "sma",
+            options: [
+              { value: "sma", label: "Simple Moving Average (SMA)" },
+              { value: "ema", label: "Exponential Moving Average (EMA)" },
+              { value: "wma", label: "Weighted Moving Average (WMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+              { value: "hma", label: "Hull Moving Average (HMA)" },
+            ],
+            description: "Select the indicator to cross with",
+          },
+          period: {
+            name: "Period",
+            type: "number",
+            default: 50,
+            min: 1,
+            max: 500,
+            step: 1,
+            description: "Number of bars used in calculation",
+          },
+          source: {
+            name: "Source",
+            type: "select",
+            default: "close",
+            options: [
+              { value: "close", label: "Close" },
+              { value: "open", label: "Open" },
+              { value: "high", label: "High" },
+              { value: "low", label: "Low" },
+            ],
+            description: "Price data point to use in calculation",
+          },
+        },
+      },
+      {
+        value: "crosses below",
+        label: "Crosses Below another moving average",
+        description: "When SMA crosses below another indicator",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "sma", label: "Simple Moving Average (SMA)" },
+          { value: "ema", label: "Exponential Moving Average (EMA)" },
+          { value: "wma", label: "Weighted Moving Average (WMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+          { value: "hma", label: "Hull Moving Average (HMA)" },
+        ],
+        customInput: true,
+        logicParams: {
+          indicator: {
+            name: "Indicator",
+            type: "select",
+            default: "sma",
+            options: [
+              { value: "sma", label: "Simple Moving Average (SMA)" },
+              { value: "ema", label: "Exponential Moving Average (EMA)" },
+              { value: "wma", label: "Weighted Moving Average (WMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+              { value: "hma", label: "Hull Moving Average (HMA)" },
+            ],
+            description: "Select the indicator to cross with",
+          },
+          period: {
+            name: "Period",
+            type: "number",
+            default: 50,
+            min: 1,
+            max: 500,
+            step: 1,
+            description: "Number of bars used in calculation",
+          },
+          source: {
+            name: "Source",
+            type: "select",
+            default: "close",
+            options: [
+              { value: "close", label: "Close" },
+              { value: "open", label: "Open" },
+              { value: "high", label: "High" },
+              { value: "low", label: "Low" },
+            ],
+            description: "Price data point to use in calculation",
+          },
+        },
+      },
+    ],
+    defaultLogic: "crosses_above_price",
+  },
+
+  ema: {
+    name: "Exponential Moving Average",
+    description: "Weighted average that gives more importance to recent prices",
+    category: "trend",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 500,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "> price",
+        label: "Greater than Price",
+        description: "When EMA crosses above the price",
+        requiresValue: false,
+      },
+      {
+        value: "< price",
+        label: "Less than Price",
+        description: "When EMA crosses below the price",
+        requiresValue: false,
+      },
+      {
+        value: "crosses above",
+        label: "Crosses Above another moving average",
+        description: "When EMA crosses above another indicator",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "sma", label: "Simple Moving Average (SMA)" },
+          { value: "ema", label: "Exponential Moving Average (EMA)" },
+          { value: "wma", label: "Weighted Moving Average (WMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+          { value: "hma", label: "Hull Moving Average (HMA)" },
+        ],
+        customInput: true,
+        logicParams: {
+          indicator: {
+            name: "Indicator",
+            type: "select",
+            default: "sma",
+            options: [
+              { value: "sma", label: "Simple Moving Average (SMA)" },
+              { value: "ema", label: "Exponential Moving Average (EMA)" },
+              { value: "wma", label: "Weighted Moving Average (WMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+              { value: "hma", label: "Hull Moving Average (HMA)" },
+            ],
+            description: "Select the indicator to cross with",
+          },
+          period: {
+            name: "Period",
+            type: "number",
+            default: 50,
+            min: 1,
+            max: 500,
+            step: 1,
+            description: "Number of bars used in calculation",
+          },
+          source: {
+            name: "Source",
+            type: "select",
+            default: "close",
+            options: [
+              { value: "close", label: "Close" },
+              { value: "open", label: "Open" },
+              { value: "high", label: "High" },
+              { value: "low", label: "Low" },
+            ],
+            description: "Price data point to use in calculation",
+          },
+        },
+      },
+      {
+        value: "crosses below",
+        label: "Crosses Below another moving average",
+        description: "When EMA crosses below another indicator",
+        requiresValue: true,
+        valueType: "select",
+        options: [
+          { value: "sma", label: "Simple Moving Average (SMA)" },
+          { value: "ema", label: "Exponential Moving Average (EMA)" },
+          { value: "wma", label: "Weighted Moving Average (WMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+          { value: "hma", label: "Hull Moving Average (HMA)" },
+        ],
+        customInput: true,
+        logicParams: {
+          indicator: {
+            name: "Indicator",
+            type: "select",
+            default: "sma",
+            options: [
+              { value: "sma", label: "Simple Moving Average (SMA)" },
+              { value: "ema", label: "Exponential Moving Average (EMA)" },
+              { value: "wma", label: "Weighted Moving Average (WMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
+              { value: "hma", label: "Hull Moving Average (HMA)" },
+            ],
+            description: "Select the indicator to cross with",
+          },
+          period: {
+            name: "Period",
+            type: "number",
+            default: 50,
+            min: 1,
+            max: 500,
+            step: 1,
+            description: "Number of bars used in calculation",
+          },
+          source: {
+            name: "Source",
+            type: "select",
+            default: "close",
+            options: [
+              { value: "close", label: "Close" },
+              { value: "open", label: "Open" },
+              { value: "high", label: "High" },
+              { value: "low", label: "Low" },
+            ],
+            description: "Price data point to use in calculation",
+          },
+        },
+      },
+    ],
+    defaultLogic: "crosses_above_price",
+  },
+
+  wma: {
+    name: "Weighted Moving Average",
+    description: "Moving average that gives more weight to recent prices",
+    category: "trend",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 9,
+        min: 1,
+        max: 500,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+          { value: "hl2", label: "HL2" },
+          { value: "hlc3", label: "HLC3" },
+          { value: "ohlc4", label: "OHLC4" },
+        ],
+        description: "Price data point to use in calculation",
+      },
+      
+    }, logicOptions: [
+     
+      {
+        value: "crosses_above_indicator",
+        label: "Crosses Above Indicator",
+        description: "When EMA crosses above another indicator",
         requiresValue: true,
         valueType: "select",
         options: [
@@ -141,7 +427,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
             max: 500,
             step: 1,
             description: "Number of bars used in calculation"
-          
           },
           source: {
             name: "Source",
@@ -210,15 +495,26 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
          
         }
       },
-      
+      {
+        value: "price_above",
+        label: "Price Above",
+        description: "When price is above WMA",
+        requiresValue: false
+      },
+      {
+        value: "price_below",
+        label: "Price Below",
+        description: "When price is below WMA",
+        requiresValue: false
+      },
     ],
+    
     defaultLogic: "crosses_above_price",
   },
-
-  ema: {
-    name: "Exponential Moving Average",
-    description: "Weighted average that gives more importance to recent prices",
-    category: "trend",
+   vwma: {
+    name: "Volume Weighted Moving Average",
+    description: "Moving average weighted by volume",
+    category: "volume",
     parameters: {
       period: {
         name: "Period",
@@ -397,7 +693,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
 
     },
     logicOptions: [
-      
       {
         value: "crosses_above",
         label: "Crosses Above",
@@ -409,8 +704,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 50,
         customInput: true,
-        syncKey: "neutral_high",
-        inputLabel: "RSI Value"
+        inputLabel: "RSI Value",
       },
       {
         value: "crosses_below",
@@ -423,8 +717,20 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 50,
         customInput: true,
-        syncKey: "neutral_low",
-        inputLabel: "RSI Value"
+        inputLabel: "RSI Value",
+      },
+      {
+        value: "<",
+        label: "Less Than",
+        description: "When RSI is less than the specified value(Condition)",
+        requiresValue: true,
+        valueType: "number",
+        min: 0,
+        max: 100,
+        step: 1,
+        defaultValue: 30,
+        customInput: true,
+        inputLabel: "RSI Value",
       },
       
       {
@@ -459,7 +765,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "divergence_bearish",
         label: "Bearish Divergence",
         description: "When price makes higher highs but RSI makes lower highs",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "divergence_bullish",
@@ -472,6 +778,399 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     defaultLogic: "crosses_above",
   },
 
+  rvi: {
+    name: "Relative Vigor Index",
+    description: "Measures the conviction of a recent price action and the likelihood that it will continue.",
+    category: "momentum",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 10,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_signal",
+        label: "Crosses Above Signal Line",
+        description: "When RVI crosses above its signal line",
+        requiresValue: false,
+      },
+      {
+        value: "crosses_below_signal",
+        label: "Crosses Below Signal Line",
+        description: "When RVI crosses below its signal line",
+        requiresValue: false,
+      },
+      {
+        value: ">",
+        label: "Greater Than Value",
+        description: "When RVI is greater than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 0,
+        customInput: true,
+        inputLabel: "RVI Value",
+      },
+      {
+        value: "<",
+        label: "Less Than Value",
+        description: "When RVI is less than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 0,
+        customInput: true,
+        inputLabel: "RVI Value",
+      },
+    ],
+    defaultLogic: "crosses_above_signal",
+  },
+
+  williams_r: {
+    name: "Williams %R",
+    description: "Momentum oscillator that measures overbought and oversold levels.",
+    category: "momentum",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 14,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When Williams %R crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: -20,
+        customInput: true,
+        inputLabel: "Williams %R Value",
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When Williams %R crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: -80,
+        customInput: true,
+        inputLabel: "Williams %R Value",
+      },
+      {
+        value: "<",
+        label: "Less Than",
+        description: "When Williams %R is less than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: -80,
+        customInput: true,
+        inputLabel: "Williams %R Value",
+      },
+      {
+        value: ">",
+        label: "Greater Than",
+        description: "When Williams %R is greater than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: -20,
+        customInput: true,
+        inputLabel: "Williams %R Value",
+      },
+    ],
+    defaultLogic: "crosses_below",
+  },
+
+  momentum: {
+    name: "Momentum",
+    description: "Measures the rate of change of price over a specified period.",
+    category: "momentum",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 10,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_zero",
+        label: "Crosses Above Zero",
+        description: "When Momentum crosses above zero",
+        requiresValue: false,
+      },
+      {
+        value: "crosses_below_zero",
+        label: "Crosses Below Zero",
+        description: "When Momentum crosses below zero",
+        requiresValue: false,
+      },
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When Momentum crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 0,
+        customInput: true,
+        inputLabel: "Momentum Value",
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When Momentum crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 0,
+        customInput: true,
+        inputLabel: "Momentum Value",
+      },
+    ],
+    defaultLogic: "crosses_above_zero",
+  },
+
+  roc: {
+    name: "Rate of Change",
+    description: "Momentum oscillator that measures the percentage change in price over a specified period.",
+    category: "momentum",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 9,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_zero",
+        label: "Crosses Above Zero",
+        description: "When ROC crosses above zero",
+        requiresValue: false,
+      },
+      {
+        value: "crosses_below_zero",
+        label: "Crosses Below Zero",
+        description: "When ROC crosses below zero",
+        requiresValue: false,
+      },
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When ROC crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 0,
+        customInput: true,
+        inputLabel: "ROC Value",
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When ROC crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 0,
+        customInput: true,
+        inputLabel: "ROC Value",
+      },
+      {
+        value: ">",
+        label: "Greater Than",
+        description: "When ROC is greater than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 0,
+        customInput: true,
+        inputLabel: "ROC Value",
+      },
+      {
+        value: "<",
+        label: "Less Than",
+        description: "When ROC is less than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 0,
+        customInput: true,
+        inputLabel: "ROC Value",
+      },
+    ],
+    defaultLogic: "crosses_above_zero",
+  },
+
+  cmf: {
+    name: "Chaikin Money Flow",
+    description: "Volume-weighted average of accumulation/distribution over a specified period.",
+    category: "volume",
+    parameters: {
+      period: {
+        name: "Period",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 100,
+        step: 1,
+        description: "Number of bars used in calculation",
+      },
+    },
+    logicOptions: [
+      {
+        value: "crosses_above_zero",
+        label: "Crosses Above Zero",
+        description: "When CMF crosses above zero (bullish)",
+        requiresValue: false,
+      },
+      {
+        value: "crosses_below_zero",
+        label: "Crosses Below Zero",
+        description: "When CMF crosses below zero (bearish)",
+        requiresValue: false,
+      },
+      {
+        value: "crosses_above",
+        label: "Crosses Above",
+        description: "When CMF crosses above a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 20,
+        customInput: true,
+        inputLabel: "CMF Value",
+      },
+      {
+        value: "crosses_below",
+        label: "Crosses Below",
+        description: "When CMF crosses below a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: -20,
+        customInput: true,
+        inputLabel: "CMF Value",
+      },
+      {
+        value: ">",
+        label: "Greater Than",
+        description: "When CMF is greater than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: 20,
+        customInput: true,
+        inputLabel: "CMF Value",
+      },
+      {
+        value: "<",
+        label: "Less Than",
+        description: "When CMF is less than a specified value",
+        requiresValue: true,
+        valueType: "number",
+        min: -100,
+        max: 100,
+        step: 1,
+        defaultValue: -20,
+        customInput: true,
+        inputLabel: "CMF Value",
+      },
+    ],
+    defaultLogic: "crosses_above_zero",
+  },
+
+  // Keep all other indicators as they were...
   macd: {
     name: "MACD",
     description: "Trend-following momentum indicator showing relationship between two moving averages",
@@ -555,62 +1254,62 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "crosses_above_signal",
         label: "Crosses Above Signal",
         description: "When MACD line crosses above the signal line (bullish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "crosses_below_signal",
         label: "Crosses Below Signal",
         description: "When MACD line crosses below the signal line (bearish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "crosses_above_zero",
         label: "Crosses Above Zero",
         description: "When MACD line crosses above zero (bullish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "crosses_below_zero",
         label: "Crosses Below Zero",
         description: "When MACD line crosses below zero (bearish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "histogram_positive",
         label: "Histogram Positive",
         description: "When MACD histogram is positive",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "histogram_negative",
         label: "Histogram Negative",
         description: "When MACD histogram is negative",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "histogram_increasing",
         label: "Histogram Increasing",
         description: "When MACD histogram is increasing",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "histogram_decreasing",
         label: "Histogram Decreasing",
         description: "When MACD histogram is decreasing",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "divergence_bullish",
         label: "Bullish Divergence",
         description: "When price makes lower lows but MACD makes higher lows",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "divergence_bearish",
         label: "Bearish Divergence",
         description: "When price makes higher highs but MACD makes lower highs",
-        requiresValue: false
-      }
+        requiresValue: false,
+      },
     ],
     defaultLogic: "crosses_above_signal",
   },
@@ -668,51 +1367,50 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "price_above_upper",
         label: "Price Above Upper",
         description: "When price is above the upper band",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "price_below_lower",
         label: "Price Below Lower",
         description: "When price is below the lower band",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "price_crosses_above_middle",
         label: "Price Crosses Above Middle",
         description: "When price crosses above the middle band",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "price_crosses_below_middle",
         label: "Price Crosses Below Middle",
         description: "When price crosses below the middle band",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "bands_squeeze",
         label: "Bands Squeeze",
         description: "When the bands are narrowing (low volatility)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "bands_expand",
         label: "Bands Expand",
         description: "When the bands are widening (high volatility)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "price_touches_upper",
         label: "Price Touches Upper",
         description: "When price touches the upper band",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "price_touches_lower",
         label: "Price Touches Lower",
         description: "When price touches the lower band",
-        requiresValue: false
+        requiresValue: false,
       },
-     
     ],
     defaultLogic: "price_crosses_above_upper",
   },
@@ -753,17 +1451,17 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     overbought: {
        name: "Overbought Level",
         type: "number",
-       default: 80,
-       min: 50,
-       max: 100,
-       step: 1,
-     description: "Level considered overbought",
-    },
-    oversold: {
-      name: "Oversold Level",
-      type: "number",
-       default: 20,
-       min: 0,
+        default: 80,
+        min: 50,
+        max: 100,
+        step: 1,
+        description: "Level considered overbought",
+      },
+      oversold: {
+        name: "Oversold Level",
+        type: "number",
+        default: 20,
+        min: 0,
         max: 50,
         step: 1,
         description: "Level considered oversold",
@@ -771,7 +1469,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
 
     },
     logicOptions: [
-      
       {
         value: "crosses_above",
         label: "Crosses Above",
@@ -783,7 +1480,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 50,
         customInput: true,
-        syncKey: "neutral_high"
+        inputLabel: "Stochastic Value",
       },
       {
         value: "crosses_below",
@@ -796,32 +1493,32 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 50,
         customInput: true,
-        syncKey: "neutral_low"
+        inputLabel: "Stochastic Value",
       },
       {
         value: "k_crosses_above_d",
         label: "%K Crosses Above %D",
         description: "When %K crosses above %D (bullish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "k_crosses_below_d",
         label: "%K Crosses Below %D",
         description: "When %K crosses below %D (bearish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "divergence_bullish",
         label: "Bullish Divergence",
         description: "When price makes lower lows but Stochastic makes higher lows",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "divergence_bearish",
         label: "Bearish Divergence",
         description: "When price makes higher highs but Stochastic makes lower highs",
-        requiresValue: false
-      }
+        requiresValue: false,
+      },
     ],
     defaultLogic: "crosses_below",
   },
@@ -862,7 +1559,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 25,
         customInput: true,
-        syncKey: "trend_strength"
+        inputLabel: "ADX Value",
       },
       {
         value: "crosses_below",
@@ -1009,55 +1706,55 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "price_above_cloud",
         label: "Price Above Cloud",
         description: "When price is above the cloud (bullish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "price_below_cloud",
         label: "Price Below Cloud",
         description: "When price is below the cloud (bearish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "price_in_cloud",
         label: "Price In Cloud",
         description: "When price is inside the cloud (neutral)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "tenkan_kijun_cross_bullish",
         label: "Tenkan-Kijun Bullish Cross",
         description: "When Tenkan-sen crosses above Kijun-sen",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "tenkan_kijun_cross_bearish",
         label: "Tenkan-Kijun Bearish Cross",
         description: "When Tenkan-sen crosses below Kijun-sen",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "chikou_price_cross_bullish",
         label: "Chikou-Price Bullish Cross",
         description: "When Chikou Span crosses above price",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "chikou_price_cross_bearish",
         label: "Chikou-Price Bearish Cross",
         description: "When Chikou Span crosses below price",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "cloud_color_change_bullish",
         label: "Cloud Color Change Bullish",
         description: "When cloud changes from red to green",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "cloud_color_change_bearish",
         label: "Cloud Color Change Bearish",
         description: "When cloud changes from green to red",
-        requiresValue: false
+        requiresValue: false,
       },
     ],
     defaultLogic: "price_above_cloud",
@@ -1068,7 +1765,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     description: "Trend following indicator that adapts to volatility",
     category: "trend",
     parameters: {
-      atr_length: { 
+      atr_length: {
         name: "ATR Length",
         type: "number",
         default: 10,
@@ -1077,7 +1774,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         description: "Length of the ATR calculation",
       },
-      Factor:{
+      Factor: {
         name: "Multiplier",
         type: "number",
         default: 3,
@@ -1088,7 +1785,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
       },
     },
     logicOptions: [
-    
       {
         value: "< price",
         label: "Greater than Price",
@@ -1117,25 +1813,25 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "trend_change_bullish",
         label: "Trend Change Bullish",
         description: "When SuperTrend changes from bearish to bullish",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "trend_change_bearish",
         label: "Trend Change Bearish",
         description: "When SuperTrend changes from bullish to bearish",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "divergence_bullish",
         label: "Bullish Divergence",
         description: "When price makes lower lows but SuperTrend makes higher lows",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "divergence_bearish",
         label: "Bearish Divergence",
         description: "When price makes higher highs but SuperTrend makes lower highs",
-        requiresValue: false
+        requiresValue: false,
       },
     ],
     defaultLogic: "crosses_below_price",
@@ -1457,28 +2153,28 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     },
     logicOptions: [
       {
-        value: "crosses_above",
-        label: "Crosses Above",
-        description: "When CCI crosses above a specified value",
+        value: "<",
+        label: "Less Than",
+        description: "When MFI is less than a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -300,
-        max: 300,
+        min: 0,
+        max: 100,
         step: 1,
-        defaultValue: 100,
+        defaultValue: 20,
         customInput: true,
-        syncKey: "cci_value"
+        inputLabel: "MFI Value",
       },
       {
-        value: "crosses_below",
-        label: "Crosses Below",
-        description: "When CCI crosses below a specified value",
+        value: ">",
+        label: "Greater Than",
+        description: "When MFI is greater than a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -300,
-        max: 300,
+        min: 0,
+        max: 100,
         step: 1,
-        defaultValue: -100,
+        defaultValue: 80,
         customInput: true,
         syncKey: "cci_value"
       },
@@ -1563,7 +2259,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 80,
         customInput: true,
-        syncKey: "mfi_value"
+        inputLabel: "MFI Value",
       },
       {
         value: "crosses_below",
@@ -1688,7 +2384,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "orb_low", label: "ORB Low" },
         ],
         customInput: true,
-        inputLabel: "ORB Level"
+        inputLabel: "ORB Level",
       },
       {
         value: "crosses_below",
@@ -1701,7 +2397,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "orb_low", label: "ORB Low" },
         ],
         customInput: true,
-        inputLabel: "ORB Level"
+        inputLabel: "ORB Level",
       },
       {
         value: "greater_than",
@@ -1714,7 +2410,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "orb_low", label: "ORB Low" },
         ],
         customInput: true,
-        inputLabel: "ORB Level"
+        inputLabel: "ORB Level",
       },
       {
         value: "less_than",
@@ -1727,7 +2423,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "orb_low", label: "ORB Low" },
         ],
         customInput: true,
-        inputLabel: "ORB Level"
+        inputLabel: "ORB Level",
       },
       {
         value: "closes_above",
@@ -1740,7 +2436,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "orb_low", label: "ORB Low" },
         ],
         customInput: true,
-        inputLabel: "ORB Level"
+        inputLabel: "ORB Level",
       },
       {
         value: "touches",
@@ -1753,7 +2449,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "orb_low", label: "ORB Low" },
         ],
         customInput: true,
-        inputLabel: "ORB Level"
+        inputLabel: "ORB Level",
       },
     ],
     defaultLogic: "crosses_above",
@@ -1979,20 +2675,20 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "close_crosses_above_upper",
         label: "Close Crosses Above Upper Band",
         description: "When price closes above the upper Keltner band",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "close_crosses_below_lower",
         label: "Close Crosses Below Lower Band",
         description: "When price closes below the lower Keltner band",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "inside_channel",
         label: "Price Inside Channel",
         description: "When price is inside the Keltner channel",
-        requiresValue: false
-      }
+        requiresValue: false,
+      },
     ],
     defaultLogic: "close_crosses_above_upper",
   },
@@ -2066,7 +2762,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         defaultValue: 2,
         customInput: true,
-        syncKey: "atr_value"
+        inputLabel: "ATR Value",
       },
       {
         value: "crosses_below",
@@ -2146,20 +2842,20 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         min: -100,
         max: 100,
         step: 1,
-        defaultValue: -20,
+        defaultValue: 2,
         customInput: true,
-        syncKey: "williams_value"
+        inputLabel: "ATR Value",
       },
       {
-        value: "crosses_below",
-        label: "Crosses Below",
-        description: "When Williams %R crosses below a specified value",
+        value: "<",
+        label: "Less Than",
+        description: "When ATR is less than a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -100,
-        max: 0,
+        min: 0,
+        max: 100,
         step: 1,
-        defaultValue: -80,
+        defaultValue: 1,
         customInput: true,
         syncKey: "williams_value"
       },
@@ -2222,26 +2918,26 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 20,
         step: 0.01,
         description: "Maximum acceleration factor",
-      }
+      },
     },
     logicOptions: [
       {
         value: "crosses_above_price",
         label: "Crosses Above Price",
         description: "When SAR crosses above price (bearish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "crosses_below_price",
         label: "Crosses Below Price",
         description: "When SAR crosses below price (bullish)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "trend_change_bullish",
         label: "Trend Change Bullish",
         description: "When SAR changes from bearish to bullish",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "trend_change_bearish",
@@ -2254,15 +2950,15 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     defaultLogic: "crosses_below_price",
   },
 
-  momentum: {
-    name: "Momentum",
-    description: "Measures the rate of change of price over a specified period.",
-    category: "momentum",
+  bbp: {
+    name: "Bollinger Bands %B",
+    description: "Measures where price is relative to Bollinger Bands.",
+    category: "volatility",
     parameters: {
       period: {
         name: "Period",
         type: "number",
-        default: 10,
+        default: 20,
         min: 1,
         max: 100,
         step: 1,
@@ -2534,7 +3230,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 5,
         step: 0.1,
         description: "Number of standard deviations for the bands",
-      }
+      },
     },
     logicOptions: [
       {
@@ -2559,7 +3255,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "crosses_below_zero",
         label: "Crosses Below 0",
         description: "When %B crosses below 0 (price below lower band)",
-        requiresValue: false
+        requiresValue: false,
       },
       {
         value: "crosses_above",
@@ -2572,7 +3268,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 0.01,
         defaultValue: 0.8,
         customInput: true,
-        syncKey: "bbp_value"
+        inputLabel: "%B Value",
       },
       {
         value: "crosses_below",
@@ -2585,8 +3281,8 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 0.01,
         defaultValue: 0.2,
         customInput: true,
-        syncKey: "bbp_value"
-      }
+        inputLabel: "%B Value",
+      },
     ],
     defaultLogic: "crosses_above_one",
   },

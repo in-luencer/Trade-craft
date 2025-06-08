@@ -12,31 +12,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 
+import type { IndicatorCondition, ConditionGroup, PositionRule } from "@/components/strategy-builder/types"
 import EntryExitNode from "@/components/strategy-builder/entry-exit-node"
 import RiskManagement, { type RiskManagementConfig } from "./strategy-builder/risk-management/risk-management-main"
 import StrategyPreview from "./strategy-preview"
 import { useStrategy } from "@/context/strategy-context"
-
-export type IndicatorCondition = {
-  id: string
-  indicator: string
-  parameter: string
-  logic: string
-  value: string
-  timeframe: string
-  params?: Record<string, any>
-}
-
-export type ConditionGroup = {
-  id: string
-  conditions: IndicatorCondition[]
-  operator: "and" | "or"
-}
-
-export type PositionRule = {
-  id: string
-  conditionGroups: ConditionGroup[]
-}
 
 export type StrategyConfig = {
   id: string
@@ -62,17 +42,13 @@ const defaultCondition: IndicatorCondition = {
   params: {
     period: 14,
     source: "close",
-
-    //overbought: 70,
-   // oversold: 30,
-
-  },
+  } as const,
 }
 
 const defaultConditionGroup: ConditionGroup = {
   id: generateId("group"),
   conditions: [{ ...defaultCondition, id: generateId("condition") }],
-  operator: "and",
+  operator: "or",
 }
 
 const defaultPositionRule: PositionRule = {

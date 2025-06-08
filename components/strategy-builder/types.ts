@@ -5,6 +5,7 @@ export type IndicatorType =
   | "wma"
   | "hma"
   | "vwap"
+  | "vwma"
   | "rsi"
   | "macd"
   | "bollinger"
@@ -15,6 +16,17 @@ export type IndicatorType =
   | "ichimoku"
   | "volume"
   | "momentum"
+  | "williams_r"
+  | "bollinger_b"
+  | "parabolic_sar"
+  | "dpo"
+  | "ppo"
+  | "cmo"
+  | "trix"
+  | "keltner"
+  | "roc"
+  | "awesome"
+  | "cci"
   | "custom"
 
 
@@ -70,7 +82,7 @@ export type IndicatorType =
 
 export type IndicatorParams = {
   // Common parameters
-  source?: string
+  source?: "open" | "high" | "low" | "close" | "hl2" | "hlc3" | "ohlc4"
   period?: number
   
   // MACD specific
@@ -97,25 +109,42 @@ export type IndicatorParams = {
   
   // Custom indicator specific
   formula?: string
+
+  // Volume specific
+  averageVolumeBar?: number
+
+  // Secondary indicator
+  secondary_indicator?: IndicatorType
+
+  // Allow string indexing for dynamic access
+  [key: string]: string | number | boolean | undefined | IndicatorType
+}
+
+export type SecondaryIndicator = {
+  type: IndicatorType;
+  params: IndicatorParams;
 }
 
 export type IndicatorCondition = {
-  id: string
-  indicator: IndicatorType
-  parameter: string
-  logic: IndicatorLogic
-  value: string | number
-  timeframe: string
-  params?: IndicatorParams
+  id: string;
+  indicator: IndicatorType;
+  parameter?: string;
+  logic: IndicatorLogic;
+  value?: string;
+  timeframe?: string;
+  params: IndicatorParams;
+  secondaryIndicator?: SecondaryIndicator;
 }
 
 export type ConditionGroup = {
-  operator: "and" | "or"
-  conditions: IndicatorCondition[]
+  id: string;
+  conditions: IndicatorCondition[];
+  operator: "or";
 }
 
 export type PositionRule = {
-  conditionGroups: ConditionGroup[]
+  id: string;
+  conditionGroups: ConditionGroup[];
 }
 
 export type RiskManagementConfig = {
@@ -127,12 +156,36 @@ export type RiskManagementConfig = {
   maxDrawdown: number
 }
 
-export type Strategy = {
-  name: string
-  description: string
-  entryLong: PositionRule
-  entryShort: PositionRule
-  exitLong: PositionRule
-  exitShort: PositionRule
-  riskManagement: RiskManagementConfig
-} 
+export type StrategyConfig = {
+  id: string;
+  name: string;
+  description: string;
+  entryLong: PositionRule;
+  entryShort: PositionRule;
+  exitLong: PositionRule;
+  exitShort: PositionRule;
+  riskManagement: RiskManagementConfig;
+  isPublic?: boolean;
+}
+
+export interface IndicatorMetadata {
+  name?: string;
+  description?: string;
+  defaultParams: IndicatorParams;
+  defaultLogic?: IndicatorLogic;
+  logicOptions: Array<{
+    value: IndicatorLogic;
+    label: string;
+    description?: string;
+    requiresValue?: boolean;
+    defaultValue?: string | number;
+    valueType?: "number" | "string" | "boolean" | "select";
+    customInput?: boolean;
+  }>;
+  parameterDescriptions?: Record<string, string>;
+  parameterRanges?: Record<string, { min?: number; max?: number; step?: number }>;
+  plotType?: "line" | "histogram" | "column" | "scatter";
+  plotColor?: string;
+  category?: string;
+  secondaryIndicatorAllowed?: boolean;
+}

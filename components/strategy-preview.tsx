@@ -1494,7 +1494,7 @@ positionSize = math.floor((strategy.equity * 0.02) / close)\n`
       const timeExit = strategy.riskManagement.timeExit.find((te) => te.enabled)
       if (timeExit) {
         if (timeExit.type === "bars") {
-          code += `// Exit after a specific number of bars
+          code += `// Exit after a specific
 var int entryBar = 0
 maxBarsInTrade = ${timeExit.value}
 

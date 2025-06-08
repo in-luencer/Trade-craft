@@ -386,34 +386,23 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         ],
         description: "Price data point to use in calculation",
       },
-    },
-    logicOptions: [
+      
+    }, logicOptions: [
+     
       {
-        value: "> price",
-        label: "Greater than Price",
-        description: "When WMA crosses above the price",
-        requiresValue: false,
-      },
-      {
-        value: "< price",
-        label: "Less than Price",
-        description: "When WMA crosses below the price",
-        requiresValue: false,
-      },
-      {
-        value: "crosses above",
-        label: "Crosses Above another moving average",
-        description: "When WMA crosses above another indicator",
+        value: "crosses_above_indicator",
+        label: "Crosses Above Indicator",
+        description: "When EMA crosses above another indicator",
         requiresValue: true,
         valueType: "select",
         options: [
           { value: "sma", label: "Simple Moving Average (SMA)" },
           { value: "ema", label: "Exponential Moving Average (EMA)" },
           { value: "wma", label: "Weighted Moving Average (WMA)" },
-          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
-          { value: "hma", label: "Hull Moving Average (HMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
         ],
         customInput: true,
+        syncKey: "crossover_indicator",
         logicParams: {
           indicator: {
             name: "Indicator",
@@ -423,48 +412,36 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
               { value: "sma", label: "Simple Moving Average (SMA)" },
               { value: "ema", label: "Exponential Moving Average (EMA)" },
               { value: "wma", label: "Weighted Moving Average (WMA)" },
-              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
-              { value: "hma", label: "Hull Moving Average (HMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
             ],
-            description: "Select the indicator to cross with",
+            description: "Select the indicator to cross with"
           },
           period: {
             name: "Period",
             type: "number",
-            default: 50,
+            default: 20,
             min: 1,
             max: 500,
             step: 1,
-            description: "Number of bars used in calculation",
+            description: "Number of bars used in calculation"
           },
-          source: {
-            name: "Source",
-            type: "select",
-            default: "close",
-            options: [
-              { value: "close", label: "Close" },
-              { value: "open", label: "Open" },
-              { value: "high", label: "High" },
-              { value: "low", label: "Low" },
-            ],
-            description: "Price data point to use in calculation",
-          },
-        },
+          
+        }
       },
       {
-        value: "crosses below",
-        label: "Crosses Below another moving average",
-        description: "When WMA crosses below another indicator",
+        value: "crosses_below_indicator",
+        label: "Crosses Below Indicator",
+        description: "When EMA crosses below another indicator",
         requiresValue: true,
         valueType: "select",
         options: [
           { value: "sma", label: "Simple Moving Average (SMA)" },
           { value: "ema", label: "Exponential Moving Average (EMA)" },
           { value: "wma", label: "Weighted Moving Average (WMA)" },
-          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
-          { value: "hma", label: "Hull Moving Average (HMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
         ],
         customInput: true,
+        syncKey: "crossover_indicator",
         logicParams: {
           indicator: {
             name: "Indicator",
@@ -474,39 +451,39 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
               { value: "sma", label: "Simple Moving Average (SMA)" },
               { value: "ema", label: "Exponential Moving Average (EMA)" },
               { value: "wma", label: "Weighted Moving Average (WMA)" },
-              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
-              { value: "hma", label: "Hull Moving Average (HMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
             ],
-            description: "Select the indicator to cross with",
+            description: "Select the indicator to cross with"
           },
           period: {
             name: "Period",
             type: "number",
-            default: 50,
+            default: 20,
             min: 1,
             max: 500,
             step: 1,
-            description: "Number of bars used in calculation",
+            description: "Number of bars used in calculation"
           },
-          source: {
-            name: "Source",
-            type: "select",
-            default: "close",
-            options: [
-              { value: "close", label: "Close" },
-              { value: "open", label: "Open" },
-              { value: "high", label: "High" },
-              { value: "low", label: "Low" },
-            ],
-            description: "Price data point to use in calculation",
-          },
-        },
+          
+        }
+      },
+      {
+        value: "price_above",
+        label: "Price Above",
+        description: "When price is above WMA",
+        requiresValue: false
+      },
+      {
+        value: "price_below",
+        label: "Price Below",
+        description: "When price is below WMA",
+        requiresValue: false
       },
     ],
+    
     defaultLogic: "crosses_above_price",
   },
-
-  vwma: {
+   vwma: {
     name: "Volume Weighted Moving Average",
     description: "Moving average weighted by volume",
     category: "volume",
@@ -529,26 +506,38 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "open", label: "Open" },
           { value: "high", label: "High" },
           { value: "low", label: "Low" },
+          { value: "hl2", label: "HL2" },
+          { value: "hlc3", label: "HLC3" },
+          { value: "ohlc4", label: "OHLC4" },
         ],
         description: "Price data point to use in calculation",
+      },
+      offset: {
+        name: "Offset",
+        type: "number",
+        default: 0,
+        min: -100,
+        max: 100,
+        step: 1,
+        description: "Shift the VWMA forward (positive) or backward (negative)",
       },
     },
     logicOptions: [
       {
-        value: "> price",
-        label: "Greater than Price",
+        value: "crosses_above_price",
+        label: "Crosses Above Price",
         description: "When VWMA crosses above price",
-        requiresValue: false,
+        requiresValue: false
       },
       {
-        value: "< price",
-        label: "Less than Price",
+        value: "crosses_below_price",
+        label: "Crosses Below Price",
         description: "When VWMA crosses below price",
-        requiresValue: false,
+        requiresValue: false
       },
       {
-        value: "crosses above",
-        label: "Crosses Above another moving average",
+        value: "crosses_above_indicator",
+        label: "Crosses Above Indicator",
         description: "When VWMA crosses above another indicator",
         requiresValue: true,
         valueType: "select",
@@ -556,9 +545,10 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "sma", label: "Simple Moving Average (SMA)" },
           { value: "ema", label: "Exponential Moving Average (EMA)" },
           { value: "wma", label: "Weighted Moving Average (WMA)" },
-          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
-          { value: "hma", label: "Hull Moving Average (HMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
         ],
+        customInput: true,
+        syncKey: "crossover_indicator",
         logicParams: {
           indicator: {
             name: "Indicator",
@@ -568,37 +558,24 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
               { value: "sma", label: "Simple Moving Average (SMA)" },
               { value: "ema", label: "Exponential Moving Average (EMA)" },
               { value: "wma", label: "Weighted Moving Average (WMA)" },
-              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
-              { value: "hma", label: "Hull Moving Average (HMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
             ],
-            description: "Select the indicator to cross with",
+            description: "Select the indicator to cross with"
           },
           period: {
             name: "Period",
             type: "number",
-            default: 50,
+            default: 20,
             min: 1,
             max: 500,
             step: 1,
-            description: "Number of bars used in calculation",
-          },
-          source: {
-            name: "Source",
-            type: "select",
-            default: "close",
-            options: [
-              { value: "close", label: "Close" },
-              { value: "open", label: "Open" },
-              { value: "high", label: "High" },
-              { value: "low", label: "Low" },
-            ],
-            description: "Price data point to use in calculation",
-          },
-        },
+            description: "Number of bars used in calculation"
+          }
+        }
       },
       {
-        value: "crosses below",
-        label: "Crosses Below another moving average",
+        value: "crosses_below_indicator",
+        label: "Crosses Below Indicator",
         description: "When VWMA crosses below another indicator",
         requiresValue: true,
         valueType: "select",
@@ -606,9 +583,10 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "sma", label: "Simple Moving Average (SMA)" },
           { value: "ema", label: "Exponential Moving Average (EMA)" },
           { value: "wma", label: "Weighted Moving Average (WMA)" },
-          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
-          { value: "hma", label: "Hull Moving Average (HMA)" },
+          { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
         ],
+        customInput: true,
+        syncKey: "crossover_indicator",
         logicParams: {
           indicator: {
             name: "Indicator",
@@ -618,37 +596,38 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
               { value: "sma", label: "Simple Moving Average (SMA)" },
               { value: "ema", label: "Exponential Moving Average (EMA)" },
               { value: "wma", label: "Weighted Moving Average (WMA)" },
-              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" },
-              { value: "hma", label: "Hull Moving Average (HMA)" },
+              { value: "vwma", label: "Volume Weighted Moving Average (VWMA)" }
             ],
-            description: "Select the indicator to cross with",
+            description: "Select the indicator to cross with"
           },
           period: {
             name: "Period",
             type: "number",
-            default: 50,
+            default: 20,
             min: 1,
             max: 500,
             step: 1,
-            description: "Number of bars used in calculation",
-          },
-          source: {
-            name: "Source",
-            type: "select",
-            default: "close",
-            options: [
-              { value: "close", label: "Close" },
-              { value: "open", label: "Open" },
-              { value: "high", label: "High" },
-              { value: "low", label: "Low" },
-            ],
-            description: "Price data point to use in calculation",
-          },
-        },
+            description: "Number of bars used in calculation"
+          }
+        }
+      },
+      {
+        value: "slope_positive",
+        label: "Positive Slope",
+        description: "When VWMA has a positive slope",
+        requiresValue: false
+      },
+      {
+        value: "slope_negative",
+        label: "Negative Slope",
+        description: "When VWMA has a negative slope",
+        requiresValue: false
       },
     ],
     defaultLogic: "crosses_above_price",
   },
+
+
 
   hma: {
     name: "Hull Moving Average",
@@ -1078,7 +1057,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         requiresValue: true,
         valueType: "number",
         min: -100,
-        max: 0,
+        max: 100,
         step: 1,
         defaultValue: -20,
         customInput: true,
@@ -1091,7 +1070,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         requiresValue: true,
         valueType: "number",
         min: -100,
-        max: 0,
+        max: 100,
         step: 1,
         defaultValue: -80,
         customInput: true,
@@ -1104,7 +1083,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         requiresValue: true,
         valueType: "number",
         min: -100,
-        max: 0,
+        max: 100,
         step: 1,
         defaultValue: -80,
         customInput: true,
@@ -1117,7 +1096,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         requiresValue: true,
         valueType: "number",
         min: -100,
-        max: 0,
+        max: 100,
         step: 1,
         defaultValue: -20,
         customInput: true,

@@ -14,26 +14,14 @@ import StrategyPreview from "./strategy-preview"
 import { useStrategy } from "@/context/strategy-context"
 import StrategyJsonExporter from "./strategy-json-exporter"
 
-export type IndicatorCondition = {
-  id: string
-  indicator: string
-  parameter: string
-  logic: string
-  value: string
-  timeframe: string
-  params?: Record<string, any>
-}
-
-export type ConditionGroup = {
-  id: string
-  conditions: IndicatorCondition[]
-  operator: "or"
-}
-
-export type PositionRule = {
-  id: string
-  conditionGroups: ConditionGroup[]
-}
+import type { 
+  IndicatorCondition,
+  ConditionGroup,
+  PositionRule,
+  IndicatorType,
+  IndicatorParams,
+  IndicatorLogic
+} from "./types";
 
 export type StrategyConfig = {
   id: string // Added 'id' property
@@ -48,22 +36,25 @@ export type StrategyConfig = {
 }
 
 const generateId = (prefix: string) => `${prefix}-${new Date().toISOString()}`
-
 const defaultCondition: IndicatorCondition = {
   id: generateId("condition"),
-  indicator: "rsi",
-  parameter: "value",
-  logic: "less_than",
+  indicator: "rsi" as IndicatorType,
+  logic: "less_than" as IndicatorLogic,
   value: "30",
   timeframe: "1d",
   params: {
     period: 14,
-    source: "close",
-
-    //overbought: 70,
-    //oversold: 30,
+    source: "close" as const
   },
+  secondaryIndicator: {
+    type: "sma" as IndicatorType,
+    params: {
+      period: 14,
+      source: "close" as const
+    }
+  }
 }
+// Remove the incorrect 'params: "value"' line and keep only the object params
 
 const defaultConditionGroup: ConditionGroup = {
   id: generateId("group"),
@@ -71,10 +62,24 @@ const defaultConditionGroup: ConditionGroup = {
   operator: "or",
 }
 
-const defaultPositionRule: PositionRule = {
-  id: generateId("rule"),
-  conditionGroups: [{ ...defaultConditionGroup, id: generateId("group") }],
-}
+const defaultPositionRule = (id: string = generateId("rule")): PositionRule => ({
+  id,
+  conditionGroups: [{
+    id: generateId("group"),
+    conditions: [{
+      id: generateId("condition"),
+      indicator: "rsi" as IndicatorType,
+      logic: "less_than" as IndicatorLogic,
+      value: "30",
+      timeframe: "1d",
+      params: {
+        period: 14,
+        source: "close" as const,
+      },
+    }],
+    operator: "or",
+  }],
+});
 
 const defaultRiskManagement: RiskManagementConfig = {
   stopLoss: [
@@ -118,10 +123,10 @@ const defaultStrategy: StrategyConfig = {
   id: generateId("strategy"),
   name: "My Trading Strategy",
   description: "A comprehensive trading strategy with independent indicator values",
-  entryLong: { ...defaultPositionRule, id: generateId("entry-long") },
-  entryShort: { ...defaultPositionRule, id: generateId("entry-short") },
-  exitLong: { ...defaultPositionRule, id: generateId("exit-long") },
-  exitShort: { ...defaultPositionRule, id: generateId("exit-short") },
+  entryLong: defaultPositionRule("entry-long"),
+  entryShort: defaultPositionRule("entry-short"),
+  exitLong: defaultPositionRule("exit-long"),
+  exitShort: defaultPositionRule("exit-short"),
   riskManagement: defaultRiskManagement,
   isPublic: false,
 }
@@ -188,14 +193,37 @@ const apiClient = {
 
 export default function StrategyBuilder() {
   const [activeTab, setActiveTab] = useState("builder")
-  const [strategy, setStrategy] = useState<StrategyConfig>(defaultStrategy)
+  const [strategy, setStrategy] = useState<StrategyConfig>({
+    id: generateId("strategy"),
+    name: "",
+    description: "",
+    entryLong: defaultPositionRule("entry-long"),
+    entryShort: defaultPositionRule("entry-short"),
+    exitLong: defaultPositionRule("exit-long"),
+    exitShort: defaultPositionRule("exit-short"),
+    riskManagement: defaultRiskManagement,
+  })
   const [isSaving, setIsSaving] = useState(false)
   const router = useRouter()
   const { setStrategyName, setStrategyId, setIsPublic, setIndicators } = useStrategy()
 
-  const updateStrategy = (newStrategy: Partial<StrategyConfig>) => {
-    setStrategy({ ...strategy, ...newStrategy })
+  const updateStrategy = (updates: Partial<StrategyConfig>) => {
+    setStrategy((prev) => ({
+      ...prev,
+      ...updates,
+    }))
   }
+
+  const createPositionRule = (groups: ConditionGroup[]): PositionRule => ({
+    id: generateId("rule"),
+    conditionGroups: groups
+  })
+
+  // Update handlers
+  const handleEntryLongUpdate = (groups: ConditionGroup[]) => updateStrategy({ entryLong: createPositionRule(groups) })
+  const handleEntryShortUpdate = (groups: ConditionGroup[]) => updateStrategy({ entryShort: createPositionRule(groups) })
+  const handleExitLongUpdate = (groups: ConditionGroup[]) => updateStrategy({ exitLong: createPositionRule(groups) })
+  const handleExitShortUpdate = (groups: ConditionGroup[]) => updateStrategy({ exitShort: createPositionRule(groups) })
 
   const saveStrategy = async () => {
     try {
@@ -300,10 +328,12 @@ export default function StrategyBuilder() {
             <EntryExitNode
               positionRule={strategy.entryLong}
               onChange={(updatedRule) => updateStrategy({ entryLong: updatedRule })}
+              title="Long Position"
             />
             <EntryExitNode
               positionRule={strategy.entryShort}
               onChange={(updatedRule) => updateStrategy({ entryShort: updatedRule })}
+              title="Short Position"
             />
           </CardContent>
         </Card>
@@ -317,10 +347,12 @@ export default function StrategyBuilder() {
             <EntryExitNode
               positionRule={strategy.exitLong}
               onChange={(updatedRule) => updateStrategy({ exitLong: updatedRule })}
+              title="Long Position"
             />
             <EntryExitNode
               positionRule={strategy.exitShort}
               onChange={(updatedRule) => updateStrategy({ exitShort: updatedRule })}
+              title="Short Position"
             />
           </CardContent>
         </Card>
@@ -347,6 +379,7 @@ export default function StrategyBuilder() {
                   <EntryExitNode
                     positionRule={strategy.entryLong}
                     onChange={(updatedRule) => updateStrategy({ entryLong: updatedRule })}
+                    title="Long Position"
                   />
                 </div>
                 <div>
@@ -354,6 +387,7 @@ export default function StrategyBuilder() {
                   <EntryExitNode
                     positionRule={strategy.entryShort}
                     onChange={(updatedRule) => updateStrategy({ entryShort: updatedRule })}
+                    title="Short Position"
                   />
                 </div>
               </CardContent>
@@ -370,6 +404,7 @@ export default function StrategyBuilder() {
                   <EntryExitNode
                     positionRule={strategy.exitLong}
                     onChange={(updatedRule) => updateStrategy({ exitLong: updatedRule })}
+                    title="Long Position"
                   />
                 </div>
                 <div>
@@ -377,6 +412,7 @@ export default function StrategyBuilder() {
                   <EntryExitNode
                     positionRule={strategy.exitShort}
                     onChange={(updatedRule) => updateStrategy({ exitShort: updatedRule })}
+                    title="Short Position"
                   />
                 </div>
               </CardContent>
@@ -400,11 +436,11 @@ export default function StrategyBuilder() {
 
         <TabsContent value="preview" className="space-y-6">
           <StrategyPreview strategy={strategy} />
-          <StrategyJsonExporter strategy={strategy} />
+      <StrategyJsonExporter strategy={strategy} />
         </TabsContent>
 
         <TabsContent value="json">
-          <StrategyJsonExporter strategy={strategy} />
+      <StrategyJsonExporter strategy={strategy} />
         </TabsContent>
       </Tabs>
 

@@ -238,7 +238,7 @@ Entry Rules:
   // Indicators used
   code += "\nIndicators Used:\n"
   const indicators = collectIndicators(strategy)
-  if (indicators.length === 0) {
+  if (!indicators) {
     code += "- No indicators used\n"
   } else {
     indicators.forEach((indicator) => {

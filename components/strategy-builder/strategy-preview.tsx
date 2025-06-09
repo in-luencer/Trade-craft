@@ -130,6 +130,9 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
           </Tabs>
         </CardContent>
       </Card>
+
+
+      
     </div>
   )
 }

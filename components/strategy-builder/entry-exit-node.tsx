@@ -23,7 +23,6 @@ const EntryExitNode = ({ positionRule, onChange, title = "Entry/Exit Rules" }: E
         {
           id: "condition-" + Date.now(),
           indicator: "rsi",
-          parameter: "value",
           logic: "less_than",
           value: "30",
           timeframe: "1d",
@@ -62,7 +61,6 @@ const EntryExitNode = ({ positionRule, onChange, title = "Entry/Exit Rules" }: E
     const newCondition: IndicatorCondition = {
       id: "condition-" + Date.now(),
       indicator: "rsi",
-      parameter: "value",
       logic: "less_than",
       value: "30",
       timeframe: "1d",

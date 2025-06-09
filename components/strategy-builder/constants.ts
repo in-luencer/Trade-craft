@@ -35,6 +35,11 @@ export const INDICATORS: Record<IndicatorType, {
     parameters: ["value"],
     logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
   },
+  vwma: {
+    name: "Volume Weighted Moving Average",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
   rsi: {
     name: "Relative Strength Index",
     parameters: ["value"],
@@ -61,6 +66,11 @@ export const INDICATORS: Record<IndicatorType, {
       "crosses_above", "crosses_below", "greater_than", "less_than", "equals",
       "inside", "outside", "touches", "squeeze", "expansion"
     ]
+  },
+  bollinger_b: {
+    name: "Bollinger %B",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
   },
   atr: {
     name: "Average True Range",
@@ -120,6 +130,56 @@ export const INDICATORS: Record<IndicatorType, {
     name: "Custom Indicator",
     parameters: ["value"],
     logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals"]
+  },
+  williams_r: {
+    name: "Williams %R",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "overbought", "oversold"]
+  },
+  parabolic_sar: {
+    name: "Parabolic SAR",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "changes_to_bullish", "changes_to_bearish"]
+  },
+  dpo: {
+    name: "Detrended Price Oscillator",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "zero_cross_up", "zero_cross_down"]
+  },
+  ppo: {
+    name: "Percentage Price Oscillator",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "zero_cross_up", "zero_cross_down"]
+  },
+  cmo: {
+    name: "Chande Momentum Oscillator",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "overbought", "oversold"]
+  },
+  trix: {
+    name: "TRIX",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "zero_cross_up", "zero_cross_down"]
+  },
+  keltner: {
+    name: "Keltner Channel",
+    parameters: ["upper", "middle", "lower"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "inside", "outside", "touches"]
+  },
+  roc: {
+    name: "Rate of Change",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "zero_cross_up", "zero_cross_down"]
+  },
+  awesome: {
+    name: "Awesome Oscillator",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "zero_cross_up", "zero_cross_down"]
+  },
+  cci: {
+    name: "Commodity Channel Index",
+    parameters: ["value"],
+    logics: ["crosses_above", "crosses_below", "greater_than", "less_than", "equals", "overbought", "oversold"]
   }
 }
 
@@ -144,5 +204,17 @@ export const DEFAULT_INDICATOR_PARAMS: Record<IndicatorType, any> = {
   ichimoku: { conversionPeriod: 9, basePeriod: 26, laggingSpanPeriod: 52, displacement: 26 },
   volume: {},
   momentum: { period: 10, source: "close" },
-  custom: { formula: "sma(close, 20) + atr(14) * 2" }
-} 
+  custom: { formula: "sma(close, 20) + atr(14) * 2" },
+  vwma: { period: 20, source: "close" },
+  williams_r: { period: 14 },
+  bollinger_b: { period: 20, stdDev: 2, source: "close" },
+  parabolic_sar: { step: 0.02, max: 0.2 },
+  dpo: { period: 20, source: "close" },
+  ppo: { fastPeriod: 12, slowPeriod: 26, signalPeriod: 9, source: "close" },
+  cmo: { period: 14, source: "close" },
+  trix: { period: 15, source: "close" },
+  keltner: { period: 20, multiplier: 2, source: "close" },
+  roc: { period: 12, source: "close" },
+  awesome: { shortPeriod: 5, longPeriod: 34 },
+  cci: { period: 20, source: "close" }
+}

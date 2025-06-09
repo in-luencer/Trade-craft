@@ -35,7 +35,6 @@ const generateId = (prefix: string) => `${prefix}-${new Date().toISOString()}`
 const defaultCondition: IndicatorCondition = {
   id: generateId("condition"),
   indicator: "rsi",
-  parameter: "value",
   logic: "less_than",
   value: "30",
   timeframe: "1d",

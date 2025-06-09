@@ -37,11 +37,11 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
               operator: group.operator,
               conditions: group.conditions.map((condition) => ({
                 indicator: condition.indicator,
-                parameter: condition.parameter,
                 logic: condition.logic,
                 value: condition.value,
                 timeframe: condition.timeframe,
                 params: condition.params,
+                secondaryIndicator: condition.secondaryIndicator, // include if present
               })),
             })),
           },
@@ -50,11 +50,11 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
               operator: group.operator,
               conditions: group.conditions.map((condition) => ({
                 indicator: condition.indicator,
-                parameter: condition.parameter,
                 logic: condition.logic,
                 value: condition.value,
                 timeframe: condition.timeframe,
                 params: condition.params,
+                secondaryIndicator: condition.secondaryIndicator, // include if present
               })),
             })),
           },
@@ -63,11 +63,11 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
               operator: group.operator,
               conditions: group.conditions.map((condition) => ({
                 indicator: condition.indicator,
-                parameter: condition.parameter,
                 logic: condition.logic,
                 value: condition.value,
                 timeframe: condition.timeframe,
                 params: condition.params,
+                secondaryIndicator: condition.secondaryIndicator, // include if present
               })),
             })),
           },
@@ -76,11 +76,11 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
               operator: group.operator,
               conditions: group.conditions.map((condition) => ({
                 indicator: condition.indicator,
-                parameter: condition.parameter,
                 logic: condition.logic,
                 value: condition.value,
                 timeframe: condition.timeframe,
                 params: condition.params,
+                secondaryIndicator: condition.secondaryIndicator, // include if present
               })),
             })),
           },

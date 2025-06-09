@@ -1,117 +1,95 @@
-
-import type { IndicatorCondition, StrategyConfig } from "./strategy-builder" // Updated import
+import { StrategyConfig } from "./types";
+import { IndicatorCondition } from "./types";
 
 import { DEFAULT_INDICATOR_PARAMS } from "./constants"
 
 export function getIndicatorVariable(condition: IndicatorCondition): string {
-  const indicator = condition.indicator
-  const parameter = condition.parameter
+  const indicator = condition.indicator;
 
   switch (indicator) {
     case "price":
-      return condition.params?.source || "close"
+      return condition.params?.source || "close";
     case "sma":
-      const smaParams = getIndicatorParams(condition, "sma")
-      return `ta.sma(${smaParams.source || "close"}, ${smaParams.period})`
+      const smaParams = getIndicatorParams(condition, "sma");
+      return `ta.sma(${smaParams.source || "close"}, ${smaParams.period})`;
     case "ema":
-      const emaParams = getIndicatorParams(condition, "ema")
-      return `ta.ema(${emaParams.source || "close"}, ${emaParams.period})`
+      const emaParams = getIndicatorParams(condition, "ema");
+      return `ta.ema(${emaParams.source || "close"}, ${emaParams.period})`;
     case "wma":
-      const wmaParams = getIndicatorParams(condition, "wma")
-      return `ta.wma(${wmaParams.source || "close"}, ${wmaParams.period})`
+      const wmaParams = getIndicatorParams(condition, "wma");
+      return `ta.wma(${wmaParams.source || "close"}, ${wmaParams.period})`;
     case "hma":
-      const hmaParams = getIndicatorParams(condition, "hma")
-      return `ta.hma(${hmaParams.source || "close"}, ${hmaParams.period})`
+      const hmaParams = getIndicatorParams(condition, "hma");
+      return `ta.hma(${hmaParams.source || "close"}, ${hmaParams.period})`;
     case "vwap":
-      return "ta.vwap(hlc3)"
+      return "ta.vwap(hlc3)";
     case "rsi":
-      const rsiParams = getIndicatorParams(condition, "rsi")
-      return `ta.rsi(${rsiParams.source || "close"}, ${rsiParams.period})`
+      const rsiParams = getIndicatorParams(condition, "rsi");
+      return `ta.rsi(${rsiParams.source || "close"}, ${rsiParams.period})`;
     case "macd":
-      if (parameter === "histogram") return "histogram"
-      if (parameter === "signal") return "signalLine"
-      return "macdLine"
+      if (condition.params?.macdType === "histogram") return "histogram";
+      if (condition.params?.macdType === "signal") return "signalLine";
+      return "macdLine";
     case "bollinger":
-      if (parameter === "upper") return "upperBand"
-      if (parameter === "lower") return "lowerBand"
-      if (parameter === "width") return "(upperBand - lowerBand) / middleBand"
-      if (parameter === "percent_b") return "(close - lowerBand) / (upperBand - lowerBand)"
-      return "middleBand"
+      if (condition.params?.band === "upper") return "upperBand";
+      if (condition.params?.band === "lower") return "lowerBand";
+      if (condition.params?.band === "width") return "(upperBand - lowerBand) / middleBand";
+      if (condition.params?.band === "percent_b") return "(close - lowerBand) / (upperBand - lowerBand)";
+      return "middleBand";
     case "atr":
-      const atrParams = getIndicatorParams(condition, "atr")
-      return `ta.atr(${atrParams.period})`
+      const atrParams = getIndicatorParams(condition, "atr");
+      return `ta.atr(${atrParams.period})`;
     case "stochastic":
-      if (parameter === "d") return "d"
-      return "k"
+      if (condition.params?.stochType === "d") return "d";
+      return "k";
     case "adx":
-      if (parameter === "di_plus") return "diPlus"
-      if (parameter === "di_minus") return "diMinus"
-      return "adx"
+      if (condition.params?.adxType === "di_plus") return "diPlus";
+      if (condition.params?.adxType === "di_minus") return "diMinus";
+      return "adx";
     case "supertrend":
-      if (parameter === "direction") return "direction"
-      return "supertrend"
+      if (condition.params?.supertrendType === "direction") return "direction";
+      return "supertrend";
     case "ichimoku":
-      if (parameter === "tenkan") return "tenkan"
-      if (parameter === "kijun") return "kijun"
-      if (parameter === "senkou_a") return "senkou_a"
-      if (parameter === "senkou_b") return "senkou_b"
-      if (parameter === "chikou") return "chikou"
-      return "tenkan"
+      if (condition.params?.ichimokuType === "tenkan") return "tenkan";
+      if (condition.params?.ichimokuType === "kijun") return "kijun";
+      if (condition.params?.ichimokuType === "senkou_a") return "senkou_a";
+      if (condition.params?.ichimokuType === "senkou_b") return "senkou_b";
+      if (condition.params?.ichimokuType === "chikou") return "chikou";
+      return "tenkan";
     case "volume":
-      if (parameter === "average") return "volumeMA"
-      return "volume"
+      if (condition.params?.volumeType === "average") return "volumeMA";
+      return "volume";
     case "momentum":
-      return "momentum"
+      return "momentum";
     case "custom":
-      return "customValue"
+      return "customValue";
     default:
-      return `${indicator}Value`
+      return `${indicator}Value`;
   }
 }
 
 export function getIndicatorLogic(condition: IndicatorCondition): string {
-  const indicator = condition.indicator
-  const logic = condition.logic
-  const value = condition.value
+  const indicator = condition.indicator;
+  const logic = condition.logic;
+  const value = condition.value;
+  const params = condition.params || {};
 
-  const params = condition.params || {}
-
-  // Handle crossover/crossunder between indicators - UPDATED to use crossPeriod
-  if (logic === "> indicator" || logic === "< indicator") {
-    const logicDescription = logic === "> indicator" ? "crosses above" : "crosses below"
-
-    // Get secondary indicator info from params - try both crossPeriod and period
-    const secondaryIndicator = params.indicator
-    const secondaryPeriod = params.crossPeriod || params.period
-
-    if (secondaryIndicator && secondaryPeriod) {
-      const secondaryDisplayName = `${secondaryIndicator.toUpperCase()}(${secondaryPeriod})`
-      return `${logicDescription} ${secondaryDisplayName}`
-    }
-  }
-
-  // Handle alternative cross indicator logic formats
-  if (logic === "crosses_above_indicator" || logic === "crosses_below_indicator") {
-    const logicDescription = logic === "crosses_above_indicator" ? "crosses above" : "crosses below"
-
-    // Get secondary indicator info from params - try both crossPeriod and period
-    const secondaryIndicator = params.indicator
-    const secondaryPeriod = params.crossPeriod || params.period
-
-    if (secondaryIndicator && secondaryPeriod) {
-      const secondaryDisplayName = `${secondaryIndicator.toUpperCase()}(${secondaryPeriod})`
-      return `${logicDescription} ${secondaryDisplayName}`
-    }
-  }
-
-  // Handle crossover/crossunder between indicators - LEGACY FORMAT
+  // Handle crossover/crossunder between indicators - only for valid logic values
   if (logic === "crosses_above" || logic === "crosses_below") {
     if (typeof value === "string" && value.startsWith("indicator:")) {
-      const targetIndicator = value.split(":")[1]
-      const targetIndicatorDisplayName = getIndicatorDisplayName({ indicator: targetIndicator } as IndicatorCondition)
-      const logicDescription = logic === "crosses_above" ? "crosses above" : "crosses below"
-      return `${logicDescription} ${targetIndicatorDisplayName}`
-
+      const targetIndicator = value.split(":")[1];
+      const targetIndicatorDisplayName = getIndicatorDisplayName({ indicator: targetIndicator } as IndicatorCondition);
+      const logicDescription = logic === "crosses_above" ? "crosses above" : "crosses below";
+      return `${logicDescription} ${targetIndicatorDisplayName}`;
+    }
+    // Handle cross with secondaryIndicator (object form)
+    if (condition.secondaryIndicator && typeof condition.secondaryIndicator === "object" && condition.secondaryIndicator.type) {
+      const logicDescription = logic === "crosses_above" ? "crosses above" : "crosses below";
+      let secondaryDisplayName = condition.secondaryIndicator.type.toUpperCase();
+      if (condition.secondaryIndicator.params && condition.secondaryIndicator.params.period) {
+        secondaryDisplayName += `(${condition.secondaryIndicator.params.period})`;
+      }
+      return `${logicDescription} ${secondaryDisplayName}`;
     }
   }
 
@@ -119,10 +97,8 @@ export function getIndicatorLogic(condition: IndicatorCondition): string {
   const logicMap: Record<string, string> = {
     crosses_above: "crosses above",
     crosses_below: "crosses below",
-
     crosses_above_price: "crosses above price",
     crosses_below_price: "crosses below price",
-
     greater_than: ">",
     less_than: "<",
     equals: "==",
@@ -161,21 +137,16 @@ export function getIndicatorLogic(condition: IndicatorCondition): string {
     changes_to_bearish: "changes to bearish",
     squeeze: "is in a squeeze",
     expansion: "is in expansion",
-
     percent_change: "percent change is",
-
     turns_up: "turns up",
     turns_down: "turns down",
     above_average: "is above average",
     below_average: "is below average",
-
     spike: "shows a spike",
-    // Add more mappings from your metadata
     price_above: "price above",
     price_below: "price below",
-  }
-
-  const logicDescription = logicMap[logic] || logic
+  };
+  const logicDescription = logicMap[logic] || logic;
 
   // Handle cases where value is included in the description
   if (["greater_than", "less_than", "equals", "percent_change"].includes(logic)) {
@@ -202,68 +173,67 @@ export function getIndicatorParams(condition: IndicatorCondition, indicatorType:
 }
 
 export function getIndicatorDisplayName(condition: IndicatorCondition): string {
-  const indicator = condition.indicator
-  const parameter = condition.parameter
+  const indicator = condition.indicator;
 
   switch (indicator) {
     case "price":
-      return condition.params?.source || "close"
+      return condition.params?.source || "close";
     case "sma":
-      const smaParams = getIndicatorParams(condition, "sma")
-      return `SMA(${smaParams.period})`
+      const smaParams = getIndicatorParams(condition, "sma");
+      return `SMA(${smaParams.period})`;
     case "ema":
-      const emaParams = getIndicatorParams(condition, "ema")
-      return `EMA(${emaParams.period})`
+      const emaParams = getIndicatorParams(condition, "ema");
+      return `EMA(${emaParams.period})`;
     case "wma":
-      const wmaParams = getIndicatorParams(condition, "wma")
-      return `WMA(${wmaParams.period})`
+      const wmaParams = getIndicatorParams(condition, "wma");
+      return `WMA(${wmaParams.period})`;
     case "hma":
-      const hmaParams = getIndicatorParams(condition, "hma")
-      return `HMA(${hmaParams.period})`
+      const hmaParams = getIndicatorParams(condition, "hma");
+      return `HMA(${hmaParams.period})`;
     case "vwap":
-      return "VWAP"
+      return "VWAP";
     case "rsi":
-      const rsiParams = getIndicatorParams(condition, "rsi")
-      return `RSI(${rsiParams.period})`
+      const rsiParams = getIndicatorParams(condition, "rsi");
+      return `RSI(${rsiParams.period})`;
     case "macd":
-      if (parameter === "histogram") return "MACD Histogram"
-      if (parameter === "signal") return "MACD Signal"
-      return "MACD Line"
+      if (condition.params?.macdType === "histogram") return "MACD Histogram";
+      if (condition.params?.macdType === "signal") return "MACD Signal";
+      return "MACD Line";
     case "bollinger":
-      if (parameter === "upper") return "Bollinger Upper Band"
-      if (parameter === "lower") return "Bollinger Lower Band"
-      if (parameter === "width") return "Bollinger Width"
-      if (parameter === "percent_b") return "Bollinger %B"
-      return "Bollinger Middle Band"
+      if (condition.params?.band === "upper") return "Bollinger Upper Band";
+      if (condition.params?.band === "lower") return "Bollinger Lower Band";
+      if (condition.params?.band === "width") return "Bollinger Width";
+      if (condition.params?.band === "percent_b") return "Bollinger %B";
+      return "Bollinger Middle Band";
     case "atr":
-      const atrParams = getIndicatorParams(condition, "atr")
-      return `ATR(${atrParams.period})`
+      const atrParams = getIndicatorParams(condition, "atr");
+      return `ATR(${atrParams.period})`;
     case "stochastic":
-      if (parameter === "d") return "Stochastic %D"
-      return "Stochastic %K"
+      if (condition.params?.stochType === "d") return "Stochastic %D";
+      return "Stochastic %K";
     case "adx":
-      if (parameter === "di_plus") return "ADX DI+"
-      if (parameter === "di_minus") return "ADX DI-"
-      return "ADX"
+      if (condition.params?.adxType === "di_plus") return "ADX DI+";
+      if (condition.params?.adxType === "di_minus") return "ADX DI-";
+      return "ADX";
     case "supertrend":
-      if (parameter === "direction") return "SuperTrend Direction"
-      return "SuperTrend"
+      if (condition.params?.supertrendType === "direction") return "SuperTrend Direction";
+      return "SuperTrend";
     case "ichimoku":
-      if (parameter === "tenkan") return "Ichimoku Tenkan"
-      if (parameter === "kijun") return "Ichimoku Kijun"
-      if (parameter === "senkou_a") return "Ichimoku Senkou A"
-      if (parameter === "senkou_b") return "Ichimoku Senkou B"
-      if (parameter === "chikou") return "Ichimoku Chikou"
-      return "Ichimoku Tenkan"
+      if (condition.params?.ichimokuType === "tenkan") return "Ichimoku Tenkan";
+      if (condition.params?.ichimokuType === "kijun") return "Ichimoku Kijun";
+      if (condition.params?.ichimokuType === "senkou_a") return "Ichimoku Senkou A";
+      if (condition.params?.ichimokuType === "senkou_b") return "Ichimoku Senkou B";
+      if (condition.params?.ichimokuType === "chikou") return "Ichimoku Chikou";
+      return "Ichimoku Tenkan";
     case "volume":
-      if (parameter === "average") return "Volume MA"
-      return "Volume"
+      if (condition.params?.volumeType === "average") return "Volume MA";
+      return "Volume";
     case "momentum":
-      return "Momentum"
+      return "Momentum";
     case "custom":
-      return "Custom Indicator"
+      return "Custom Indicator";
     default:
-      return `${indicator}(${parameter})`
+      return `${indicator}`;
   }
 }
 

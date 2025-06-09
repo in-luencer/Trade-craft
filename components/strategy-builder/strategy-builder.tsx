@@ -50,17 +50,14 @@ const defaultCondition: IndicatorCondition = {
     //oversold: 30,
 
   },
-    source: "close" as const
-  },
   secondaryIndicator: {
     type: "sma" as IndicatorType,
     params: {
       period: 14,
-      source: "close" as const
-    }
-  }
+      source: "close",
+    },
+  },
 }
-// Remove the incorrect 'params: "value"' line and keep only the object params
 
 const defaultConditionGroup: ConditionGroup = {
   id: generateId("group"),
@@ -80,7 +77,7 @@ const defaultPositionRule = (id: string = generateId("rule")): PositionRule => (
       timeframe: "1d",
       params: {
         period: 14,
-        source: "close" as const,
+        source: "close",
       },
     }],
     operator: "or",

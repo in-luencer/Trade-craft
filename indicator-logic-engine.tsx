@@ -14,7 +14,7 @@ import { Slider } from "@/components/ui/slider"
 import { Card, CardContent } from "@/components/ui/card"
 import { HelpCircle } from "lucide-react"
 
-import type { IndicatorType, IndicatorCondition, IndicatorParams } from "./components/strategy-builder/types";
+import type { IndicatorType, IndicatorCondition, IndicatorParams, IndicatorLogic } from "./components/strategy-builder/types";
 import type { IndicatorParameter } from "./components/strategy-builder/indicator-metadata";
 import indicatorMetadata from "./indicator-metadata"
 
@@ -78,7 +78,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
       onChange({
         ...condition,
         indicator: value as IndicatorType,
-        logic: newIndicator.defaultLogic || newIndicator.logicOptions[0].value,
+        logic: (newIndicator.defaultLogic || newIndicator.logicOptions[0].value) as IndicatorLogic,
         value: newIndicator.logicOptions[0]?.defaultValue?.toString() || "0",
         params: initialParams,
       })
@@ -90,7 +90,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
     // Always use our dedicated 'value' property, not a shared sync via params[syncKey]
     onChange({
       ...condition,
-      logic: value,
+      logic: value as IndicatorLogic,
       value: newLogic?.defaultValue?.toString() || "0", // Always reset to the new logic's default value if changing
     })
   }
@@ -214,8 +214,8 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                                     {option}
                                   </SelectItem>
                                 ) : (
-                                  <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
+                                  <SelectItem key={typeof option === "string" ? option : option.value} value={typeof option === "string" ? option : option.value}>
+                                    {typeof option === "string" ? option : option.label}
                                   </SelectItem>
                                 )
                               ))}
@@ -310,7 +310,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                                     {option}
                                   </SelectItem>
                                 ) : (
-                                  <SelectItem key={option.value} value={option.value}>
+                                  <SelectItem key={typeof option === "string" ? option : option.value} value={typeof option === "string" ? option : option.value}>
                                     {option.label}
                                   </SelectItem>
                                 )
@@ -455,18 +455,24 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                       <Label>{param.name}</Label>
                       {param.type === "select" ? (
                         <Select
-                          value={condition.params?.[`secondary_${key}`]|| param.default}
+                          value={(condition.params?.[`secondary_${key}`] || param.default)?.toString()}
                           onValueChange={(value) => handleLogicParamChange(key, value)}
                         >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {param.options?.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
+                            {param.options?.map((option) =>
+                              typeof option === "string" ? (
+                                <SelectItem key={option} value={option}>
+                                  {option}
+                                </SelectItem>
+                              ) : (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              )
+                            )}
                           </SelectContent>
                         </Select>
                       ) : (
@@ -474,7 +480,7 @@ export default function IndicatorLogicEngine({ condition, onChange, onRemove }: 
                           <div className="flex items-center justify-between">
                             <Input
                               type="number"
-                              value={condition.params?.[`secondary_${key}`] || param.default}
+                              value={(condition.params?.[`secondary_${key}`] !== undefined && typeof condition.params?.[`secondary_${key}`] !== "boolean" ? condition.params?.[`secondary_${key}`] : param.default)?.toString()}
                               onChange={(e) => handleLogicParamChange(key, Number(e.target.value))}
                               min={param.min}
                               max={param.max}

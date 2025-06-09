@@ -6,7 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:analyze": "ANALYZE=true next build",
+    "build:prod": "NODE_ENV=production next build",
+    "start:prod": "NODE_ENV=production next start",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "if exist .next rmdir /s /q .next && if exist out rmdir /s /q out",
+    "prebuild": "npm run clean"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -72,6 +79,9 @@
     "@types/node": "^20.11.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "@next/bundle-analyzer": "^14.1.0",
+    "compression-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.3.3"

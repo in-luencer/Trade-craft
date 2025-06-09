@@ -134,11 +134,14 @@ export type SecondaryIndicator = {
 export type IndicatorCondition = {
   id: string
   indicator: IndicatorType
-  parameter: string
-  logic: string
+  logic: IndicatorLogic
   value: string
   timeframe: string
-  params?: Record<string, any>
+  params: IndicatorParams
+  secondaryIndicator?: {
+    type: IndicatorType
+    params: IndicatorParams
+  }
 }
 
 export type ConditionGroup = {

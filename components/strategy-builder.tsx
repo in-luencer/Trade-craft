@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-
+import { cleanPositionRule } from "./strategy-builder/utils";
 import type { IndicatorCondition, ConditionGroup, PositionRule } from "@/components/strategy-builder/types"
 import EntryExitNode from "@/components/strategy-builder/entry-exit-node"
 import RiskManagement, { type RiskManagementConfig } from "./strategy-builder/risk-management/risk-management-main"
@@ -248,16 +248,15 @@ export default function StrategyBuilder() {
           })
         })
       }
-
-      collectIndicators(strategy.entryLong)
-      collectIndicators(strategy.entryShort)
-      collectIndicators(strategy.exitLong)
-      collectIndicators(strategy.exitShort)
-
-      setIndicators(Array.from(indicators))
-
-      // In a real app, this would save to your backend
-      await apiClient.saveStrategy(strategy)
+      const cleanedStrategy = {
+        ...strategy,
+        entryLong: cleanPositionRule(strategy.entryLong),
+        entryShort: cleanPositionRule(strategy.entryShort),
+        exitLong: cleanPositionRule(strategy.exitLong),
+        exitShort: cleanPositionRule(strategy.exitShort),
+      };
+      await apiClient.saveStrategy(cleanedStrategy);
+    
       alert("Strategy saved successfully!")
       return true
     } catch (error) {

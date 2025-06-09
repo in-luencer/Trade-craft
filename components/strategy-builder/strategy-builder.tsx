@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Save, ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
-
+import { cleanPositionRule } from "./utils";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -50,13 +50,14 @@ const defaultCondition: IndicatorCondition = {
     //oversold: 30,
 
   },
+
   secondaryIndicator: {
     type: "sma" as IndicatorType,
     params: {
       period: 14,
-      source: "close",
-    },
-  },
+     source: "close",
+   },
+ },
 }
 
 const defaultConditionGroup: ConditionGroup = {
@@ -64,6 +65,9 @@ const defaultConditionGroup: ConditionGroup = {
   conditions: [{ ...defaultCondition, id: generateId("condition") }],
   operator: "or",
 }
+
+
+
 
 const defaultPositionRule = (id: string = generateId("rule")): PositionRule => ({
   id,

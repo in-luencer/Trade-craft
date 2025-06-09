@@ -117,10 +117,12 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
       logic: value,
     };
 
-    // Initialize secondary indicator only if one is needed and none exists
-    if ((value.includes("crosses") || value.includes("above") || value.includes("below")) && !updatedCondition.secondaryIndicator) {
-      const selectedLogicOption = indicator.logicOptions.find(opt => opt.value === value);
-      
+    // Initialize secondary indicator only if one is needed, customInput is true, and none exists
+    const selectedLogicOption = indicator.logicOptions.find(opt => opt.value === value);
+    if ((value.includes("crosses") || value.includes("above") || value.includes("below")) && 
+        !updatedCondition.secondaryIndicator && 
+        selectedLogicOption?.customInput) {
+            
       // Get first available indicator from metadata that matches the operation's needs
       const firstIndicator = Object.keys(indicatorMetadata)[0];
       

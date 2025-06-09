@@ -4,8 +4,9 @@ import { Plus, Trash2 } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import type { ConditionGroup, IndicatorLogic, IndicatorType, IndicatorCondition, PositionRule } from "./types"
+import type { ConditionGroup, IndicatorLogic, IndicatorType, IndicatorCondition, PositionRule ,    } from "./types"
 import IndicatorLogicEngine from "./indicator-logic-engine"
+import type { IndicatorMetadata, LogicOption } from "./indicator-metadata";
 
 interface EntryExitNodeProps {
   positionRule: PositionRule;
@@ -40,6 +41,24 @@ const EntryExitNode = ({ positionRule, onChange, title = "Entry/Exit Rules" }: E
       conditionGroups: [...groups, newGroup]
     });
   }
+  
+  function cleanCondition(
+    condition: IndicatorCondition,
+    indicatorMeta: IndicatorMetadata
+  ): IndicatorCondition {
+    const logicOption: LogicOption | undefined = indicatorMeta.logicOptions.find(
+      (opt: LogicOption) => opt.value === condition.logic
+    );
+    if (!logicOption?.customInput && condition.secondaryIndicator) {
+      // Remove secondaryIndicator if not needed
+      const { secondaryIndicator, ...rest } = condition;
+      return rest as IndicatorCondition;
+    }
+    return condition;
+  }
+
+  
+  
 
   const removeConditionGroup = (groupId: string) => {
     onChange({

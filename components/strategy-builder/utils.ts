@@ -2,6 +2,9 @@ import { StrategyConfig } from "./types";
 import { IndicatorCondition } from "./types";
 
 import { DEFAULT_INDICATOR_PARAMS } from "./constants"
+import { indicatorMetadata } from "./indicator-metadata";
+import type { PositionRule,  } from "./types";
+
 
 export function getIndicatorVariable(condition: IndicatorCondition): string {
   const indicator = condition.indicator;
@@ -254,8 +257,37 @@ export function collectIndicators(strategy: StrategyConfig): Set<string> {
   collectFromRule(strategy.entryShort)
   collectFromRule(strategy.exitLong)
   collectFromRule(strategy.exitShort)
+ 
+
+  
+  
 
   return indicators
 
 }
 
+// Clean a single condition
+export function cleanCondition(
+  condition: IndicatorCondition
+): IndicatorCondition {
+  const indicatorMeta = indicatorMetadata[condition.indicator];
+  const logicOption = indicatorMeta.logicOptions.find(
+    (opt) => opt.value === condition.logic
+  );
+  if (!logicOption?.customInput && condition.secondaryIndicator) {
+    const { secondaryIndicator, ...rest } = condition;
+    return rest as IndicatorCondition;
+  }
+  return condition;
+}
+
+// Clean all conditions in a PositionRule
+export function cleanPositionRule(positionRule: PositionRule): PositionRule {
+  return {
+    ...positionRule,
+    conditionGroups: positionRule.conditionGroups.map(group => ({
+      ...group,
+      conditions: group.conditions.map(cleanCondition),
+    })),
+  };
+}

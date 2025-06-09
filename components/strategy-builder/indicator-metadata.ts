@@ -725,7 +725,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: -20,
-        customInput: true,
+        customInput: false,
         inputLabel: "Williams %R Value",
       },
       {
@@ -738,7 +738,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: -80,
-        customInput: true,
+        customInput: false,
         inputLabel: "Williams %R Value",
       },
       {
@@ -885,7 +885,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         value: "crosses_above",
         label: "Crosses Above",
         description: "When ROC crosses above a specified value",
-        requiresValue: true,
+        requiresValue: false,
         valueType: "number",
         min: -100,
         max: 100,
@@ -904,7 +904,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 0,
-        customInput: true,
+        customInput: false,
         inputLabel: "ROC Value",
       },
       {
@@ -975,7 +975,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 20,
-        customInput: true,
+        customInput: false,
         inputLabel: "CMF Value",
       },
       {
@@ -988,7 +988,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: -20,
-        customInput: true,
+        customInput:false,
         inputLabel: "CMF Value",
       },
       {
@@ -1200,18 +1200,22 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         ],
         description: "Price data point to use in calculation",
       },
-      maType: {
-        name: "MA Type",
-        type: "select",
-        default: "sma",
-        options: [
-          { value: "sma", label: "Simple" },
-          { value: "ema", label: "Exponential" },
-          { value: "wma", label: "Weighted" },
-        ],
-        description: "Type of moving average to use",
-      },
-    },
+    
+     maType: {
+    name: "MA Type",
+       type: "select",
+     default: "sma",
+      options: [
+         { value: "sma", label: "Simple" },
+        { value: "ema", label: "Exponential" },
+         { value: "wma", label: "Weighted" },
+      ],
+       description: "Type of moving average to use",
+     },
+     },
+  
+  
+     
     defaultComponent: "middle",
     logicOptions: [
       {
@@ -1330,7 +1334,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 50,
-        customInput: true,
+        customInput: false,
         inputLabel: "Stochastic Value",
       },
       {
@@ -1343,7 +1347,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 50,
-        customInput: true,
+        customInput: false,
         inputLabel: "Stochastic Value",
       },
       {
@@ -1409,7 +1413,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 25,
-        customInput: true,
+        customInput: false,
         inputLabel: "ADX Value",
       },
       {
@@ -1422,7 +1426,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 25,
-        customInput: true,
+        customInput: false,
         syncKey: "trend_strength"
       },
         {
@@ -1956,7 +1960,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 80,
-        customInput: true,
+        customInput: false,
         inputLabel: "MFI Value",
       },
       {
@@ -1969,7 +1973,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 20,
-        customInput: true,
+        customInput: false,
         syncKey: "mfi_value"
       }
     ],
@@ -2081,7 +2085,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "orb_high", label: "ORB High" },
           { value: "orb_low", label: "ORB Low" },
         ],
-        customInput: true,
+        customInput: false,
         inputLabel: "ORB Level",
       },
       {
@@ -2094,7 +2098,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "orb_high", label: "ORB High" },
           { value: "orb_low", label: "ORB Low" },
         ],
-        customInput: true,
+        customInput: false,
         inputLabel: "ORB Level",
       },
       {
@@ -2459,7 +2463,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 2,
-        customInput: true,
+        customInput: false,
         inputLabel: "ATR Value",
       },
       {
@@ -2472,7 +2476,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         defaultValue: 1,
-        customInput: true,
+        customInput: false,
         syncKey: "atr_value"
       },
       {
@@ -2616,7 +2620,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 1000,
         step: 0.1,
         defaultValue: 0,
-        customInput: true,
+        customInput: false,
         syncKey: "momentum_value"
       },
       {
@@ -2629,7 +2633,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 0.1,
         step: 0.01,
         defaultValue: 0,
-        customInput: true,
+        customInput: false,
         syncKey: "momentum_value"
       }
     ],

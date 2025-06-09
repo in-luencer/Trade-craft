@@ -1,5 +1,5 @@
 "use client"
-
+import { cleanPositionRule } from "./utils";
 import { useState } from "react"
 import { Copy, Download } from "lucide-react"
 

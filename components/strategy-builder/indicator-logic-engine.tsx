@@ -117,23 +117,22 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
       logic: value,
     };
 
-    // Initialize secondary indicator only if one is needed, customInput is true, and none exists
+    // Only initialize secondary indicator for moving averages (from metadata)
     const selectedLogicOption = indicator.logicOptions.find(opt => opt.value === value);
-    if ((value.includes("crosses") || value.includes("above") || value.includes("below")) && 
-        !updatedCondition.secondaryIndicator && 
-        selectedLogicOption?.customInput) {
-            
-      // Get first available indicator from metadata that matches the operation's needs
-      const firstIndicator = Object.keys(indicatorMetadata)[0];
-      
+    if ((value.includes("crosses") || value.includes("above") || value.includes("below")) &&
+        !updatedCondition.secondaryIndicator &&
+        selectedLogicOption?.customInput &&
+        MOVING_AVERAGE_INDICATORS.includes(condition.indicator)) {
+      // Get first available moving average indicator from metadata
+      const firstMA = MOVING_AVERAGE_INDICATORS[0];
       updatedCondition.secondaryIndicator = {
-        type: firstIndicator as IndicatorType,
+        type: firstMA as IndicatorType,
         params: {
-          ...Object.entries(indicatorMetadata[firstIndicator].parameters).reduce<Record<string, any>>(
+          ...Object.entries(indicatorMetadata[firstMA].parameters).reduce<Record<string, any>>(
             (acc, [key, param]) => ({
               ...acc,
               [key]: param.default
-            }), 
+            }),
             {}
           )
         }
@@ -434,34 +433,36 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
               </div>
 
               {/* Custom Logic Input */}
-              {selectedLogic?.customInput && (
+              {(
+                (selectedLogic?.customInput && !MOVING_AVERAGE_INDICATORS.includes(condition.indicator)) ||
+                (!MOVING_AVERAGE_INDICATORS.includes(condition.indicator) && (condition.logic === "crosses_above" || condition.logic === "crosses_below"))
+              ) && (
                 <div className="space-y-2">
-                  <Label>{selectedLogic.inputLabel || "Custom Value"}</Label>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <Input
-                        type={selectedLogic.valueType === "number" ? "number" : "text"}
-                        value={condition.value || selectedLogic.defaultValue?.toString() || ""}
-                        onChange={(e) => handleValueChange(e.target.value)}
-                        min={selectedLogic.min}
-                        max={selectedLogic.max}
-                        step={selectedLogic.step}
-                        className="w-full"
-                      />
-                      {selectedLogic.valueType === "number" && (
-                        <span className="text-xs text-muted-foreground ml-2 w-12 text-right">
-                          {condition.value || selectedLogic.defaultValue || ""}
+                  <Label className="block mb-1">{selectedLogic?.inputLabel || "Custom Value"}</Label>
+                  <div className="flex flex-col gap-3">
+                    <Input
+                      type={selectedLogic?.valueType === "number" ? "number" : "text"}
+                      value={condition.value || selectedLogic?.defaultValue?.toString() || ""}
+                      onChange={(e) => handleValueChange(e.target.value)}
+                      min={selectedLogic?.min}
+                      max={selectedLogic?.max}
+                      step={selectedLogic?.step}
+                      className="w-full"
+                    />
+                    {selectedLogic?.valueType === "number" && selectedLogic?.min !== undefined && selectedLogic?.max !== undefined && (
+                      <div className="flex items-center gap-3">
+                        <Slider
+                          value={[Number(condition.value || selectedLogic?.defaultValue || 0)]}
+                          min={selectedLogic?.min}
+                          max={selectedLogic?.max}
+                          step={selectedLogic?.step}
+                          onValueChange={(values) => handleValueChange(values[0].toString())}
+                          className="flex-1"
+                        />
+                        <span className="text-xs text-muted-foreground w-10 text-right">
+                          {condition.value || selectedLogic?.defaultValue || ""}
                         </span>
-                      )}
-                    </div>
-                    {selectedLogic.valueType === "number" && selectedLogic.min !== undefined && selectedLogic.max !== undefined && (
-                      <Slider
-                        value={[Number(condition.value || selectedLogic.defaultValue || 0)]}
-                        min={selectedLogic.min}
-                        max={selectedLogic.max}
-                        step={selectedLogic.step}
-                        onValueChange={(values) => handleValueChange(values[0].toString())}
-                      />
+                      </div>
                     )}
                   </div>
                 </div>
@@ -470,89 +471,89 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
 
             {/* Secondary Indicator Parameters */}
             {selectedLogic?.customInput && (
-              selectedLogic.logicParams || 
-              condition.logic?.includes("crosses") || 
-              condition.logic?.includes("above") || 
-              condition.logic?.includes("below")
-            ) && (
-              <div className="space-y-4 mt-4">
-                <h3 className="text-sm font-medium">Secondary Indicator Parameters</h3>
-                
-                {/* Secondary Indicator Type Selector */}
-                <div className="space-y-2">
-                  <Label>Indicator Type</Label>
-                  <Select
-                    value={condition.secondaryIndicator?.type || "sma"}
-                    onValueChange={handleSecondaryIndicatorTypeChange}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["sma", "ema", "wma", "vwma"].map((key) => (
-                        <SelectItem key={key} value={key}>
-                          {indicatorMetadata[key].name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Secondary Indicator Parameters */}
-                {condition.secondaryIndicator && (
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Render parameters based on the selected indicator type */}
-                    {Object.entries(indicatorMetadata[condition.secondaryIndicator.type].parameters).map(([key, param]: [string, IndicatorParameter]) => (
-                      <div key={key} className="space-y-2">
-                        <Label>{param.name}</Label>
-                        {param.type === "select" ? (
-                          <Select
-                            value={String(condition.secondaryIndicator?.params?.[key] ?? param.default)}
-                            onValueChange={(value) => handleLogicParamChange(key, value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {(param.options as Array<string | { value: string | number; label: string }>)?.map((option) => (
-                                typeof option === "string"
-                                  ? <SelectItem key={option} value={option}>{option}</SelectItem>
-                                  : <SelectItem key={String(option.value)} value={String(option.value)}>{option.label}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : param.type === "number" ? (
-                          <div className="flex flex-col gap-2">
-                            <div className="flex items-center justify-between">
-                              <Input
-                                type="number"
-                                value={condition.secondaryIndicator?.params?.[key] !== undefined ? String(condition.secondaryIndicator?.params?.[key]) : String(param.default)}
-                                onChange={(e) => handleLogicParamChange(key, Number(e.target.value))}
-                                min={param.min}
-                                max={param.max}
-                                step={param.step}
-                                className="w-full"
-                              />
-                              <span className="text-xs text-muted-foreground ml-2 w-12 text-right">
-                                {condition.secondaryIndicator?.params?.[key] !== undefined ? condition.secondaryIndicator?.params?.[key] : param.default}
-                              </span>
-                            </div>
-                            {param.min !== undefined && param.max !== undefined && (
-                              <Slider
-                                value={[Number(condition.secondaryIndicator?.params?.[key] !== undefined ? condition.secondaryIndicator?.params?.[key] : param.default)]}
-                                min={param.min}
-                                max={param.max}
-                                step={param.step}
-                                onValueChange={(values) => handleLogicParamChange(key, values[0])}
-                              />
-                            )}
-                          </div>
-                        ) : null}
-                      </div>
-                    ))}
+              (selectedLogic.logicParams ||
+                ((condition.logic?.includes("crosses") ||
+                  condition.logic?.includes("above") ||
+                  condition.logic?.includes("below")) &&
+                  MOVING_AVERAGE_INDICATORS.includes(condition.indicator))
+              ) && (
+                <div className="space-y-4 mt-4">
+                  <h3 className="text-sm font-medium">Secondary Indicator Parameters</h3>
+                  {/* Secondary Indicator Type Selector */}
+                  <div className="space-y-2">
+                    <Label>Indicator Type</Label>
+                    <Select
+                      value={condition.secondaryIndicator?.type || MOVING_AVERAGE_INDICATORS[0]}
+                      onValueChange={handleSecondaryIndicatorTypeChange}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {MOVING_AVERAGE_INDICATORS.map((key) => (
+                          <SelectItem key={key} value={key}>
+                            {indicatorMetadata[key].name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                )}
-              </div>
+                  {/* Secondary Indicator Parameters */}
+                  {condition.secondaryIndicator && (
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Render parameters based on the selected indicator type */}
+                      {Object.entries(indicatorMetadata[condition.secondaryIndicator.type].parameters).map(([key, param]: [string, IndicatorParameter]) => (
+                        <div key={key} className="space-y-2">
+                          <Label>{param.name}</Label>
+                          {param.type === "select" ? (
+                            <Select
+                              value={String(condition.secondaryIndicator?.params?.[key] ?? param.default)}
+                              onValueChange={(value) => handleLogicParamChange(key, value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {(param.options as Array<string | { value: string | number; label: string }>)?.map((option) => (
+                                  typeof option === "string"
+                                    ? <SelectItem key={option} value={option}>{option}</SelectItem>
+                                    : <SelectItem key={String(option.value)} value={String(option.value)}>{option.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : param.type === "number" ? (
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center justify-between">
+                                <Input
+                                  type="number"
+                                  value={condition.secondaryIndicator?.params?.[key] !== undefined ? String(condition.secondaryIndicator?.params?.[key]) : String(param.default)}
+                                  onChange={(e) => handleLogicParamChange(key, Number(e.target.value))}
+                                  min={param.min}
+                                  max={param.max}
+                                  step={param.step}
+                                  className="w-full"
+                                />
+                                <span className="text-xs text-muted-foreground ml-2 w-12 text-right">
+                                  {condition.secondaryIndicator?.params?.[key] !== undefined ? condition.secondaryIndicator?.params?.[key] : param.default}
+                                </span>
+                              </div>
+                              {param.min !== undefined && param.max !== undefined && (
+                                <Slider
+                                  value={[Number(condition.secondaryIndicator?.params?.[key] !== undefined ? condition.secondaryIndicator?.params?.[key] : param.default)]}
+                                  min={param.min}
+                                  max={param.max}
+                                  step={param.step}
+                                  onValueChange={(values) => handleLogicParamChange(key, values[0])}
+                                />
+                              )}
+                            </div>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
             )}
           </div>
         </div>
@@ -562,3 +563,18 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
 };
 
 export default IndicatorLogicEngine;
+
+// Dynamically determine which indicators are moving averages based on indicatorMetadata
+const MOVING_AVERAGE_INDICATORS = Object.keys(indicatorMetadata).filter(
+  key => {
+    const meta = indicatorMetadata[key];
+    // Heuristic: has 'Moving Average' in the name, or logicOptions with selectable moving average types
+    return (
+      meta.name?.toLowerCase().includes("moving average") ||
+      (meta.logicOptions && meta.logicOptions.some(opt =>
+        opt.logicParams && opt.logicParams.indicator && Array.isArray(opt.logicParams.indicator.options) &&
+        opt.logicParams.indicator.options.some((o: any) => typeof o === "object" && o.label?.toLowerCase().includes("moving average"))
+      ))
+    );
+  }
+);

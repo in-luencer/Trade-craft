@@ -570,19 +570,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         customInput: true,
         inputLabel: "RSI Value",
       },
-      {
-        value: "<",
-        label: "Less Than",
-        description: "When RSI is less than the specified value(Condition)",
-        requiresValue: true,
-        valueType: "number",
-        min: 0,
-        max: 100,
-        step: 1,
-        defaultValue: 30,
-        customInput: true,
-        inputLabel: "RSI Value",
-      },
       
       {
         value: "<",

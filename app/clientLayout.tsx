@@ -110,18 +110,29 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <div className="min-h-screen">
         {/* Public header - only shown on public pages */}
         {!isAuthenticated && pathname !== "/login" && pathname !== "/signup" && (
-          <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <header className="sticky top-0 z-50 w-full border-b border-primary/10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center justify-between">
-              <Link href="/" className="flex items-center space-x-2">
-                <span className="text-xl font-bold">Trade Crafter</span>
+              <Link href="/" className="flex items-center space-x-3 group">
+                {/* Candlestick chart icon as SVG */}
+                <span className="inline-flex items-center justify-center">
+                  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="8" y="20" width="3" height="10" rx="1.5" fill="#2196F3"/>
+                    <rect x="13" y="14" width="3" height="10" rx="1.5" fill="#2196F3"/>
+                    <rect x="18" y="8" width="3" height="10" rx="1.5" fill="#2196F3"/>
+                    <rect x="23" y="8" width="3" height="10" rx="1.5" fill="#F44336"/>
+                    <rect x="28" y="14" width="3" height="10" rx="1.5" fill="#F44336"/>
+                    <rect x="33" y="20" width="3" height="10" rx="1.5" fill="#F44336"/>
+                  </svg>
+                </span>
+                <span className="font-extrabold text-xl tracking-tight text-foreground">Trade Crafter</span>
               </Link>
-              <div className="flex items-center space-x-4">
-                <Link href="/login" className="text-sm font-medium transition-colors hover:text-foreground/80">
+              <div className="flex items-center space-x-3">
+                <Link href="/login" className="text-sm font-medium transition-colors hover:text-primary underline-offset-4 hover:underline px-2 py-1 rounded-md">
                   Login
                 </Link>
                 <Link
                   href="/signup"
-                  className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                  className="rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-none"
                 >
                   Sign Up
                 </Link>
@@ -132,26 +143,37 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
         {/* Authenticated header - only shown on authenticated pages */}
         {isAuthenticated && (
-          <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-14 items-center">
-              <div className="mr-4 flex">
-                <Link href="/dashboard" className="mr-6 flex items-center space-x-2">
-                  <span className="font-bold">in_luencer</span>
+          <header className="sticky top-0 z-50 w-full border-b border-primary/10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-14 items-center justify-between">
+              <div className="flex items-center gap-6">
+                <Link href="/dashboard" className="flex items-center space-x-3 group">
+                  {/* Candlestick chart icon as SVG */}
+                  <span className="inline-flex items-center justify-center">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="8" y="20" width="3" height="10" rx="1.5" fill="#2196F3"/>
+                      <rect x="13" y="14" width="3" height="10" rx="1.5" fill="#2196F3"/>
+                      <rect x="18" y="8" width="3" height="10" rx="1.5" fill="#2196F3"/>
+                      <rect x="23" y="8" width="3" height="10" rx="1.5" fill="#F44336"/>
+                      <rect x="28" y="14" width="3" height="10" rx="1.5" fill="#F44336"/>
+                      <rect x="33" y="20" width="3" height="10" rx="1.5" fill="#F44336"/>
+                    </svg>
+                  </span>
+                  <span className="font-extrabold text-xl tracking-tight text-foreground">Trade Crafter</span>
                 </Link>
-                <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
-                  <Link href="/dashboard" className="transition-colors hover:text-foreground/80">
+                <nav className="hidden items-center space-x-5 text-sm font-medium md:flex">
+                  <Link href="/dashboard" className="transition-colors hover:text-primary underline-offset-4 hover:underline px-2 py-1 rounded-md">
                     Dashboard
                   </Link>
-                  <Link href="/marketplace" className="transition-colors hover:text-foreground/80">
+                  <Link href="/marketplace" className="transition-colors hover:text-primary underline-offset-4 hover:underline px-2 py-1 rounded-md">
                     Marketplace
                   </Link>
-                  <Link href="/builder" className="transition-colors hover:text-foreground/80">
+                  <Link href="/builder" className="transition-colors hover:text-primary underline-offset-4 hover:underline px-2 py-1 rounded-md">
                     Builder
                   </Link>
-                  <Link href="/backtest" className="transition-colors hover:text-foreground/80">
+                  <Link href="/backtest" className="transition-colors hover:text-primary underline-offset-4 hover:underline px-2 py-1 rounded-md">
                     Backtest
                   </Link>
-                  <Link href="/settings" className="transition-colors hover:text-foreground/80">
+                  <Link href="/settings" className="transition-colors hover:text-primary underline-offset-4 hover:underline px-2 py-1 rounded-md">
                     Settings
                   </Link>
                 </nav>

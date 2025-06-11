@@ -49,12 +49,12 @@ export function MobileNav() {
             Dashboard
           </Link>
           <Link
-            href="/strategies"
+            href="/marketplace"
             className="flex items-center rounded-md px-2 py-1 hover:bg-muted"
             onClick={() => setOpen(false)}
           >
             <BarChart4 className="mr-2 h-5 w-5" />
-            Strategies
+            MarketPlace
           </Link>
           <Link
             href="/builder"

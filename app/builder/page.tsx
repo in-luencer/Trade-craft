@@ -9,13 +9,22 @@ export const metadata: Metadata = {
 
 export default function BuilderPage() {
   return (
-    <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">Strategy Builder</h1>
-        <p className="text-sm sm:text-base text-muted-foreground text-center sm:text-left">Create your trading strategy visually without code</p>
-      </div>
-      <div className="overflow-x-auto">
-        <StrategyBuilder />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
+      <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="mb-10 space-y-4">
+          <div className="flex flex-col items-center sm:items-start">
+            <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80 animate-fade-in">
+              Strategy Builder
+            </h1>
+            <div className="h-1 w-20 bg-gradient-to-r from-primary/50 to-primary/20 rounded-full mt-2" />
+          </div>
+          <p className="text-base sm:text-lg text-muted-foreground/90 text-center sm:text-left max-w-2xl animate-fade-in-up">
+            Create your trading strategy visually without code. Design, test, and deploy sophisticated trading algorithms with our intuitive drag-and-drop interface.
+          </p>
+        </div>
+        <div className="overflow-x-auto rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg animate-fade-in-up">
+          <StrategyBuilder />
+        </div>
       </div>
     </div>
   )

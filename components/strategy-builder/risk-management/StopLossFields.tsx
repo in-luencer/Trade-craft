@@ -34,13 +34,17 @@ export function StopLossFields({ rule, updateStopLossRule }: { rule: StopLossRul
       return (
         <div className="space-y-2 mt-4">
           <label>Time (HH:MM)</label>
-          <div className="flex gap-2">
+            <div className="flex gap-2">
             <Input
               type="number"
               min={0}
               max={23}
               value={typeof rule.value === "number" ? Math.floor(rule.value / 60) : ""}
-              onChange={e => {/* ... */}}
+              onChange={e => {
+              const hours = Number.parseInt(e.target.value) || 0;
+              const minutes = typeof rule.value === "number" ? rule.value % 60 : 0;
+              updateStopLossRule(rule.id, { value: hours * 60 + minutes });
+              }}
               placeholder="HH"
               className="w-16"
             />
@@ -49,11 +53,15 @@ export function StopLossFields({ rule, updateStopLossRule }: { rule: StopLossRul
               min={0}
               max={59}
               value={typeof rule.value === "number" ? rule.value % 60 : ""}
-              onChange={e => {/* ... */}}
+              onChange={e => {
+              const minutes = Number.parseInt(e.target.value) || 0;
+              const hours = typeof rule.value === "number" ? Math.floor(rule.value / 60) : 0;
+              updateStopLossRule(rule.id, { value: hours * 60 + minutes });
+              }}
               placeholder="MM"
               className="w-16"
             />
-          </div>
+            </div>
         </div>
       );
     case "fixed-dollar":

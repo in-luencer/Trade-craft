@@ -71,7 +71,7 @@ export function PositionSizingSection({ config, positionSizingRules }: PositionS
                     <SelectItem value="fixed-amount">Fixed Amount</SelectItem>
                     <SelectItem value="fixed-units">Fixed Units</SelectItem>
                     <SelectItem value="percentage">Percentage of Equity</SelectItem>
-                    <SelectItem value="risk-reward">Risk-Based</SelectItem>
+                    <SelectItem value="risk-based">Risk-Based</SelectItem>
                     <SelectItem value="kelly">Kelly Criterion</SelectItem>
                     <SelectItem value="volatility-based">Volatility Based</SelectItem>
                   </SelectContent>

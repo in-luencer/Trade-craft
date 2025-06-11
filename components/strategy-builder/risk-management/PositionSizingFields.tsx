@@ -49,29 +49,9 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
           </div>
         </div>
       );
-    case "risk-reward":
+    case "risk-based":
       return (
         <div className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label>Max Risk per Trade (%)</Label>
-            <Input
-              type="number"
-              value={rule.maxRisk || 2}
-              onChange={e => updatePositionSizingRule(rule.id, { maxRisk: Number.parseFloat(e.target.value) || 2 })}
-              min="0.1"
-              step="0.1"
-              placeholder="e.g. 2"
-            />
-          </div>
-          <div className="space-y-2">
-            <Select
-              value={rule.useStopLossRisk ? "stoploss" : "manual"}
-              onValueChange={value => updatePositionSizingRule(rule.id, { useStopLossRisk: value === "stoploss" })}
-            >
-              <option value="stoploss">Stop Loss Based</option>
-              <option value="manual">Manual</option>
-            </Select>
-          </div>
           {(!rule.useStopLossRisk) && (
             <div className="space-y-2">
               <Label>Manual Risk per Trade (%)</Label>

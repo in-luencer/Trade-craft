@@ -383,9 +383,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "open", label: "Open" },
           { value: "high", label: "High" },
           { value: "low", label: "Low" },
-          { value: "hl2", label: "HL2" },
-          { value: "hlc3", label: "HLC3" },
-          { value: "ohlc4", label: "OHLC4" },
         ],
         description: "Price data point to use in calculation",
       },
@@ -535,9 +532,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "open", label: "Open" },
           { value: "high", label: "High" },
           { value: "low", label: "Low" },
-          { value: "hl2", label: "HL2" },
-          { value: "hlc3", label: "HLC3" },
-          { value: "ohlc4", label: "OHLC4" },
         ],
         description: "Price data point to use in calculation",
       },
@@ -646,26 +640,26 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
       },
       {
         value: ">",
-        label: "Greater Than Value",
+        label: "Greater Than ",
         description: "When RVI is greater than a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -100,
-        max: 100,
-        step: 1,
+        min: -1,
+        max: 1,
+        step: 0.01,
         defaultValue: 0,
         customInput: true,
         inputLabel: "RVI Value",
       },
       {
         value: "<",
-        label: "Less Than Value",
+        label: "Less Than ",
         description: "When RVI is less than a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -100,
-        max: 100,
-        step: 1,
+        min: -1,
+        max: 1,
+        step: 0.01,
         defaultValue: 0,
         customInput: true,
         inputLabel: "RVI Value",
@@ -804,9 +798,9 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "When Momentum crosses above a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -100,
-        max: 100,
-        step: 1,
+        min: -2,
+        max: 2,
+        step: 0.001,
         defaultValue: 0,
         customInput: true,
         inputLabel: "Momentum Value",
@@ -817,9 +811,9 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "When Momentum crosses below a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -100,
-        max: 100,
-        step: 1,
+        min: -2,
+        max: 2,
+        step: 0.001,
         defaultValue: 0,
         customInput: true,
         inputLabel: "Momentum Value",
@@ -1023,6 +1017,19 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         description: "Period for the faster EMA",
       },
+      
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
+      },
       slowPeriod: {
         name: "Slow Period",
         type: "number",
@@ -1040,18 +1047,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         max: 100,
         step: 1,
         description: "Period for the signal line",
-      },
-      source: {
-        name: "Source",
-        type: "select",
-        default: "close",
-        options: [
-          { value: "close", label: "Close" },
-          { value: "open", label: "Open" },
-          { value: "high", label: "High" },
-          { value: "low", label: "Low" },
-        ],
-        description: "Price data point to use in calculation",
       },
       signal_smoothing: {
         name: "Signal Smoothing",
@@ -1280,7 +1275,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         description: "Number of bars for %D calculation",
       },
-      d_slowing: {
+      d_smoothing: {
         name: "%D smoothing",
         type: "number",
         default: 3,
@@ -1289,26 +1284,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         description: "Slowing period",
       },
-
-    overbought: {
-       name: "Overbought Level",
-        type: "number",
-        default: 80,
-        min: 50,
-        max: 100,
-        step: 1,
-        description: "Level considered overbought",
-      },
-      oversold: {
-        name: "Oversold Level",
-        type: "number",
-        default: 20,
-        min: 0,
-        max: 50,
-        step: 1,
-        description: "Level considered oversold",
-     },
-
     },
     logicOptions: [
       {
@@ -1469,6 +1444,8 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         options: [
           { value: "sma", label: "Simple" },
           { value: "ema", label: "Exponential" },
+          { value: "wma", label: "Weighted" },
+          { value: "vwma", label: "Volume Weighted" },
         ],
         description: "Type of moving average to use",
       },
@@ -1505,7 +1482,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     category: "trend",
     parameters: {
       ConversionLinePeriod: {
-        name: "Tenkan-sen Period",
+        name: "Conversion Line Period",
         type: "number",
         default: 9,
         min: 1,
@@ -1514,7 +1491,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "Period for the Tenkan-sen line",
       },
       BaseLinePeriod: {
-        name: "Kijun-sen Period",
+        name: "Base Line Period",
         type: "number",
         default: 26,
         min: 1,
@@ -1523,7 +1500,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "Period for the Kijun-sen line",
       },
       LeadingSpanBPeriod: {
-        name: "Senkou Span B Period",
+        name: "Leading Span B Period",
         type: "number",
         default: 52,
         min: 1,
@@ -1532,7 +1509,7 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "Period for the Senkou Span B line",
       },
       LaggingSpanPeriod: {
-        name: "Chikou Span Period",
+        name: "Lagging Span Period",
         type: "number",
         default: 26,
         min: 1,
@@ -1617,13 +1594,13 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "Length of the ATR calculation",
       },
       Factor: {
-        name: "Multiplier",
+        name: "Factor",
         type: "number",
         default: 3,
         min: 1,
         max: 10,
         step: 0.1,
-        description: "Multiplier for the ATR to determine the bands",
+        description: "Factor for the ATR to determine the bands",
       },
     },
     logicOptions: [
@@ -1794,18 +1771,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           }
         }
       },
-      {
-        value: "slope_positive",
-        label: "Positive Slope",
-        description: "When VWMA has a positive slope",
-        requiresValue: false
-      },
-      {
-        value: "slope_negative",
-        label: "Negative Slope",
-        description: "When VWMA has a negative slope",
-        requiresValue: false
-      },
     ],
     defaultLogic: "crosses_above_price",
   },
@@ -1867,30 +1832,6 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         customInput: true,
         syncKey: "cci_value"
       },
-      {
-        value: "<",
-        label: "Less Than",
-        description: "When CCI is less than a specified value",
-        requiresValue: true,
-        valueType: "number",
-        min: -300,
-        max: 300,
-        step: 1,
-        defaultValue: 100,
-        customInput: true,
-      },
-      {
-        value: ">",
-        label: "Greater Than",
-        description: "When CCI is greater than a specified value",
-        requiresValue: true,
-        valueType: "number",
-        min: -300,
-        max: 300,
-        step: 1,
-        defaultValue: 100,
-        customInput: true,
-      }
     ],
     defaultLogic: "crosses_above",
   },
@@ -2270,69 +2211,14 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
     ],
     defaultLogic: "crosses_above_price",
   },
-  rvi_duplicate: {
-    name: "Relative Vigor Index",
-    description: "Measures the conviction of a recent price action and the likelihood that it will continue.",
-    category: "momentum",
-    parameters: {
-      period: {
-        name: "Period",
-        type: "number",
-        default: 10,
-        min: 1,
-        max: 100,
-        step: 1,
-        description: "Number of bars used in calculation",
-      },
-    },
-    logicOptions: [
-      {
-        value: "crosses_above_signal",
-        label: "Crosses Above Signal Line",
-        description: "When RVI crosses above its signal line",
-        requiresValue: false
-      },
-      {
-        value: "crosses_below_signal",
-        label: "Crosses Below Signal Line",
-        description: "When RVI crosses below its signal line",
-        requiresValue: false
-      },
-      {
-        value: ">",
-        label: "Greater Than Value",
-        description: "When RVI is greater than a specified value",
-        requiresValue: true,
-          valueType: "number",
-          min: -1,
-          max: 1,
-          step: 0.01,
-          defaultValue: -0.25,
-          customInput: true,
-      },
-      {
-        value: "<",
-        label: "Less Than Value",
-        description: "When RVI is less than a specified value",
-        requiresValue: true,
-        valueType: "number",
-        min: -1,
-        max: 1,
-        step: 0.01,
-        defaultValue: -0.25,
-        customInput: true,
-      }
-    ],
-    defaultLogic: "crosses_above_signal",
-  },
-
+ 
   keltner: {
     name: "Keltner Channel",
     description: "Volatility-based envelope set above and below an EMA.",
     category: "volatility",
     parameters: {
       period: {
-        name: "EMA Period",
+        name: "Period",
         type: "number",
         default: 20,
         min: 1,
@@ -2340,17 +2226,20 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         description: "Number of bars for EMA calculation",
       },
-      atrPeriod: {
-        name: "ATR Period",
-        type: "number",
-        default: 10,
-        min: 1,
-        max: 100,
-        step: 1,
-        description: "Number of bars for ATR calculation",
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
       },
       multiplier: {
-        name: "ATR Multiplier",
+        name: "Multiplier",
         type: "number",
         default: 2,
         min: 0.1,
@@ -2438,6 +2327,19 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         step: 1,
         description: "Number of bars used in calculation",
       },
+      source: {
+        name: "Source",
+        type: "select",
+        default: "close",
+        options: [
+          { value: "close", label: "Close" },
+          { value: "open", label: "Open" },
+          { value: "high", label: "High" },
+          { value: "low", label: "Low" },
+        ],
+        description: "Price data point to use in calculation",
+      },
+
     },
     logicOptions: [
       {
@@ -2582,6 +2484,16 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
           { value: "low", label: "Low" },
         ],
         description: "Price data point to use in calculation",
+      },
+      stdev: {
+        name: "Standard Deviations",
+        type: "number",
+        default: 2,
+        min: 1,
+        max: 20,
+        step: 1,
+        description: "Number of standard deviations to use in calculation",
+
       }
     },
     logicOptions: [
@@ -2603,9 +2515,9 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "When Momentum crosses above a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -1000,
-        max: 1000,
-        step: 0.1,
+        min: -5000,
+        max: 5000,
+        step: 1,
         defaultValue: 0,
         customInput: false,
         syncKey: "momentum_value"
@@ -2616,9 +2528,9 @@ export const indicatorMetadata: Record<string, IndicatorMetadata> = {
         description: "When Momentum crosses below a specified value",
         requiresValue: true,
         valueType: "number",
-        min: -0.0001,
-        max: 0.1,
-        step: 0.01,
+        min: -5000,
+        max: 5000,
+        step: 1,
         defaultValue: 0,
         customInput: false,
         syncKey: "momentum_value"

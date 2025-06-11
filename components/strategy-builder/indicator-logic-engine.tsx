@@ -468,6 +468,7 @@ const IndicatorLogicEngine: React.FC<IndicatorLogicEngineProps> = ({ condition, 
                 </div>
               )}
             </div>
+            
 
             {/* Secondary Indicator Parameters */}
             {selectedLogic?.customInput && (

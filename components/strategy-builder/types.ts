@@ -228,6 +228,7 @@ export type PositionSizingRule = {
     | "fixed-amount"
     | "percentage"
     | "risk-based"
+    | "risk-reward"
     | "kelly"
     | "optimal-f"
     | "volatility-based"

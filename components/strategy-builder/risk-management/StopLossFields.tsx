@@ -68,6 +68,7 @@ export function StopLossFields({ rule, updateStopLossRule }: { rule: StopLossRul
       return (
         <div className="grid grid-cols-2 gap-4 mt-4">
           <div className="space-y-2">
+            <label className="block text-sm font-medium">Fixed Dollar Amount</label>
             <Input
               type="number"
               value={rule.lookbackPeriod || 20}

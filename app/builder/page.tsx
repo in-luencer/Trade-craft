@@ -19,7 +19,7 @@ export default function BuilderPage() {
             <div className="h-1 w-20 bg-gradient-to-r from-primary/50 to-primary/20 rounded-full mt-2" />
           </div>
           <p className="text-base sm:text-lg text-muted-foreground/90 text-center sm:text-left max-w-2xl animate-fade-in-up">
-            Create your trading strategy visually without code. Design, test, and deploy sophisticated trading algorithms with our intuitive drag-and-drop interface.
+            Create your trading strategy visually without code. Design, test, and deploy sophisticated trading algorithms with our intuitive interface.
           </p>
         </div>
         <div className="overflow-x-auto rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg animate-fade-in-up">

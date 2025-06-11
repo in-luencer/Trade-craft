@@ -6,40 +6,50 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowRight, Eye, EyeOff, Mail } from "lucide-react"
+import { useAuth } from "@/context/auth-context"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function LoginPage() {
   const router = useRouter()
+  const { login, isLoading: authLoading } = useAuth()
+  const { toast } = useToast()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    // Get form elements
-    const form = e.target as HTMLFormElement
-    const email = form.email.value
-    const password = form.password.value
-
-    // Basic validation
-    if (!email || !password) {
-      alert("Please enter both email and password")
-      return
-    }
-
     setIsLoading(true)
 
-    // Simulate login process
-    setTimeout(() => {
+    try {
+      const email = (e.currentTarget.elements.namedItem('email') as HTMLInputElement).value
+      const password = (e.currentTarget.elements.namedItem('password') as HTMLInputElement).value
+
+      // Basic validation
+      if (!email || !password) {
+        toast({
+          title: "Error",
+          description: "Please enter both email and password",
+          variant: "destructive",
+        })
+        return
+      }
+
+      await login(email, password)
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Invalid email or password",
+        variant: "destructive",
+      })
+    } finally {
       setIsLoading(false)
-      // Redirect to dashboard after login
-      router.push("/dashboard")
-    }, 1500)
+    }
   }
 
   return (
@@ -91,9 +101,9 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
-              {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+            <Button type="submit" className="w-full" disabled={isLoading || authLoading}>
+              {isLoading || authLoading ? "Logging in..." : "Login"}
+              {!isLoading && !authLoading && <ArrowRight className="ml-2 h-4 w-4" />}
             </Button>
             <div className="text-center text-sm">
               Don't have an account?{" "}

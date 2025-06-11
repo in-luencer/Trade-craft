@@ -176,12 +176,12 @@ export default function StrategyMarketplacePage() {
           </CardContent>
                 <CardFooter className="flex flex-col space-y-2">
             <Button asChild className="w-full">
-              <Link href="/builder?template=premium-ma-crossover">
+              <Link href={`/strategy/premium-ma-crossover`}>
                 Purchase Strategy <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
                   <Button variant="outline" className="w-full">
-                    <Link href="/details?strategy=premium-ma-crossover">
+                    <Link href={`/strategy/premium-ma-crossover`}>
                       View Details
                     </Link>
                   </Button>
@@ -221,12 +221,12 @@ export default function StrategyMarketplacePage() {
           </CardContent>
                 <CardFooter className="flex flex-col space-y-2">
             <Button asChild className="w-full">
-              <Link href="/builder?template=rsi-momentum">
+              <Link href={`/strategy/rsi-momentum`}>
                 Purchase Strategy <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
                   <Button variant="outline" className="w-full">
-                    <Link href="/details?strategy=rsi-momentum">
+                    <Link href={`/strategy/rsi-momentum`}>
                       View Details
                     </Link>
                   </Button>
@@ -265,13 +265,13 @@ export default function StrategyMarketplacePage() {
           </CardContent>
                 <CardFooter className="flex flex-col space-y-2">
             <Button asChild className="w-full">
-              <Link href="/builder?template=macd-divergence">
+              <Link href={`/strategy/macd-divergence`}>
                 Purchase Strategy <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
                   <Button variant="outline" className="w-full">
-              <Link href="/details?strategy=macd-divergence">
-                      View Details
+              <Link href={`/strategy/macd-divergence`}>
+                View Details 
               </Link>
             </Button>
           </CardFooter>

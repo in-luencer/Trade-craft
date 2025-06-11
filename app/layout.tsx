@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import ClientLayout from "./clientLayout"
 import { StrategyProvider } from "@/context/strategy-context"
 import { ThemeProvider } from "@/components/theme-provider"
+import { AuthProvider } from "@/context/auth-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -12,9 +13,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <StrategyProvider>
-            <ClientLayout>{children}</ClientLayout>
-          </StrategyProvider>
+          <AuthProvider>
+            <StrategyProvider>
+              <ClientLayout>{children}</ClientLayout>
+            </StrategyProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

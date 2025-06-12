@@ -164,12 +164,21 @@ export default function StrategyProductPage({ params }: { params: { slug: string
 
       {/* Owner Section */}
       <section className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto bg-primary/5 rounded-2xl shadow-lg p-8 flex flex-col sm:flex-row items-center gap-6">
-          <img src="/placeholder-user.jpg" alt="Owner" className="h-20 w-20 rounded-full object-cover border-4 border-primary/30 shadow" />
-          <div className="flex-1 text-center sm:text-left">
-            <h3 className="text-xl font-bold mb-1">Alex Morgan</h3>
-            <p className="text-zinc-300 mb-2">Lead Quantitative Strategist & Founder</p>
-            <p className="text-zinc-400 text-base">Alex is a seasoned trader and developer with over 10 years of experience in building algorithmic trading systems. His strategies have helped thousands of traders achieve consistent results in various markets.</p>
+        <div className="max-w-2xl mx-auto bg-primary/5 rounded-2xl shadow-lg p-8">
+          <div className="flex flex-col sm:flex-row items-center gap-6 mb-8">
+            <img src="/placeholder-user.jpg" alt="Owner" className="h-20 w-20 rounded-full object-cover border-4 border-primary/30 shadow" />
+            <div className="flex-1 text-center sm:text-left">
+              <h3 className="text-xl font-bold mb-1">Alex Morgan</h3>
+              <p className="text-zinc-300 mb-2">Lead Quantitative Strategist & Founder</p>
+              <p className="text-zinc-400 text-base">Alex is a seasoned trader and developer with over 10 years of experience in building algorithmic trading systems. His strategies have helped thousands of traders achieve consistent results in various markets.</p>
+            </div>
+          </div>
+          <div className="border-t border-primary/10 pt-6">
+            <h2 className="text-xl font-bold text-black-300 mb-4">Contact the Owner</h2>
+            <form className="flex flex-col gap-3">
+              <textarea placeholder="Your message to the owner..." className="rounded-md border border-zinc-300 px-4 py-2 min-h-[80px] bg-transparent text-zinc-100" required />
+              <Button type="submit" className="w-full mt-2 bg-primary/90 hover:bg-primary/70">Send Message</Button>
+            </form>
           </div>
         </div>
       </section>
@@ -206,11 +215,11 @@ export default function StrategyProductPage({ params }: { params: { slug: string
           <div className="space-y-4">
             <details className="rounded-lg bg-primary/10 p-4 group" open>
               <summary className="font-semibold mb-1 cursor-pointer text-zinc-100 group-open:mb-2">How do I install and use this strategy?</summary>
-              <p className="text-zinc-300">After purchase, you’ll receive step-by-step instructions and support to integrate the strategy with your Trade Crafter account.</p>
+              <p className="text-zinc-300">After purchase, you'll receive step-by-step instructions and support to integrate the strategy with your Trade Crafter account.</p>
             </details>
             <details className="rounded-lg bg-primary/10 p-4 group">
               <summary className="font-semibold mb-1 cursor-pointer text-zinc-100 group-open:mb-2">Is there a refund policy?</summary>
-              <p className="text-zinc-300">Yes, we offer a 7-day money-back guarantee if you’re not satisfied with the results.</p>
+              <p className="text-zinc-300">Yes, we offer a 7-day money-back guarantee if you're not satisfied with the results.</p>
             </details>
             <details className="rounded-lg bg-primary/10 p-4 group">
               <summary className="font-semibold mb-1 cursor-pointer text-zinc-100 group-open:mb-2">Can I customize the strategy parameters?</summary>
@@ -218,29 +227,15 @@ export default function StrategyProductPage({ params }: { params: { slug: string
             </details>
             <details className="rounded-lg bg-primary/10 p-4 group">
               <summary className="font-semibold mb-1 cursor-pointer text-zinc-100 group-open:mb-2">Do I get updates if the strategy improves?</summary>
-              <p className="text-zinc-300">Yes, you’ll receive free updates and improvements for all purchased strategies.</p>
+              <p className="text-zinc-300">Yes, you'll receive free updates and improvements for all purchased strategies.</p>
             </details>
           </div>
         </div>
       </section>
-
-      {/* Message Owner Section */}
-      <section className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto bg-primary/5 rounded-2xl shadow-lg p-8 flex flex-col gap-4">
-          <h2 className="text-xl font-bold text-zinc-900 mb-2">Contact the Owner</h2>
-          <form className="flex flex-col gap-3">
-            <input type="text" placeholder="Your Name" className="rounded-md border border-zinc-300 px-4 py-2 text-zinc-900 bg-white" required />
-            <input type="email" placeholder="Your Email" className="rounded-md border border-zinc-300 px-4 py-2 text-zinc-900 bg-white" required />
-            <textarea placeholder="Your message to the owner..." className="rounded-md border border-zinc-300 px-4 py-2 text-zinc-900 bg-white min-h-[80px]" required />
-            <Button type="submit" className="w-full mt-2">Send Message</Button>
-          </form>
-        </div>
-      </section>
-
       {/* Report Section */}
       <section className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto bg-red-50 border border-red-200 rounded-2xl shadow-lg p-8 flex flex-col gap-4">
-          <h2 className="text-xl font-bold text-red-700 mb-2">Report or File a Complaint</h2>
+          <h2 className="text-xl font-bold text-red-900 mb-2">Report the strategy</h2>
           <form className="flex flex-col gap-3">
             <input type="text" placeholder="Your Name" className="rounded-md border border-zinc-300 px-4 py-2 text-zinc-900 bg-white" required />
             <input type="email" placeholder="Your Email" className="rounded-md border border-zinc-300 px-4 py-2 text-zinc-900 bg-white" required />
@@ -252,7 +247,7 @@ export default function StrategyProductPage({ params }: { params: { slug: string
 
       {/* Bottom CTA */}
       <div className="w-full flex justify-center py-12 bg-gradient-to-r from-yellow-400 via-primary to-purple-400 border-t border-zinc-200">
-        <Button size="lg" className="text-lg px-8 py-4 font-bold shadow-lg bg-zinc-900 text-white hover:scale-105 transition-transform">
+        <Button size="lg" className="text-lg px-8 py-4 font-bold shadow-lg bg-zinc-900 text-white hover:text-zinc-800 hover:bg-gradient-to-r from-yellow-400 via-primary to-purple-400 transition-transform">
           Purchase for {product.price}
         </Button>
       </div>

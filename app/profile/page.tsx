@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Camera, Mail, User, Phone, MapPin, Building, Save, BarChart4, Calendar, Clock, TrendingUp, Users, Star, MessageSquare, Share2 } from "lucide-react"
+import { Camera, Mail, User, Phone, MapPin, Building, Save, BarChart4, Calendar, Clock, TrendingUp, Users, Star, MessageSquare, Share2, Wallet, Award, ChartBar } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const { toast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("overview")
 
   // Mock trading statistics
   const tradingStats = {
@@ -30,6 +31,8 @@ export default function ProfilePage() {
     followers: 234,
     following: 45,
     strategies: 8,
+    totalRevenue: 15420,
+    successfulStrategies: 6,
   }
 
   // Mock recent activity
@@ -42,6 +45,7 @@ export default function ProfilePage() {
       timestamp: '2 hours ago',
       likes: 12,
       comments: 3,
+      price: 49.99,
     },
     {
       id: 2,
@@ -51,10 +55,10 @@ export default function ProfilePage() {
       timestamp: '5 hours ago',
       likes: 8,
       comments: 2,
+      profit: 320,
     },
   ]
 
-  // Redirect if not authenticated
   if (!authLoading && !user) {
     router.push('/login')
     return null
@@ -104,152 +108,186 @@ export default function ProfilePage() {
 
   return (
     <div className="container max-w-7xl py-8">
-      <div className="grid gap-6">
-        {/* Profile Header */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Avatar and Basic Info */}
-              <div className="flex flex-col items-center md:items-start space-y-4">
-                <div className="relative">
-                  <Avatar className="h-32 w-32">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                  </Avatar>
-                  {isEditing && (
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="absolute bottom-0 right-0 rounded-full"
-                    >
-                      <Camera className="h-4 w-4" />
-                    </Button>
-                  )}
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {/* Profile Overview */}
+        <div className="md:col-span-1">
+          <Card className="relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-yellow-400/20 via-purple-400/20 to-primary/20" />
+            <CardContent className="pt-28 pb-8">
+              <div className="absolute top-12 left-1/2 -translate-x-1/2">
+                <Avatar className="h-24 w-24 border-4 border-background">
+                  <AvatarImage src={user?.avatar || ''} />
+                  <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="text-center space-y-3">
+                <h2 className="text-2xl font-bold">{user?.name}</h2>
+                <div className="flex justify-center gap-2">
+                  <Badge variant="outline" className="border-yellow-400/60">Pro Trader</Badge>
+                  <Badge variant="outline" className="border-purple-400/60">Strategy Creator</Badge>
                 </div>
-                <div className="text-center md:text-left">
-                  <h2 className="text-2xl font-bold">{user.name}</h2>
-                  <p className="text-muted-foreground">{user.company}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="secondary">Pro Trader</Badge>
-                    <Badge variant="outline">Verified</Badge>
+                <p className="text-muted-foreground">{user?.company || user?.location || 'No bio added yet'}</p>
+                <div className="flex justify-center gap-4 pt-4">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{tradingStats.followers ?? 0}</p>
+                    <p className="text-sm text-muted-foreground">Followers</p>
+                  </div>
+                  <Separator orientation="vertical" />
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{tradingStats.strategies ?? 0}</p>
+                    <p className="text-sm text-muted-foreground">Strategies</p>
+                  </div>
+                  <Separator orientation="vertical" />
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">${tradingStats.totalRevenue?.toLocaleString?.() ?? '0'}</p>
+                    <p className="text-sm text-muted-foreground">Revenue</p>
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Trading Stats */}
-              <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="space-y-1">
+          {/* Trading Statistics */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle className="text-xl">Trading Statistics</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Total Trades</p>
                   <p className="text-2xl font-bold">{tradingStats.totalTrades}</p>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Win Rate</p>
-                  <p className="text-2xl font-bold">{tradingStats.winRate}%</p>
+                  <p className="text-2xl font-bold text-green-500">{tradingStats.winRate}%</p>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Avg. Return</p>
-                  <p className="text-2xl font-bold">{tradingStats.avgReturn}%</p>
+                  <p className="text-2xl font-bold text-green-500">+{tradingStats.avgReturn}%</p>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Followers</p>
-                  <p className="text-2xl font-bold">{tradingStats.followers}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Following</p>
-                  <p className="text-2xl font-bold">{tradingStats.following}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Strategies</p>
-                  <p className="text-2xl font-bold">{tradingStats.strategies}</p>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Successful Strategies</p>
+                  <p className="text-2xl font-bold">{tradingStats.successfulStrategies}</p>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Main Content */}
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Left Column - Profile Info */}
-          <div className="md:col-span-1 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Profile Information</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSave}>
-                  <div className="space-y-4">
+        <div className="md:col-span-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="strategies">Strategies</TabsTrigger>
+              <TabsTrigger value="activity">Activity</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Activity</CardTitle>
+                  <CardDescription>Your latest trading and strategy activities</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-8">
+                    {recentActivity.map((activity) => (
+                      <div key={activity.id} className="flex items-start gap-4">
+                        <div className="rounded-full bg-primary/10 p-2">
+                          {activity.type === 'strategy' ? (
+                            <ChartBar className="h-4 w-4 text-primary" />
+                          ) : (
+                            <TrendingUp className="h-4 w-4 text-primary" />
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <p className="font-medium">{activity.title}</p>
+                            <span className="text-sm text-muted-foreground">{activity.timestamp}</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{activity.description}</p>
+                          <div className="flex items-center gap-4 pt-2">
+                            <div className="flex items-center gap-1">
+                              <Star className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-sm">{activity.likes}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-sm">{activity.comments}</span>
+                            </div>
+                            {activity.price && (
+                              <div className="flex items-center gap-1">
+                                <Wallet className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-sm">${activity.price}</span>
+                              </div>
+                            )}
+                            {activity.profit && (
+                              <div className="flex items-center gap-1">
+                                <TrendingUp className="h-4 w-4 text-green-500" />
+                                <span className="text-sm text-green-500">+${activity.profit}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="settings">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Profile Settings</CardTitle>
+                  <CardDescription>Update your profile information</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSave} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="name"
-                          name="name"
-                          defaultValue={user.name}
-                          className="pl-9"
-                          disabled={!isEditing}
-                        />
-                      </div>
+                      <Input
+                        id="name"
+                        defaultValue={user.name}
+                        disabled={!isEditing || isLoading}
+                      />
                     </div>
-
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          defaultValue={user.email}
-                          className="pl-9"
-                          disabled={!isEditing}
-                        />
-                      </div>
+                      <Input
+                        id="email"
+                        type="email"
+                        defaultValue={user.email}
+                        disabled={!isEditing || isLoading}
+                      />
                     </div>
-
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone</Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="phone"
-                          name="phone"
-                          defaultValue={user.phone}
-                          className="pl-9"
-                          disabled={!isEditing}
-                        />
-                      </div>
+                      <Input
+                        id="phone"
+                        defaultValue={user.phone}
+                        disabled={!isEditing || isLoading}
+                      />
                     </div>
-
                     <div className="space-y-2">
                       <Label htmlFor="location">Location</Label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="location"
-                          name="location"
-                          defaultValue={user.location}
-                          className="pl-9"
-                          disabled={!isEditing}
-                        />
-                      </div>
+                      <Input
+                        id="location"
+                        defaultValue={user.location}
+                        disabled={!isEditing || isLoading}
+                      />
                     </div>
-
                     <div className="space-y-2">
                       <Label htmlFor="company">Company</Label>
-                      <div className="relative">
-                        <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="company"
-                          name="company"
-                          defaultValue={user.company}
-                          className="pl-9"
-                          disabled={!isEditing}
-                        />
-                      </div>
+                      <Input
+                        id="company"
+                        defaultValue={user.company}
+                        disabled={!isEditing || isLoading}
+                      />
                     </div>
-
-                    <div className="flex justify-end space-x-4">
+                    <div className="flex justify-end gap-4">
                       {isEditing ? (
                         <>
                           <Button
@@ -261,8 +299,14 @@ export default function ProfilePage() {
                             Cancel
                           </Button>
                           <Button type="submit" disabled={isLoading}>
-                            {isLoading ? "Saving..." : "Save Changes"}
-                            {!isLoading && <Save className="ml-2 h-4 w-4" />}
+                            {isLoading ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            ) : (
+                              <>
+                                <Save className="mr-2 h-4 w-4" />
+                                Save Changes
+                              </>
+                            )}
                           </Button>
                         </>
                       ) : (
@@ -271,80 +315,13 @@ export default function ProfilePage() {
                         </Button>
                       )}
                     </div>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Activity and Stats */}
-          <div className="md:col-span-2 space-y-6">
-            <Tabs defaultValue="activity" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="activity">Activity</TabsTrigger>
-                <TabsTrigger value="strategies">Strategies</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              </TabsList>
-              <TabsContent value="activity" className="space-y-4">
-                {recentActivity.map((activity) => (
-                  <Card key={activity.id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">{activity.title}</h3>
-                            <Badge variant="outline" className="text-xs">
-                              {activity.type}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {activity.description}
-                          </p>
-                          <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-4 w-4" />
-                              {activity.timestamp}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Star className="h-4 w-4" />
-                              {activity.likes}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <MessageSquare className="h-4 w-4" />
-                              {activity.comments}
-                            </span>
-                            <Button variant="ghost" size="sm" className="ml-auto">
-                              <Share2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-              <TabsContent value="strategies">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="text-center text-muted-foreground">
-                      Your trading strategies will appear here
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="analytics">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="text-center text-muted-foreground">
-                      Trading analytics and performance metrics will appear here
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
   )
-} 
+}

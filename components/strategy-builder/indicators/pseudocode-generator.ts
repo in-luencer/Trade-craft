@@ -228,7 +228,7 @@ function generateRiskManagementCode(strategy: StrategyConfig): string {
           "volatility-based": "based on volatility",
           custom: "using custom formula",
         }
-        code += `SET_POSITION_SIZE ${typeMap[rule.type]} ${rule.value} WITH MAX_RISK ${rule.maxRisk}%\n`
+        code += `SET_POSITION_SIZE ${typeMap[rule.type]} ${rule.value}\n`
       }
     })
     code += "\n"

@@ -3,7 +3,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import { useState } from "react"
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer } from "@/components/ui/chart"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -39,7 +38,6 @@ interface RiskRule {
   activationThreshold?: number
   equityPercentage?: number
   riskPerTrade?: number
-  maxRisk?: number
   winRate?: number
   payoffRatio?: number
   volatilityPeriod?: number
@@ -581,20 +579,30 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
     // Position Sizing
     if (strategy.riskManagement.positionSizing.length > 0) {
       code += "// Position Sizing\n"
-      strategy.riskManagement.positionSizing.forEach((rule) => {
+      strategy.riskManagement.positionSizing.forEach((rule: RiskRule) => {
         if (rule.enabled) {
-          const typeMap: Record<string, string> = {
-            fixed: "fixed units",
-            percentage: "percentage of equity",
-            "risk-reward": "based on risk/reward ratio",
-            kelly: "using Kelly criterion",
-            "optimal-f": "using Optimal F",
-            martingale: "using Martingale strategy",
-            "anti-martingale": "using Anti-Martingale strategy",
-            "volatility-based": "based on volatility",
-            custom: "using custom formula",
+          switch (rule.type) {
+            case "percentage":
+              code += `SET_POSITION_SIZE percentage_of_equity ${rule.equityPercentage}%\n`
+              break
+            case "fixed-amount":
+              code += `SET_POSITION_SIZE fixed_amount ${rule.value}\n`
+              break
+            case "fixed-units":
+              code += `SET_POSITION_SIZE fixed_units ${rule.value}\n`
+              break
+            case "risk-based":
+              code += `SET_POSITION_SIZE risk_based ${rule.riskPerTrade}%\n`
+              break
+            case "kelly":
+              code += `SET_POSITION_SIZE kelly_criterion win_rate=${rule.winRate} payoff_ratio=${rule.payoffRatio}\n`
+              break
+            case "volatility-based":
+              code += `SET_POSITION_SIZE volatility_based period=${rule.volatilityPeriod} multiplier=${rule.volatilityMultiplier}\n`
+              break
+            default:
+              code += `SET_POSITION_SIZE ${rule.type} ${rule.value}\n`
           }
-          code += `SET_POSITION_SIZE ${typeMap[rule.type]} ${rule.value} WITH MAX_RISK ${rule.maxRisk}%\n`
         }
       })
       code += "\n"
@@ -629,7 +637,7 @@ export default function StrategyPreview({ strategy }: StrategyPreviewProps) {
 strategy("${strategy.name}", overlay=true, margin_long=100, margin_short=100)
 
 // Input parameters
-riskPerTrade = input.float(${strategy.riskManagement.positionSizing[0]?.maxRisk || 2}, "Risk Per Trade (%)", minval=0.1, maxval=100, step=0.1)
+riskPerTrade = input.float(${strategy.riskManagement.positionSizing[0]?.riskPerTrade || 2}, "Risk Per Trade (%)", minval=0.1, maxval=100, step=0.1)
 maxPositions = input.int(${strategy.riskManagement.maxOpenPositions}, "Max Open Positions", minval=1, maxval=100, step=1)
 maxDrawdown = input.float(${strategy.riskManagement.maxDrawdown}, "Max Drawdown (%)", minval=1, maxval=100, step=1)
 
@@ -1430,64 +1438,34 @@ if (strategy.position_size < 0)
     // Position Sizing
     code += `\n// Position Sizing\n`
     if (strategy.riskManagement.positionSizing.length > 0) {
-      const positionSizing = strategy.riskManagement.positionSizing.find((ps) => ps.enabled)
-      if (positionSizing) {
-        if (positionSizing.type === "percentage") {
-          code += `// Percentage-based position sizing
-equityPct = ${positionSizing.equityPercentage || positionSizing.value} / 100
-positionSize = math.floor((strategy.equity * equityPct) / close)\n`
-        } else if (positionSizing.type === "risk-reward") {
-          code += `// Risk-based position sizing
-riskPct = ${positionSizing.riskPerTrade || positionSizing.value} / 100
-maxRiskPct = ${positionSizing.maxRisk} / 100
-maxRiskAmount = strategy.equity * maxRiskPct
-
-// Calculate position size based on stop loss distance
-longRisk = close - longStopPrice
-shortRisk = shortStopPrice - close
-
-// Ensure we don't divide by zero
-longPositionSize = longRisk > 0 ? math.floor(math.min((strategy.equity * riskPct) / longRisk, maxRiskAmount / longRisk)) : 0
-shortPositionSize = shortRisk > 0 ? math.floor(math.min((strategy.equity * riskPct) / shortRisk, maxRiskAmount / shortRisk)) : 0\n`
-        } else if (positionSizing.type === "kelly") {
-          code += `// Kelly Criterion position sizing
-winRate = ${positionSizing.winRate || 60} / 100
-payoffRatio = ${positionSizing.payoffRatio || 2}
-maxRiskPct = ${positionSizing.maxRisk} / 100
-
-// Kelly formula: f = (p * b - q) / b, where p = win rate, q = 1-p, b = payoff ratio
-kellyPct = (winRate * payoffRatio - (1 - winRate)) / payoffRatio
-// Usually we use half-Kelly for safety
-adjustedKellyPct = math.min(kellyPct / 2, maxRiskPct)
-
-positionSize = math.floor((strategy.equity * adjustedKellyPct) / close)\n`
-        } else if (positionSizing.type === "volatility-based") {
-          code += `// Volatility-based position sizing
-volPeriod = ${positionSizing.volatilityPeriod || 20}
-volMultiplier = ${positionSizing.volatilityMultiplier || 0.5}
-maxRiskPct = ${positionSizing.maxRisk} / 100
-
-// Calculate volatility
-volValue = ta.stdev(close, volPeriod)
-volRatio = volValue / close
-
-// Adjust position size inversely to volatility
-positionPct = math.min(volMultiplier / volRatio, maxRiskPct)
-positionSize = math.floor((strategy.equity * positionPct) / close)\n`
-        } else if (positionSizing.type === "fixed") {
-          code += `// Fixed position sizing
-positionSize = ${positionSizing.value}\n`
-        } else {
-          code += `// Default position sizing (2% of equity)
-positionSize = math.floor((strategy.equity * 0.02) / close)\n`
+      code += "// Position Sizing\n"
+      strategy.riskManagement.positionSizing.forEach((rule: RiskRule) => {
+        if (rule.enabled) {
+          switch (rule.type) {
+            case "percentage":
+              code += `SET_POSITION_SIZE percentage_of_equity ${rule.equityPercentage}%\n`
+              break
+            case "fixed-amount":
+              code += `SET_POSITION_SIZE fixed_amount ${rule.value}\n`
+              break
+            case "fixed-units":
+              code += `SET_POSITION_SIZE fixed_units ${rule.value}\n`
+              break
+            case "risk-based":
+              code += `SET_POSITION_SIZE risk_based ${rule.riskPerTrade}%\n`
+              break
+            case "kelly":
+              code += `SET_POSITION_SIZE kelly_criterion win_rate=${rule.winRate} payoff_ratio=${rule.payoffRatio}\n`
+              break
+            case "volatility-based":
+              code += `SET_POSITION_SIZE volatility_based period=${rule.volatilityPeriod} multiplier=${rule.volatilityMultiplier}\n`
+              break
+            default:
+              code += `SET_POSITION_SIZE ${rule.type} ${rule.value}\n`
+          }
         }
-      } else {
-        code += `// Default position sizing (2% of equity)
-positionSize = math.floor((strategy.equity * 0.02) / close)\n`
-      }
-    } else {
-      code += `// Default position sizing (2% of equity)
-positionSize = math.floor((strategy.equity * 0.02) / close)\n`
+      })
+      code += "\n"
     }
 
     // Time-based exits

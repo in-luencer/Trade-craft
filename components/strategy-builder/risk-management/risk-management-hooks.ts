@@ -60,7 +60,13 @@ export function useTimeExitRules(config: RiskManagementConfig, updateConfig: (c:
 
 export function usePositionSizingRules(config: RiskManagementConfig, updateConfig: (c: Partial<RiskManagementConfig>) => void) {
   const add = useCallback(() => {
-    const newRule: PositionSizingRule = { id: `ps-${Date.now()}`, type: "percentage", value: 2, maxRisk: 2, enabled: true };
+    const newRule: PositionSizingRule = { 
+      id: `ps-${Date.now()}`, 
+      type: "percentage", 
+      value: 2, 
+      equityPercentage: 2,
+      enabled: true 
+    };
     updateConfig({ positionSizing: [...config.positionSizing, newRule] });
   }, [config, updateConfig]);
   const update = useCallback((id: string, updates: Partial<PositionSizingRule>) => {

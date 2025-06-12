@@ -54,7 +54,12 @@ export interface RiskRule {
   enabled: boolean
   type: string
   value: number | string
-  maxRisk?: number
+  equityPercentage?: number
+  riskPerTrade?: number
+  winRate?: number
+  payoffRatio?: number
+  volatilityPeriod?: number
+  volatilityMultiplier?: number
 }
 
 export interface RiskManagement {

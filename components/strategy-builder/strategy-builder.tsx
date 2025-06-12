@@ -111,7 +111,7 @@ const defaultRiskManagement: RiskManagementConfig = {
       id: "ps-default",
       type: "percentage",
       value: 2,
-      maxRisk: 2,
+      equityPercentage: 2,
       enabled: true,
     },
   ],

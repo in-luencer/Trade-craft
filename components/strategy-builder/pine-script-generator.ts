@@ -6,7 +6,7 @@ export function generatePineScript(strategy: StrategyConfig): string {
 strategy("${strategy.name}", overlay=true, margin_long=100, margin_short=100)
 
 // Input parameters
-riskPerTrade = input.float(${strategy.riskManagement.positionSizing[0]?.maxRisk || 2}, "Risk Per Trade (%)", minval=0.1, maxval=100, step=0.1)
+riskPerTrade = input.float(${strategy.riskManagement.positionSizing[0]?.riskPerTrade || 2}, "Risk Per Trade (%)", minval=0.1, maxval=100, step=0.1)
 maxPositions = input.int(${strategy.riskManagement.maxOpenPositions}, "Max Open Positions", minval=1, maxval=100, step=1)
 maxDrawdown = input.float(${strategy.riskManagement.maxDrawdown}, "Max Drawdown (%)", minval=1, maxval=100, step=1)
 
@@ -252,6 +252,67 @@ plot(momentum(${getIndicatorParams({ indicator: "momentum" } as any, "momentum")
         break
     }
   })
+
+  // Position Sizing
+  if (strategy.riskManagement.positionSizing.length > 0) {
+    const positionSizing = strategy.riskManagement.positionSizing.find((ps) => ps.enabled);
+    if (positionSizing) {
+      switch (positionSizing.type) {
+        case "percentage":
+          code += `// Percentage-based position sizing
+equityPct = ${positionSizing.equityPercentage} / 100
+positionSize = math.floor((strategy.equity * equityPct) / close)\n`;
+          break;
+        case "risk-based":
+          code += `// Risk-based position sizing
+riskPct = ${positionSizing.riskPerTrade} / 100
+positionSize = math.floor((strategy.equity * riskPct) / close)\n`;
+          break;
+        case "kelly":
+          code += `// Kelly Criterion position sizing
+winRate = ${positionSizing.winRate} / 100
+payoffRatio = ${positionSizing.payoffRatio}
+
+// Kelly formula: f = (p * b - q) / b, where p = win rate, q = 1-p, b = payoff ratio
+kellyPct = (winRate * payoffRatio - (1 - winRate)) / payoffRatio
+// Usually we use half-Kelly for safety
+adjustedKellyPct = kellyPct / 2
+
+positionSize = math.floor((strategy.equity * adjustedKellyPct) / close)\n`;
+          break;
+        case "volatility-based":
+          code += `// Volatility-based position sizing
+volPeriod = ${positionSizing.volatilityPeriod}
+volMultiplier = ${positionSizing.volatilityMultiplier}
+
+// Calculate volatility
+volValue = ta.stdev(close, volPeriod)
+volRatio = volValue / close
+
+// Adjust position size inversely to volatility
+positionPct = volMultiplier / volRatio
+positionSize = math.floor((strategy.equity * positionPct) / close)\n`;
+          break;
+        case "fixed-amount":
+          code += `// Fixed amount position sizing
+positionSize = math.floor(${positionSizing.value} / close)\n`;
+          break;
+        case "fixed-units":
+          code += `// Fixed units position sizing
+positionSize = ${positionSizing.value}\n`;
+          break;
+        default:
+          code += `// Default position sizing (2% of equity)
+positionSize = math.floor((strategy.equity * 0.02) / close)\n`;
+      }
+    } else {
+      code += `// Default position sizing (2% of equity)
+positionSize = math.floor((strategy.equity * 0.02) / close)\n`;
+    }
+  } else {
+    code += `// Default position sizing (2% of equity)
+positionSize = math.floor((strategy.equity * 0.02) / close)\n`;
+  }
 
   return code
 }

@@ -7,7 +7,7 @@ export function generatePineScript(strategy: StrategyConfig): string {
 strategy("${strategy.name}", overlay=true, margin_long=100, margin_short=100)
 
 // Input parameters
-riskPerTrade = input.float(${strategy.riskManagement.positionSizing[0]?.maxRisk || 2}, "Risk Per Trade (%)", minval=0.1, maxval=100, step=0.1)
+riskPerTrade = input.float(${strategy.riskManagement.positionSizing[0]?.riskPerTrade || 2}, "Risk Per Trade (%)", minval=0.1, maxval=100, step=0.1)
 maxPositions = input.int(${strategy.riskManagement.maxOpenPositions}, "Max Open Positions", minval=1, maxval=100, step=1)
 maxDrawdown = input.float(${strategy.riskManagement.maxDrawdown}, "Max Drawdown (%)", minval=1, maxval=100, step=1)
 

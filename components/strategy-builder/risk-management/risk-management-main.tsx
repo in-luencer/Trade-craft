@@ -56,24 +56,24 @@ export type PositionSizingRule = {
     | "fixed-units"
     | "fixed-amount"
     | "percentage"
-    | "risk-reward"
     | "risk-based"
+    | "risk-reward"
     | "kelly"
+    | "optimal-f"
     | "volatility-based"
     | "custom"
-    | "optimal-f"
   value: number
-  maxRisk: number
-  equityPercentage?: number
-  riskPerTrade?: number
-  winRate?: number
-  payoffRatio?: number
+  enabled: boolean
+  // Type-specific fields
+  equityPercentage?: number // Only for percentage type
+  riskPerTrade?: number // Only for risk-based type
+  winRate?: number // Only for kelly type
+  payoffRatio?: number // Only for kelly type
   optimalFraction?: number
   volatilityPeriod?: number
   volatilityMultiplier?: number
   customFormula?: string
   useStopLossRisk?: boolean
-  enabled: boolean
 }
 
 export type TimeExitRule = {

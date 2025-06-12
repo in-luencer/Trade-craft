@@ -109,7 +109,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
             id: "ps-1",
             type: "percentage",
             value: "2",
-            maxRisk: "2",
+            equityPercentage: 2,
             enabled: true,
           },
         ],

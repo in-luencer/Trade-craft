@@ -13,7 +13,19 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
           <Input
             type="number"
             value={rule.value ?? ''}
-            onChange={e => updatePositionSizingRule(rule.id, { value: e.target.value === '' ? undefined : Number.parseFloat(e.target.value) })}
+            onChange={e => {
+              const value = e.target.value === '' ? undefined : Number.parseFloat(e.target.value);
+              updatePositionSizingRule(rule.id, { 
+                value,
+                // Clear all other fields
+                equityPercentage: undefined,
+                riskPerTrade: undefined,
+                winRate: undefined,
+                payoffRatio: undefined,
+                volatilityPeriod: undefined,
+                volatilityMultiplier: undefined
+              });
+            }}
             min="0.01"
             step="0.01"
             placeholder="Enter number of units"
@@ -27,7 +39,19 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
           <Input
             type="number"
             value={rule.value ?? ''}
-            onChange={e => updatePositionSizingRule(rule.id, { value: e.target.value === '' ? undefined : Number.parseFloat(e.target.value) })}
+            onChange={e => {
+              const value = e.target.value === '' ? undefined : Number.parseFloat(e.target.value);
+              updatePositionSizingRule(rule.id, { 
+                value,
+                // Clear all other fields
+                equityPercentage: undefined,
+                riskPerTrade: undefined,
+                winRate: undefined,
+                payoffRatio: undefined,
+                volatilityPeriod: undefined,
+                volatilityMultiplier: undefined
+              });
+            }}
             min="1"
             step="1"
             placeholder="Enter fixed amount"
@@ -41,8 +65,20 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
             <Label>Equity Percentage (%)</Label>
             <Input
               type="number"
-              value={rule.equityPercentage || 2}
-              onChange={e => updatePositionSizingRule(rule.id, { equityPercentage: Number.parseFloat(e.target.value) || 2 })}
+              value={rule.equityPercentage ?? ''}
+              onChange={e => {
+                const equityPercentage = e.target.value === '' ? undefined : Number.parseFloat(e.target.value);
+                updatePositionSizingRule(rule.id, { 
+                  equityPercentage,
+                  // Clear all other fields
+                  value: undefined,
+                  riskPerTrade: undefined,
+                  winRate: undefined,
+                  payoffRatio: undefined,
+                  volatilityPeriod: undefined,
+                  volatilityMultiplier: undefined
+                });
+              }}
               min="0.1"
               step="0.1"
             />
@@ -57,8 +93,20 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
               <Label>Manual Risk per Trade (%)</Label>
               <Input
                 type="number"
-                value={rule.riskPerTrade || 1}
-                onChange={e => updatePositionSizingRule(rule.id, { riskPerTrade: Number.parseFloat(e.target.value) || 1 })}
+                value={rule.riskPerTrade ?? ''}
+                onChange={e => {
+                  const riskPerTrade = e.target.value === '' ? undefined : Number.parseFloat(e.target.value);
+                  updatePositionSizingRule(rule.id, { 
+                    riskPerTrade,
+                    // Clear all other fields
+                    value: undefined,
+                    equityPercentage: undefined,
+                    winRate: undefined,
+                    payoffRatio: undefined,
+                    volatilityPeriod: undefined,
+                    volatilityMultiplier: undefined
+                  });
+                }}
                 min="0.1"
                 step="0.1"
                 placeholder="e.g. 1"
@@ -74,8 +122,19 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
             <Label>Win Rate (%)</Label>
             <Input
               type="number"
-              value={rule.winRate || 60}
-              onChange={e => updatePositionSizingRule(rule.id, { winRate: Number.parseInt(e.target.value) || 60 })}
+              value={rule.winRate ?? ''}
+              onChange={e => {
+                const winRate = e.target.value === '' ? undefined : Number.parseInt(e.target.value);
+                updatePositionSizingRule(rule.id, { 
+                  winRate,
+                  // Clear all other fields
+                  value: undefined,
+                  equityPercentage: undefined,
+                  riskPerTrade: undefined,
+                  volatilityPeriod: undefined,
+                  volatilityMultiplier: undefined
+                });
+              }}
               min="1"
               max="99"
               step="1"
@@ -85,8 +144,19 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
             <Label>Payoff Ratio</Label>
             <Input
               type="number"
-              value={rule.payoffRatio || 2}
-              onChange={e => updatePositionSizingRule(rule.id, { payoffRatio: Number.parseFloat(e.target.value) || 2 })}
+              value={rule.payoffRatio ?? ''}
+              onChange={e => {
+                const payoffRatio = e.target.value === '' ? undefined : Number.parseFloat(e.target.value);
+                updatePositionSizingRule(rule.id, { 
+                  payoffRatio,
+                  // Clear all other fields
+                  value: undefined,
+                  equityPercentage: undefined,
+                  riskPerTrade: undefined,
+                  volatilityPeriod: undefined,
+                  volatilityMultiplier: undefined
+                });
+              }}
               min="0.1"
               step="0.1"
             />
@@ -100,8 +170,19 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
             <Label>ATR Period</Label>
             <Input
               type="number"
-              value={rule.volatilityPeriod || 20}
-              onChange={e => updatePositionSizingRule(rule.id, { volatilityPeriod: Number.parseInt(e.target.value) || 20 })}
+              value={rule.volatilityPeriod ?? ''}
+              onChange={e => {
+                const volatilityPeriod = e.target.value === '' ? undefined : Number.parseInt(e.target.value);
+                updatePositionSizingRule(rule.id, { 
+                  volatilityPeriod,
+                  // Clear all other fields
+                  value: undefined,
+                  equityPercentage: undefined,
+                  riskPerTrade: undefined,
+                  winRate: undefined,
+                  payoffRatio: undefined
+                });
+              }}
               min="1"
               step="1"
             />
@@ -110,8 +191,19 @@ export function PositionSizingFields({ rule, updatePositionSizingRule }: { rule:
             <Label>ATR Multiplier</Label>
             <Input
               type="number"
-              value={rule.volatilityMultiplier || 0.5}
-              onChange={e => updatePositionSizingRule(rule.id, { volatilityMultiplier: Number.parseFloat(e.target.value) || 0.5 })}
+              value={rule.volatilityMultiplier ?? ''}
+              onChange={e => {
+                const volatilityMultiplier = e.target.value === '' ? undefined : Number.parseFloat(e.target.value);
+                updatePositionSizingRule(rule.id, { 
+                  volatilityMultiplier,
+                  // Clear all other fields
+                  value: undefined,
+                  equityPercentage: undefined,
+                  riskPerTrade: undefined,
+                  winRate: undefined,
+                  payoffRatio: undefined
+                });
+              }}
               min="0.1"
               step="0.1"
             />

@@ -1,4 +1,3 @@
-
 import type { StrategyConfig } from "./strategy-builder"
 import { collectIndicators } from "./utils"
 import indicatorMetadata from "./indicator-metadata"
@@ -9,13 +8,44 @@ export function generatePseudocode(strategy: StrategyConfig): string {
 Description: ${strategy.description}
 
 Risk Management:
-- Risk per trade: ${strategy.riskManagement.positionSizing[0]?.maxRisk || 2}%
+- Risk per trade: ${strategy.riskManagement.positionSizing[0]?.riskPerTrade || 2}%
 - Max open positions: ${strategy.riskManagement.maxOpenPositions}
 - Max drawdown: ${strategy.riskManagement.maxDrawdown}%
 
 Entry Rules:
 `
 
+  // Position Sizing
+  if (strategy.riskManagement.positionSizing.length > 0) {
+    code += "// Position Sizing\n"
+    strategy.riskManagement.positionSizing.forEach((rule) => {
+      if (rule.enabled) {
+        switch (rule.type) {
+          case "percentage":
+            code += `SET_POSITION_SIZE percentage_of_equity ${rule.equityPercentage}%\n`
+            break
+          case "fixed-amount":
+            code += `SET_POSITION_SIZE fixed_amount ${rule.value}\n`
+            break
+          case "fixed-units":
+            code += `SET_POSITION_SIZE fixed_units ${rule.value}\n`
+            break
+          case "risk-based":
+            code += `SET_POSITION_SIZE risk_based ${rule.riskPerTrade}%\n`
+            break
+          case "kelly":
+            code += `SET_POSITION_SIZE kelly_criterion win_rate=${rule.winRate} payoff_ratio=${rule.payoffRatio}\n`
+            break
+          case "volatility-based":
+            code += `SET_POSITION_SIZE volatility_based period=${rule.volatilityPeriod} multiplier=${rule.volatilityMultiplier}\n`
+            break
+          default:
+            code += `SET_POSITION_SIZE ${rule.type} ${rule.value}\n`
+        }
+      }
+    })
+    code += "\n"
+  }
 
   function getLogicDescription(condition: any): string {
     const logic = condition.logic

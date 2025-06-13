@@ -120,7 +120,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
             id: "ps-1",
             type: "percentage",
             value: "2",
-            maxRisk: "2",
+            equityPercentage: 2,
             enabled: true,
           },
         ],

@@ -42,6 +42,14 @@ export default function StrategyMarketplacePage() {
               </Button>
             </div>
           </div>
+          {/* Upload Strategy button - top right */}
+          <div className="absolute right-6 top-6 z-10">
+            <Link href="/strategy/upload">
+              <Button size="lg" className="bg-gradient-to-r from-yellow-400 via-primary to-purple-400 text-zinc-900 font-bold shadow-lg hover:scale-105 transition-transform">
+                Upload Strategy
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 

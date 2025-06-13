@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Strategy {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  price           Float
+  winRate         Float
+  maxDrawdown     Float
+  avgTrades       Int
+  backtestPeriod  Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Creator fields
+  creatorName     String
+  creatorTitle    String
+  creatorBio      String
+
+  // Media
+  photos          Photo[]
+  videos          Video[]
+
+  // Premium features
+  premiumFeatures PremiumFeature[]
+
+  // FAQs
+  faqs            FAQ[]
+
+  // Stats
+  rating          Float    @default(0)
+  reviewCount     Int      @default(0)
+}
+
+model Photo {
+  id          String   @id @default(cuid())
+  url         String
+  strategyId  String
+  strategy    Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+}
+
+model Video {
+  id          String   @id @default(cuid())
+  url         String
+  strategyId  String
+  strategy    Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+}
+
+model PremiumFeature {
+  id          String   @id @default(cuid())
+  description String
+  strategyId  String
+  strategy    Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+}
+
+model FAQ {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String
+  strategyId  String
+  strategy    Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+}

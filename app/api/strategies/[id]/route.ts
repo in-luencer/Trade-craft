@@ -1,8 +1,19 @@
-import { NextResponse } from "next/server"
+// Next.js 15+ expects the context.params to be a Promise<SegmentParams> (see .next/types/app/api/strategies/[id]/route.ts)
+// So we need to make the context param type as { params: Promise<{ id: string }> }
+// and await context.params.id
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+
+// Helper to get id from context.params (which is a Promise)
+async function getId(context: { params: Promise<{ id: string }> }) {
+  const params = await context.params
+  return params.id
+}
+
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const id = params.id
+    const id = await getId(context)
 
     // In a real app, you would fetch this from a database
     // For now, return a mock strategy
@@ -123,9 +134,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const id = params.id
+    const id = await getId(context)
     const strategy = await request.json()
 
     // In a real app, you would update this in a database
@@ -142,9 +153,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const id = params.id
+    const id = await getId(context)
 
     // In a real app, you would delete this from a database
     console.log(`Deleting strategy ${id}`)

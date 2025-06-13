@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PositionSizingSection } from "./PositionSizingSection";
 import { TimeExitSection } from "./TimeExitSection";
 import { useStopLossRules, useTakeProfitRules, useTrailingStopRules, useTimeExitRules, usePositionSizingRules } from "./risk-management-hooks"
+import type { RiskManagementConfig } from "../types"
 import { LeverageSection } from "./LeverageSection"
 import { StopLossSection } from "./StopLossSection"
 import { TakeProfitSection } from "./TakeProfitSection"
@@ -81,30 +82,6 @@ export type TimeExitRule = {
   type: "bars" | "time" | "date" | "session-end" | "custom"
   value: number
   enabled: boolean
-}
-
-export type RiskManagementConfig = {
-  stopLoss: StopLossRule[]
-  takeProfit: TakeProfitRule[]
-  trailingStop: TrailingStopRule[]
-  positionSizing: PositionSizingRule[]
-  timeExit: TimeExitRule[]
-  maxOpenPositions: number
-  maxDrawdown: number
-  maxDailyLoss: number
-  maxMonthlyDrawdown?: number
-  maxTradesPerDay?: number
-  maxTradesPerWeek?: number
-  sessionStart?: string
-  sessionEnd?: string
-  maxConsecutiveLosses: number
-  profitTarget: number
-  riskRewardMinimum: number
-  pyramiding: number
-  experienceLevel: "beginner" | "intermediate" | "advanced"
-  leverageEnabled?: boolean
-  leverageRatio?: number
-  advancedLogic?: { id: string; description: string; enabled: boolean }[]
 }
 
 interface RiskManagementProps {

@@ -14,8 +14,8 @@ import { Switch } from "@/components/ui/switch"
 import { cleanPositionRule } from "./strategy-builder/utils";
 import type { IndicatorCondition, ConditionGroup, PositionRule } from "@/components/strategy-builder/types"
 import EntryExitNode from "@/components/strategy-builder/entry-exit-node"
-import RiskManagement, { type RiskManagementConfig } from "./strategy-builder/risk-management/risk-management-main"
-import StrategyPreview from "./strategy-preview"
+import RiskManagement from "./strategy-builder/risk-management/risk-management-main"
+import type { RiskManagementConfig } from "@/components/strategy-builder/types"
 import { useStrategy } from "@/context/strategy-context"
 
 export type StrategyConfig = {
@@ -78,7 +78,6 @@ const defaultRiskManagement: RiskManagementConfig = {
       id: "ps-default",
       type: "percentage",
       value: 2,
-      maxRisk: 2,
       enabled: true,
     },
   ],
@@ -386,10 +385,7 @@ export default function StrategyBuilder() {
         </TabsContent>
 
 
-       <TabsContent value="preview">
-          <StrategyPreview strategy={strategyForPreview} />
-        </TabsContent> 
-
+      
       </Tabs>
 
       <Button onClick={saveStrategy} className="w-full mb-4" disabled={isSaving}>

@@ -9,8 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import EntryExitNode from "./entry-exit-node"
-import RiskManagement, { type RiskManagementConfig } from "./risk-management/risk-management-main"
-import StrategyPreview from "./strategy-preview"
+import RiskManagement from "./risk-management/risk-management-main"
 import { useStrategy } from "@/context/strategy-context"
 import StrategyJsonExporter from "./strategy-json-exporter"
 
@@ -20,7 +19,8 @@ import type {
   PositionRule,
   IndicatorType,
   IndicatorParams,
-  IndicatorLogic
+  IndicatorLogic,
+  RiskManagementConfig
 } from "./types";
 
 export type StrategyConfig = {
@@ -440,12 +440,6 @@ export default function StrategyBuilder() {
             </CardContent>
           </Card>
         </TabsContent>
-
-        <TabsContent value="preview" className="space-y-6">
-          <StrategyPreview strategy={strategy} />
-      <StrategyJsonExporter strategy={strategy} />
-        </TabsContent>
-
         <TabsContent value="json">
       <StrategyJsonExporter strategy={strategy} />
         </TabsContent>

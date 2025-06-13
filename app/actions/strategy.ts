@@ -45,7 +45,7 @@ export async function uploadStrategy(formData: FormData) {
     const strategyPerformance = await fetchStrategyPerformance(validatedData.strategyId)
 
     // Create strategy in database with transaction to ensure all related data is created
-    const strategy = await prisma.$transaction(async (tx) => {
+    const strategy = await prisma.$transaction(async (tx: any) => {
       // Create the strategy
       const strategy = await tx.strategy.create({
         data: {

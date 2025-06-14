@@ -43,12 +43,19 @@ export default function UploadStrategyPage() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'photos' | 'videos') => {
     const files = Array.from(e.target.files || [])
-    if (files.length > 0) {
+    const validFiles = files.filter(file => {
+      const isValidType = type === 'photos' ? file.type.startsWith('image/') : file.type.startsWith('video/');
+      const isValidSize = file.size <= 50 * 1024 * 1024; // Limit file size to 50MB
+      return isValidType && isValidSize;
+    });
+    if (validFiles.length > 0) {
       if (type === 'photos') {
-        setPhotos(prev => [...prev, ...files])
+        setPhotos(prev => [...prev, ...validFiles])
       } else {
-        setVideos(prev => [...prev, ...files])
+        setVideos(prev => [...prev, ...validFiles])
       }
+    } else {
+      toast.error("Invalid file type or size. Please upload valid files.");
     }
   }
 
